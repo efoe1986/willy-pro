@@ -2,647 +2,995 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#002157">
-    <link rel="manifest" href="manifest.json">
-    
-    <title>Willy Pro - Road Book & Gestion</title>
-    
-    <!-- Librairies -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Air Camp Pulse - Application Directeur</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
     <style>
         :root {
+            /* Charte graphique Air Camp Pulse originale */
             --af-blue: #002157;
             --af-red: #E5002B;
             --af-green: #10B981;
             --af-light-blue: #E6F0FA;
         }
+        
         body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             background-color: #333; 
-            margin: 0; padding: 0; 
-            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
             -webkit-tap-highlight-color: transparent; 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            justify-content: center; 
         }
-        input, textarea, select { -webkit-user-select: auto; user-select: auto; outline: none; }
-
-        .mobile-frame { max-width: 414px; margin: 0 auto; min-height: 100vh; background-color: #f3f4f6; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.5); overflow-x: hidden; }
         
-        .header-af { background-color: var(--af-blue); color: white; border-bottom: 4px solid var(--af-red); padding-top: max(1.25rem, env(safe-area-inset-top)); }
+        .mobile-frame { 
+            width: 100%; 
+            max-width: 414px; 
+            margin: 0 auto; 
+            height: 100vh; 
+            max-height: 100vh; 
+            background-color: #f3f4f6; 
+            position: relative; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.5); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+        }
         
-        .view-section { display: none; width: 100%; min-height: 100vh; background-color: #f3f4f6; }
-        .view-section.active { display: block; animation: fadeIn 0.2s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* En-têtes */
+        .header-af { background-color: var(--af-blue); color: white; border-bottom: 4px solid var(--af-red); padding: 1.25rem 1rem 1rem 1rem; display: flex; align-items: center; justify-content: space-between; z-index: 30; padding-top: max(1.25rem, env(safe-area-inset-top)); flex-shrink: 0; }
+        
+        /* Gestion stricte de l'affichage pour éviter tout blocage de clic */
+        .view-section { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #f3f4f6; flex-direction: column; z-index: 10;}
+        .view-section.active { display: flex; z-index: 20; animation: fadeIn 0.2s ease-in-out;}
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        .scrollable-area { flex: 1; overflow-y: auto; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+
+        /* --- STYLES COMMUNS --- */
         .calendar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding: 1rem; }
-        .day-card { border-radius: 12px; padding: 1rem 0.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); aspect-ratio: 1; position: relative; transition: all 0.3s ease; background: white; cursor: pointer; }
+        .day-card { border-radius: 12px; padding: 1rem 0.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); aspect-ratio: 1; position: relative; transition: all 0.3s ease; cursor: pointer; }
         .day-done { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-        .day-active { border: 2px solid var(--af-blue); }
-        .day-locked { background-color: #e5e7eb; color: #9ca3af; border: 1px dashed #d1d5db; }
+        .day-active { background-color: white; border: 2px solid var(--af-red); box-shadow: 0 4px 12px rgba(229, 0, 43, 0.15); cursor: pointer; }
+        .pulse-dot { position: absolute; top: 8px; right: 8px; width: 10px; height: 10px; background-color: var(--af-red); border-radius: 50%; animation: pulse 2s infinite; }
         
-        .bottom-bar { position: sticky; bottom: 0; left: 0; right: 0; background: white; padding: 0.75rem 0.5rem; padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; z-index: 30; }
-        .action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6b7280; font-size: 0.6rem; width: 16%; gap: 0.2rem; cursor: pointer; border: none; background: none; }
+        @keyframes pulse { 
+            0% { box-shadow: 0 0 0 0 rgba(229, 0, 43, 0.7); } 
+            70% { box-shadow: 0 0 0 10px rgba(229, 0, 43, 0); } 
+            100% { box-shadow: 0 0 0 0 rgba(229, 0, 43, 0); } 
+        }
+        
+        .day-locked { background-color: #e5e7eb; color: #9ca3af; border: 1px dashed #d1d5db; cursor: not-allowed; }
+        
+        /* Navigation Basse */
+        .bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; background: white; padding: 0.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-around; z-index: 30; padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); box-shadow: 0 -4px 10px rgba(0,0,0,0.05);}
+        .action-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; font-size: 0.65rem; width: 25%; gap: 0.2rem; cursor: pointer; border: none; background: none; transition: color 0.2s; padding: 0.25rem 0;}
         .action-btn.active { color: var(--af-blue); font-weight: bold; }
+        .action-btn i { font-size: 1.4rem; transition: transform 0.2s;}
+        .action-btn.active i { transform: scale(1.1); }
 
-        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; overflow: hidden; }
-        .card-header { padding: 1rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-        .card-content { padding: 0 1rem; max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
-        .card.open .card-content { max-height: 5000px; padding: 1rem; border-top: 1px solid #eee; }
+        /* Cartes du Flashboard */
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; overflow: visible; }
+        .card-header { padding: 1rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background-color: white; transition: background-color 0.3s; border-radius: 16px; }
+        .card-header.active { background-color: var(--af-light-blue); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+        .card-content { padding: 0 1rem; max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease; }
+        .card.open .card-content { max-height: 5000px; padding: 1rem; border-top: 1px solid #eee; overflow: visible; }
 
-        .btn-primary { background-color: var(--af-blue); color: white; width: 100%; padding: 1rem; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; }
-        .back-btn { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.15); border: none; color: white; cursor: pointer; }
-        .logout-btn { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: var(--af-red); border: none; color: white; cursor: pointer; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: var(--af-blue); cursor: pointer; margin-top: -8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: #ddd; border-radius: 4px; }
 
-        .weather-btn { padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1.2rem; cursor: pointer; background: white; transition: 0.2s; }
-        .weather-btn.active { background-color: var(--af-light-blue); border-color: var(--af-blue); transform: scale(1.1); }
+        .health-badge { width: 36px; height: 36px; border-radius: 50%; background-color: #f3f4f6; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .health-badge.active { background-color: #fee2e2; color: var(--af-red); }
 
-        .star-rating { color: #ddd; cursor: pointer; font-size: 1.1rem; padding: 0 1px; }
-        .star-rating.active { color: #fbbf24; }
+        /* Modales */
+        .modal-overlay { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease-out;}
+        .center-modal { width: 90%; max-width: 360px; background: white; border-radius: 24px; padding: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); transform: translateY(20px); opacity: 0; animation: modalPop 0.3s ease forwards; }
+        @keyframes modalPop { to { transform: translateY(0); opacity: 1; } }
 
-        .media-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .media-item { border-radius: 12px; overflow: hidden; background: #eee; aspect-ratio: 1; position: relative; border: 1px solid #ddd; }
-        .media-item img { width: 100%; height: 100%; object-fit: cover; }
+        /* Login Inputs */
+        .login-input { width: 100%; padding: 1rem; border-radius: 12px; background: rgba(255,255,255,0.9); border: 2px solid transparent; outline: none; font-size: 1rem; color: #333; transition: border 0.3s; margin-bottom: 0.75rem;}
+        .login-input:focus { border: 2px solid var(--af-red); }
 
-        .modal { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 100; align-items: flex-end; }
-        .modal.show { display: flex; }
-        .modal-content { background: white; width: 100%; border-radius: 24px 24px 0 0; padding: 1.5rem; animation: slideUp 0.3s ease-out; max-height: 90vh; overflow-y: auto; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 50px; font-size: 0.75rem; z-index: 200; opacity: 0; transition: 0.3s; pointer-events: none; }
-        
-        .type-btn { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 10px; font-size: 10px; font-weight: bold; text-align: center; cursor: pointer; background: white; }
-        .type-btn.active { background: var(--af-blue); color: white; border-color: var(--af-blue); }
+        /* Tables & Rapports */
+        .report-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; }
+        .report-table th { background-color: var(--af-blue); color: white; padding: 0.5rem; border: 1px solid #ddd; }
+        .report-table td { padding: 0.5rem; border: 1px solid #ddd; color: #374151; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
 <div class="mobile-frame">
+    <!-- Toast Notification -->
+    <div id="global-toast" class="absolute top-20 left-1/2 transform -translate-x-1/2 bg-gray-900/95 backdrop-blur text-white px-5 py-2.5 rounded-full text-sm font-bold opacity-0 -translate-y-4 transition-all duration-300 z-[100] pointer-events-none flex items-center shadow-xl">
+        <i class="fas fa-info-circle mr-2" id="toast-icon"></i> <span id="toast-text">Message</span>
+    </div>
 
-    <div id="toast">Message</div>
+    <!-- ===================================== -->
+    <!-- ECRAN 1 : LOGIN DIRECTEUR             -->
+    <!-- ===================================== -->
+    <div id="screen-login" class="view-section active" style="background: var(--af-blue); justify-content: center; align-items: center;">
+        <div class="p-8 text-center relative z-10 w-full max-w-sm mx-auto">
+            <h1 class="text-4xl font-black text-white mb-2 tracking-tight">AIR CAMP <span class="text-[var(--af-red)]">PULSE</span></h1>
+            <p class="text-blue-200 mb-10 text-sm font-medium uppercase tracking-widest">Espace Directeur</p>
+            
+            <div class="space-y-4 text-left">
+                <p class="text-white font-bold mb-2">Connectez-vous pour accéder à vos séjours</p>
+                <input type="email" id="dir-login-email" placeholder="Adresse Email" class="login-input" autocomplete="email">
+                <input type="password" id="dir-login-pwd" placeholder="Mot de passe" class="login-input" autocomplete="current-password">
+                <button type="button" id="btn-login" onclick="loginAsDirector(this)" class="w-full bg-[var(--af-red)] text-white py-4 rounded-xl font-bold shadow-lg active:bg-red-800 transition-colors flex items-center justify-center gap-2 mt-4 cursor-pointer border-none">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </button>
+            </div>
+        </div>
+        <!-- Décoration de fond (ne bloque pas les clics) -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+            <div class="absolute -top-1/2 -left-1/2 w-full h-full rounded-full mix-blend-multiply blur-[100px] opacity-30" style="background-color: var(--af-red);"></div>
+        </div>
+    </div>
 
-    <!-- VUE 0 : IDENTIFICATION -->
-    <div id="view-setup" class="view-section bg-[var(--af-blue)]">
-        <div class="min-h-screen flex flex-col justify-center items-center p-6 text-center">
-            <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm">
-                <h1 class="text-3xl font-black text-[var(--af-blue)] mb-1 uppercase">Willy <span class="text-[var(--af-red)]">Pro</span></h1>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-6 border-b pb-4">Road Book Manager</p>
-                
-                <div class="space-y-4 text-left">
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Directeur</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="setup-nom" placeholder="Nom" class="p-3 border rounded-xl bg-gray-50 text-sm">
-                            <input type="text" id="setup-prenom" placeholder="Prénom" class="p-3 border rounded-xl bg-gray-50 text-sm">
-                        </div>
-                    </div>
-                    <input type="text" id="setup-sejour-nom" placeholder="Nom du séjour" class="w-full p-3 border rounded-xl bg-gray-50 text-sm">
-                    <input type="text" id="setup-destination" placeholder="Destination" class="w-full p-3 border rounded-xl bg-gray-50 text-sm">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="date" id="setup-date-debut" class="p-3 border rounded-xl text-xs bg-gray-50">
-                        <input type="date" id="setup-date-fin" class="p-3 border rounded-xl text-xs bg-gray-50">
-                    </div>
-                    <button onclick="startSession()" class="btn-primary mt-4">Ouvrir le Séjour</button>
+    <!-- ===================================== -->
+    <!-- ECRAN 2 : LISTE DES SEJOURS           -->
+    <!-- ===================================== -->
+    <div id="screen-home" class="view-section">
+        <header class="header-af">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-100 text-[var(--af-blue)] flex items-center justify-center font-bold text-xl" id="dir-avatar-fallback">D</div>
+                <div>
+                    <h1 class="text-lg font-black text-white leading-tight m-0">Mes Séjours</h1>
+                    <p class="text-xs text-blue-200 m-0" id="dir-name-display">Directeur</p>
                 </div>
+            </div>
+            <button class="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center border-none cursor-pointer hover:bg-white/20 transition-colors" onclick="logoutDir()">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </header>
+        
+        <div class="bg-[var(--af-light-blue)] p-4 border-b border-blue-200 flex items-center justify-between shrink-0">
+            <p class="text-[var(--af-blue)] text-sm font-medium m-0">Rejoindre un séjour avec un code ?</p>
+            <button onclick="openJoinModal()" class="bg-[var(--af-blue)] text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md border-none cursor-pointer hover:bg-blue-900 transition-colors">
+                <i class="fas fa-plus mr-1"></i> Code
+            </button>
+        </div>
+
+        <div class="scrollable-area p-4 space-y-4" id="director-trips-list">
+            <!-- Liste injectée par JS -->
+            <div class="flex flex-col items-center text-center text-gray-400 mt-20">
+                <i class="fas fa-sync-alt fa-spin text-4xl mb-3"></i>
+                <p>Connexion en cours...</p>
             </div>
         </div>
     </div>
 
-    <!-- VUE 1 : HUB / CALENDRIER -->
-    <div id="view-hub" class="view-section pb-20">
-        <header class="header-af p-5 rounded-b-2xl shadow-lg">
-            <div class="flex justify-between items-start">
+    <!-- ===================================== -->
+    <!-- VUE HUB : CALENDRIER DU SEJOUR        -->
+    <!-- ===================================== -->
+    <div id="view-hub" class="view-section">
+        <header class="header-af rounded-b-2xl shadow-md block">
+            <div class="flex justify-between items-start mb-4">
                 <div>
-                    <p class="text-[10px] text-blue-200 font-bold uppercase mb-1" id="hub-director-display">Directeur : ...</p>
-                    <h1 class="font-bold text-2xl leading-tight" id="hub-trip-name">Séjour...</h1>
-                    <p class="text-xs opacity-80" id="hub-destination">📍 Destination...</p>
+                    <div class="flex items-center gap-2 mb-1">
+                        <button onclick="navToHome()" class="text-white text-lg w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border-none cursor-pointer">
+                            <i class="fas fa-arrow-left text-sm"></i>
+                        </button>
+                        <p class="text-xs uppercase tracking-wider text-blue-200 m-0">Tableau de Bord</p>
+                    </div>
+                    <h1 class="font-bold text-2xl mt-1 leading-tight m-0" id="hub-trip-name">Séjour</h1>
+                    <p class="text-sm opacity-90 mt-1 m-0" id="hub-trip-dates"><i class="far fa-calendar-alt mr-1"></i> Dates</p>
                 </div>
-                <button onclick="logout()" class="logout-btn shadow-md"><i class="fas fa-sign-out-alt"></i></button>
+                <div class="bg-white/20 p-2 rounded-lg text-center backdrop-blur-sm">
+                    <p class="text-[0.6rem] opacity-80 uppercase tracking-widest m-0">Effectif</p>
+                    <p class="font-bold text-lg m-0"><i class="fas fa-child text-sm mr-1"></i><span id="hub-effectif-count">0</span></p>
+                </div>
             </div>
-            <div class="w-full bg-white/20 rounded-full h-1.5 mt-6"><div id="progress-bar" class="bg-white rounded-full h-1.5 transition-all duration-500" style="width: 0%"></div></div>
+            <div class="mt-4">
+                <div class="flex justify-between text-xs mb-1"><span>Progression</span><span id="progress-text">0 Jours</span></div>
+                <div class="w-full bg-white/30 rounded-full h-2"><div id="progress-bar" class="bg-white rounded-full h-2 transition-all duration-1000" style="width: 0%"></div></div>
+            </div>
         </header>
-        <main class="p-4">
-            <div class="calendar-grid" id="main-calendar"></div>
-            <button onclick="generateRoadBook()" class="btn-primary mt-6 shadow-xl"><i class="fas fa-book-open mr-2"></i>Road Book Final</button>
+
+        <main class="scrollable-area mt-4 px-4">
+            <h2 class="font-bold text-gray-700 mb-2">Journal de bord</h2>
+            <p class="text-sm text-gray-500 mb-2">Sélectionnez le jour à compléter :</p>
+            
+            <div class="calendar-grid !p-0 mb-6" id="main-calendar">
+                <!-- Calendrier généré via JS -->
+            </div>
+
+            <div class="bg-[var(--af-light-blue)] p-4 rounded-xl border border-blue-200 text-center mb-4">
+                <i class="fas fa-file-alt text-3xl text-[var(--af-blue)] mb-2"></i>
+                <h3 class="font-bold text-[var(--af-blue)] mb-1 m-0">Fin de séjour ?</h3>
+                <p class="text-xs text-blue-800 mb-3 m-0">Synthétisez les données en un document complet.</p>
+                <button onclick="generateReport()" class="bg-[var(--af-blue)] text-white w-full p-3 rounded-lg font-bold shadow-md hover:bg-blue-900 transition-colors border-none cursor-pointer mt-2">
+                    <i class="fas fa-eye mr-2"></i> Voir le Rapport
+                </button>
+            </div>
         </main>
+
         <nav class="bottom-bar">
-            <button class="action-btn active" onclick="switchView('view-hub')"><i class="fas fa-calendar-day"></i><span>Journal</span></button>
-            <button class="action-btn" onclick="switchView('view-hebergement')"><i class="fas fa-hotel"></i><span>Héberg.</span></button>
-            <button class="action-btn" onclick="switchView('view-effectifs')"><i class="fas fa-users"></i><span>Effectifs</span></button>
-            <button class="action-btn" onclick="switchView('view-medias')"><i class="fas fa-images"></i><span>Médias</span></button>
-            <button class="action-btn" onclick="switchView('view-budget')"><i class="fas fa-wallet"></i><span>Budget</span></button>
+            <button class="action-btn active" id="nav-hub" onclick="switchView('view-hub')"><i class="fas fa-calendar-alt"></i><span>Calendrier</span></button>
+            <button class="action-btn" id="nav-heb" onclick="switchView('view-hebergement')"><i class="fas fa-hotel"></i><span>Étapes</span></button>
+            <button class="action-btn" id="nav-eff" onclick="switchView('view-effectifs')"><i class="fas fa-users"></i><span>Effectifs</span></button>
+            <button class="action-btn" id="nav-bud" onclick="switchView('view-budget')"><i class="fas fa-wallet"></i><span>Budget</span></button>
         </nav>
     </div>
 
-    <!-- VUE 2 : RAPPORT JOURNALIER (FLASHBOARD) -->
-    <div id="view-flashboard" class="view-section pb-24">
-        <header class="header-af p-4 sticky top-0 z-40 flex items-center gap-3 shadow-md">
-            <button onclick="switchView('view-hub')" class="back-btn"><i class="fas fa-chevron-left"></i></button>
-            <div class="flex-1"><h1 class="font-bold text-lg" id="currentDate">Date</h1><p class="text-[10px] opacity-80 uppercase font-bold" id="currentDayBadge">JOUR 1</p></div>
-            <button onclick="logout()" class="logout-btn w-8 h-8"><i class="fas fa-sign-out-alt text-xs"></i></button>
+    <!-- ===================================== -->
+    <!-- VUE FLASHBOARD : SAISIE DU JOUR       -->
+    <!-- ===================================== -->
+    <div id="view-flashboard" class="view-section">
+        <header class="header-af flex items-center gap-3 shrink-0">
+            <button onclick="switchView('view-hub')" class="text-white text-xl w-10 h-10 border-none bg-transparent cursor-pointer flex items-center justify-center">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="flex-1"><h1 class="font-bold text-lg tracking-wide m-0">Rapport Journalier</h1><p class="text-xs opacity-80 m-0" id="currentDate">Date</p></div>
+            <div class="w-10 h-10 rounded-full bg-white text-[var(--af-blue)] flex items-center justify-center font-bold" id="currentDayBadge">J1</div>
         </header>
 
-        <main class="p-4">
-            <!-- 1. MÉTÉO -->
+        <main class="scrollable-area p-4">
+            <!-- Ambiance -->
             <div class="card" id="card1">
                 <div class="card-header" onclick="toggleCard('card1')">
-                    <div class="flex items-center gap-3 text-blue-900"><i class="fas fa-cloud-sun text-lg"></i><h2 class="font-bold text-sm">1. Météo & Moral</h2></div><i class="fas fa-chevron-down text-gray-300"></i>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fas fa-smile-beam text-xl"></i></div><div><h2 class="font-bold m-0 text-gray-800 text-base">1. Ambiance Générale</h2></div></div><i class="fas fa-chevron-down text-gray-400 transition-transform" id="icon-card1"></i>
                 </div>
                 <div class="card-content">
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-3">Moral des enfants : <span id="val-enfants" class="text-lg">😃</span></label>
-                    <input type="range" id="input-moral" min="1" max="5" value="4" class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer" oninput="updateEmoji(this.value, 'val-enfants')">
-                    <div class="grid grid-cols-2 gap-4 mt-6">
-                        <div>
-                            <p class="text-[9px] uppercase font-black text-gray-400 mb-2 text-center">Matin</p>
-                            <div class="flex gap-1 justify-center" id="meteo-am-box">
-                                <button class="weather-btn flex-1" onclick="selectWeather(this, 'am', 'Pluie')">🌧️</button>
-                                <button class="weather-btn flex-1" onclick="selectWeather(this, 'am', 'Nuage')">☁️</button>
-                                <button class="weather-btn flex-1" onclick="selectWeather(this, 'am', 'Soleil')">☀️</button>
+                    <div class="mb-6 mt-2">
+                        <label class="block text-sm font-semibold mb-2 flex justify-between"><span>Moral des enfants</span><span id="val-enfants" class="text-xl">😃</span></label>
+                        <input type="range" id="input-moral" min="1" max="5" value="4" class="w-full" oninput="updateEmoji(this.value, 'val-enfants')">
+                    </div>
+                    <div class="border-t pt-4 mb-4">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Météo du jour</h3>
+                        <div class="flex gap-4">
+                            <div class="w-1/2">
+                                <label class="text-[0.65rem] text-gray-500 uppercase font-bold mb-2 block text-center">Matin (AM)</label>
+                                <div class="flex bg-gray-100 p-1 rounded-lg input-meteo-am">
+                                    <button class="flex-1 py-2 text-gray-400 rounded-md transition-all border-none cursor-pointer" onclick="selectWeather(this, 'am', 'Pluvieux')"><i class="fas fa-cloud-rain text-lg"></i></button>
+                                    <button class="flex-1 py-2 text-gray-400 rounded-md transition-all border-none cursor-pointer" onclick="selectWeather(this, 'am', 'Mitigé')"><i class="fas fa-cloud-sun text-lg"></i></button>
+                                    <button class="flex-1 py-2 text-yellow-500 bg-white shadow-sm rounded-md transition-all meteo-selected border-none cursor-pointer" data-val="Ensoleillé" onclick="selectWeather(this, 'am', 'Ensoleillé')"><i class="fas fa-sun text-lg"></i></button>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <p class="text-[9px] uppercase font-black text-gray-400 mb-2 text-center">Après-midi</p>
-                            <div class="flex gap-1 justify-center" id="meteo-pm-box">
-                                <button class="weather-btn flex-1" onclick="selectWeather(this, 'pm', 'Pluie')">🌧️</button>
-                                <button class="weather-btn flex-1" onclick="selectWeather(this, 'pm', 'Nuage')">☁️</button>
-                                <button class="weather-btn flex-1" onclick="selectWeather(this, 'pm', 'Soleil')">☀️</button>
+                            <div class="w-1/2">
+                                <label class="text-[0.65rem] text-gray-500 uppercase font-bold mb-2 block text-center">Après-midi (PM)</label>
+                                <div class="flex bg-gray-100 p-1 rounded-lg input-meteo-pm">
+                                    <button class="flex-1 py-2 text-gray-400 rounded-md transition-all border-none cursor-pointer" onclick="selectWeather(this, 'pm', 'Pluvieux')"><i class="fas fa-cloud-rain text-lg"></i></button>
+                                    <button class="flex-1 py-2 text-gray-400 rounded-md transition-all border-none cursor-pointer" onclick="selectWeather(this, 'pm', 'Mitigé')"><i class="fas fa-cloud-sun text-lg"></i></button>
+                                    <button class="flex-1 py-2 text-yellow-500 bg-white shadow-sm rounded-md transition-all meteo-selected border-none cursor-pointer" data-val="Ensoleillé" onclick="selectWeather(this, 'pm', 'Ensoleillé')"><i class="fas fa-sun text-lg"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. SANTÉ -->
+            <!-- Santé -->
             <div class="card" id="card2">
                 <div class="card-header" onclick="toggleCard('card2')">
-                    <div class="flex items-center gap-3 text-red-600"><i class="fas fa-first-aid text-lg"></i><h2 class="font-bold text-sm">2. Santé & Soins</h2></div><i class="fas fa-chevron-down text-gray-300"></i>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-red-100 text-[var(--af-red)] flex items-center justify-center"><i class="fas fa-notes-medical text-xl"></i></div><div><h2 class="font-bold m-0 text-gray-800 text-base">2. Santé & Incidents</h2></div></div><i class="fas fa-chevron-down text-gray-400 transition-transform" id="icon-card2"></i>
                 </div>
-                <div class="card-content"><div id="childrenList" class="space-y-1"></div></div>
+                <div class="card-content">
+                    <button onclick="openIncidentModal()" class="w-full bg-[var(--af-red)] text-white p-3 rounded-lg font-bold mb-4 shadow-sm mt-2 border-none cursor-pointer flex justify-center items-center gap-2"><i class="fas fa-exclamation-triangle"></i> Déclarer un Incident Majeur</button>
+                    <div id="childrenList"><p class="text-sm text-gray-400 text-center italic py-3">En attente de la liste Admin.</p></div>
+                </div>
             </div>
 
-            <!-- 3. RESTAURATION -->
+            <!-- Restauration -->
             <div class="card" id="card3">
                 <div class="card-header" onclick="toggleCard('card3')">
-                    <div class="flex items-center gap-3 text-orange-500"><i class="fas fa-utensils text-lg"></i><h2 class="font-bold text-sm">3. Restauration</h2></div><i class="fas fa-chevron-down text-gray-300"></i>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center"><i class="fas fa-utensils text-xl"></i></div><div><h2 class="font-bold m-0 text-gray-800 text-base">3. Restauration</h2></div></div><i class="fas fa-chevron-down text-gray-400 transition-transform" id="icon-card3"></i>
                 </div>
                 <div class="card-content">
-                    <div class="bg-orange-50 p-3 rounded-xl border border-orange-100 mb-4">
-                        <div class="flex gap-1 mb-2">
-                            <div class="type-btn active flex-1" onclick="setMealType(this, 'Petit-Déjeuner')">P.Dèj</div>
-                            <div class="type-btn flex-1" onclick="setMealType(this, 'Déjeuner')">Déj</div>
-                            <div class="type-btn flex-1" onclick="setMealType(this, 'Dîner')">Dîner</div>
-                        </div>
-                        <input type="text" id="meal-place" placeholder="Nom du restaurant / lieu" class="w-full p-2.5 border rounded-xl mb-2 text-xs bg-white">
-                        <textarea id="meal-comment" placeholder="Commentaires (menu, avis...)" class="w-full p-2.5 border rounded-xl text-xs h-16 mb-2 bg-white"></textarea>
-                        <div class="flex gap-2">
-                            <button onclick="triggerCamera('menus')" class="flex-1 p-2 bg-white border border-orange-300 rounded-lg text-orange-600 font-bold text-[10px]"><i class="fas fa-camera mr-1"></i>Photo</button>
-                            <button onclick="saveMeal()" class="flex-1 p-2 bg-orange-500 text-white rounded-lg font-bold text-[10px]">Ajouter</button>
-                        </div>
-                    </div>
-                    <div id="day-meals-list" class="space-y-2"></div>
+                    <div id="repasList" class="mb-4 mt-2"></div>
+                    <button class="w-full bg-white border-2 border-orange-400 text-orange-500 p-3 rounded-xl font-bold mb-2 shadow-sm flex items-center justify-center gap-2 cursor-pointer" onclick="addRepas()"><i class="fas fa-plus-circle"></i> Ajouter un repas</button>
                 </div>
             </div>
 
-            <!-- 4. ACTIVITÉS / VEILLÉE -->
+            <!-- Activités -->
             <div class="card" id="card4">
                 <div class="card-header" onclick="toggleCard('card4')">
-                    <div class="flex items-center gap-3 text-green-600"><i class="fas fa-hiking text-lg"></i><h2 class="font-bold text-sm">4. Activités / Veillée</h2></div><i class="fas fa-chevron-down text-gray-300"></i>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center"><i class="fas fa-hiking text-xl"></i></div><div><h2 class="font-bold m-0 text-gray-800 text-base">4. Activités & Bons Plans</h2></div></div><i class="fas fa-chevron-down text-gray-400 transition-transform" id="icon-card4"></i>
                 </div>
                 <div class="card-content">
-                    <div class="bg-green-50 p-3 rounded-xl border border-green-100 mb-4">
-                        <div class="flex gap-1 mb-2">
-                            <div class="type-btn active flex-1" id="type-act-btn" onclick="setActType(this, 'Activité')">Activité</div>
-                            <div class="type-btn flex-1" id="type-vei-btn" onclick="setActType(this, 'Veillée')">Veillée</div>
-                        </div>
-                        <input type="text" id="act-name" placeholder="Nom de l'activité ou veillée" class="w-full p-2.5 border rounded-xl mb-2 text-xs font-bold bg-white">
-                        <input type="number" id="act-price" placeholder="Prix par personne (€) - Facultatif" class="w-full p-2.5 border rounded-xl mb-2 text-xs bg-white">
-                        <textarea id="act-comment" placeholder="Déroulement, avis..." class="w-full p-2.5 border rounded-xl text-xs h-16 mb-2 bg-white"></textarea>
-                        <button onclick="saveActivity()" class="w-full p-2 bg-green-600 text-white rounded-lg font-bold text-[10px]">Valider</button>
-                    </div>
-                    <div id="day-acts-list" class="space-y-2"></div>
+                    <div id="activitiesList" class="mb-4 mt-2"></div>
+                    <button class="w-full bg-white border-2 border-teal-500 text-teal-600 p-3 rounded-xl font-bold mb-2 cursor-pointer flex justify-center items-center gap-2" onclick="addActivity()"><i class="fas fa-plus-circle"></i> Ajouter une activité</button>
                 </div>
             </div>
 
-            <!-- 5. BILAN / POINT JEUNES -->
+            <!-- Pédagogie -->
             <div class="card" id="card5">
                 <div class="card-header" onclick="toggleCard('card5')">
-                    <div class="flex items-center gap-3 text-purple-600"><i class="fas fa-brain text-lg"></i><h2 class="font-bold text-sm">5. Bilan & Point Jeunes</h2></div><i class="fas fa-chevron-down text-gray-300"></i>
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center"><i class="fas fa-puzzle-piece text-xl"></i></div><div><h2 class="font-bold m-0 text-gray-800 text-base">5. Aspect Pédagogique</h2></div></div><i class="fas fa-chevron-down text-gray-400 transition-transform" id="icon-card5"></i>
                 </div>
                 <div class="card-content">
-                    <textarea id="input-bilan" placeholder="Bilan pédagogique de la journée..." class="w-full p-3 border rounded-xl text-xs h-20 mb-2 bg-gray-50" onchange="updateDayBilan(this.value)"></textarea>
-                    <textarea id="input-point-jeunes" placeholder="Point spécifique sur certains jeunes (comportement, fatigue, besoins)..." class="w-full p-3 border rounded-xl text-xs h-20 bg-gray-50" onchange="updateDayJeunes(this.value)"></textarea>
+                    <div class="mb-4 mt-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Veillée</label>
+                        <input type="text" id="input-veillee-nom" placeholder="Nom de la veillée" class="w-full p-3 border rounded-lg mb-2 text-sm bg-gray-50 outline-none focus:border-[var(--af-blue)]">
+                        <textarea id="input-veillee-desc" placeholder="En quoi a consisté la veillée ?" class="w-full p-3 border rounded-lg text-sm bg-gray-50 min-h-[60px] outline-none focus:border-[var(--af-blue)]"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Bilan de la journée</label>
+                        <textarea id="input-bilan-jour" placeholder="Commentaire général sur l'ambiance du groupe, la dynamique, le déroulé..." class="w-full p-3 border rounded-lg text-sm bg-gray-50 min-h-[80px] outline-none focus:border-[var(--af-blue)]"></textarea>
+                    </div>
+                    <div class="border-t pt-4 mb-2">
+                        <button onclick="openComportementModal()" class="w-full bg-orange-100 text-orange-700 border border-orange-300 p-3 rounded-xl font-bold mb-2 shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fas fa-user-shield"></i> Signaler un incident comportemental
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- 6. BUDGET JOURNALIER -->
-            <div class="card" id="card6">
-                <div class="card-header" onclick="toggleCard('card6')">
-                    <div class="flex items-center gap-3 text-emerald-600"><i class="fas fa-wallet text-lg"></i><h2 class="font-bold text-sm">6. Dépenses & Retraits</h2></div><i class="fas fa-chevron-down text-gray-300"></i>
+            <!-- Budget -->
+            <div class="card open" id="card6">
+                <div class="card-header active" onclick="toggleCard('card6')">
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"><i class="fas fa-euro-sign text-xl"></i></div><div><h2 class="font-bold m-0 text-gray-800 text-base">6. Budget & Dépenses</h2></div></div><i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" style="transform: rotate(180deg);" id="icon-card6"></i>
                 </div>
                 <div class="card-content">
-                    <div class="flex justify-between items-center mb-3"><h3 class="font-bold text-[10px] uppercase text-gray-400">Transaction</h3><span id="daily-total-display" class="font-black text-emerald-600">0.00 €</span></div>
-                    
-                    <!-- DÉPENSES -->
-                    <div class="space-y-2 bg-gray-50 p-3 rounded-xl border mb-4">
-                        <input type="text" id="exp-nature" placeholder="Nature (ex: Taxi)" class="w-full p-2 border rounded-lg text-xs">
-                        <div class="grid grid-cols-2 gap-2">
-                            <select id="exp-cat" class="p-2 border rounded-lg text-xs bg-white">
-                                <option>Alimentation</option><option>Hébergement</option><option>Activités</option><option>Transports</option><option>Médical</option><option>Autres</option>
-                            </select>
-                            <select id="exp-mode" class="p-2 border rounded-lg text-xs bg-white">
-                                <option value="CB">CB</option><option value="Cash">Espèces</option>
-                            </select>
-                        </div>
-                        <div class="flex gap-2">
-                            <input type="number" id="exp-amount" placeholder="Montant" class="w-1/2 p-2 border rounded-lg font-bold text-sm">
-                            <select id="exp-curr" class="w-1/2 p-2 border rounded-lg text-[10px]" onchange="toggleCustomCurrency(this, 'exp-curr-custom')">
-                                <option value="EUR">€ (EUR)</option><option value="USD">$ (USD)</option><option value="CUSTOM">Autre...</option>
-                            </select>
-                        </div>
-                        <input type="text" id="exp-curr-custom" placeholder="Saisir devise" class="hidden w-full p-2 border rounded-lg text-xs">
-                        <div class="flex gap-2 pt-2">
-                            <button onclick="triggerCamera('tickets')" class="flex-1 p-2 bg-white border border-gray-200 rounded-lg text-gray-500 font-bold text-[10px]"><i class="fas fa-camera mr-1"></i>Ticket</button>
-                            <button onclick="saveExpense()" class="flex-2 p-2 bg-emerald-600 text-white rounded-lg font-bold text-xs shadow-md">Enregistrer</button>
-                        </div>
+                    <div class="bg-emerald-50 p-3 rounded-lg mb-4 flex justify-between items-center border border-emerald-100">
+                        <span class="font-bold text-emerald-800">Dépenses du Jour</span>
+                        <span class="text-xl font-black text-emerald-600" id="daily-total-display">0.00 €</span>
                     </div>
-
-                    <!-- RETRAITS -->
-                    <div class="space-y-2 bg-orange-50 p-3 rounded-xl border border-orange-200 mb-4">
-                        <h3 class="font-bold text-[10px] uppercase text-orange-600 mb-1">Retrait d'espèces</h3>
-                        <input type="number" id="ret-amount" placeholder="Montant du retrait" class="w-full p-2 border rounded-lg font-bold text-sm bg-white">
-                        <div class="flex gap-2">
-                            <select id="ret-curr" class="w-1/2 p-2 border rounded-lg text-[10px] bg-white" onchange="toggleCustomCurrency(this, 'ret-curr-custom')">
-                                <option value="EUR">€ (EUR)</option><option value="USD">$ (USD)</option><option value="CUSTOM">Autre...</option>
-                            </select>
-                            <input type="text" id="ret-curr-custom" placeholder="Saisir devise" class="hidden w-1/2 p-2 border rounded-lg text-xs bg-white">
-                        </div>
-                        <button onclick="saveWithdrawal()" class="w-full p-2 bg-orange-500 text-white rounded-lg font-bold text-xs shadow-md">Valider le retrait</button>
-                    </div>
-
-                    <div id="daily-ops-list" class="space-y-1 text-[10px]"></div>
+                    <div id="operationsList" class="mb-4"></div>
+                    <button class="w-full bg-white border-2 border-emerald-500 text-emerald-600 p-3 rounded-xl font-bold shadow-sm flex items-center justify-center gap-2 cursor-pointer" onclick="addOperation()"><i class="fas fa-plus-circle"></i> Ajouter une opération</button>
                 </div>
             </div>
 
-            <button class="btn-primary mt-6 shadow-xl" onclick="submitDay()">Valider la journée</button>
+            <button id="submitBtn" class="w-full bg-[var(--af-blue)] text-white p-4 rounded-xl font-bold border-none cursor-pointer shadow-lg mt-4 flex items-center justify-center gap-2 transition-colors active:bg-blue-900" onclick="submitDay()">
+                <i class="fas fa-paper-plane"></i> Valider et Transmettre (Cloud)
+            </button>
         </main>
     </div>
 
-    <!-- VUE 3 : BUDGET GLOBAL -->
-    <div id="view-budget" class="view-section pb-24">
-        <header class="header-af p-4 flex items-center gap-3 shadow-md">
-            <button onclick="switchView('view-hub')" class="back-btn"><i class="fas fa-chevron-left"></i></button>
-            <h1 class="font-bold flex-1">Bilan Financier</h1>
-            <button onclick="logout()" class="logout-btn w-8 h-8"><i class="fas fa-sign-out-alt text-xs"></i></button>
+    <!-- ===================================== -->
+    <!-- VUE BUDGET GLOBAL                     -->
+    <!-- ===================================== -->
+    <div id="view-budget" class="view-section">
+        <header class="header-af flex items-center gap-3 shrink-0">
+            <button onclick="switchView('view-hub')" class="text-white text-xl border-none bg-transparent cursor-pointer w-10 h-10 flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
+            <div class="flex-1"><h1 class="font-bold text-lg tracking-wide m-0 text-white">Suivi Budgétaire</h1></div>
         </header>
-        <main class="p-4">
-            <div class="grid grid-cols-2 gap-4 mb-6 text-center">
-                <div class="bg-white p-4 rounded-2xl shadow-sm border-t-4 border-blue-900"><p class="text-[9px] font-bold text-gray-400 uppercase mb-1">Dépenses CB</p><p class="text-xl font-black text-blue-900" id="dash-tot-cb">0.00 €</p></div>
-                <div class="bg-white p-4 rounded-2xl shadow-sm border-t-4 border-emerald-600"><p class="text-[9px] font-bold text-gray-400 uppercase mb-1">Solde Caisse</p><p class="text-xl font-black text-emerald-600" id="dash-tot-cash">0.00 €</p></div>
+        
+        <main class="scrollable-area p-4 space-y-4">
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div class="bg-[var(--af-blue)] text-white p-4 rounded-2xl shadow-sm relative overflow-hidden">
+                    <i class="fas fa-credit-card absolute right-[-10px] bottom-[-10px] text-4xl opacity-20"></i>
+                    <p class="text-[0.65rem] text-blue-200 mb-1 font-bold tracking-wider uppercase">Dépenses CB</p>
+                    <h3 class="font-black text-2xl" id="dash-tot-cb">0.00</h3>
+                </div>
+                <div class="bg-[var(--af-green)] text-white p-4 rounded-2xl shadow-sm relative overflow-hidden">
+                    <i class="fas fa-coins absolute right-[-10px] bottom-[-10px] text-4xl opacity-20"></i>
+                    <p class="text-[0.65rem] text-emerald-100 mb-1 font-bold tracking-wider uppercase">Dépenses Espèces</p>
+                    <h3 class="font-black text-2xl" id="dash-tot-cash">0.00</h3>
+                </div>
             </div>
-            <div class="bg-white p-4 rounded-2xl shadow-sm mb-4"><h2 class="font-bold text-xs border-b pb-2 mb-3 uppercase tracking-tighter">Postes de dépenses</h2><div id="cat-breakdown" class="space-y-2"></div></div>
-            <div class="bg-white p-4 rounded-2xl shadow-sm mb-4"><h2 class="font-bold text-xs border-b pb-2 mb-3 uppercase tracking-tighter">Historique des retraits</h2><div id="withdraw-history" class="space-y-2 text-[10px]"></div></div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm mb-4 border border-gray-100">
+                <h4 class="font-bold text-gray-800 mb-4 border-b pb-2"><i class="fas fa-list-ul mr-2 text-gray-400"></i>Toutes les opérations</h4>
+                <div id="recap-budget-list" class="space-y-3">
+                    <p class="text-sm italic text-gray-400">Aucune opération enregistrée.</p>
+                </div>
+            </div>
         </main>
+
+        <nav class="bottom-bar">
+            <button class="action-btn" id="nav-hub" onclick="switchView('view-hub')"><i class="fas fa-calendar-alt"></i><span>Calendrier</span></button>
+            <button class="action-btn" id="nav-heb" onclick="switchView('view-hebergement')"><i class="fas fa-hotel"></i><span>Étapes</span></button>
+            <button class="action-btn" id="nav-eff" onclick="switchView('view-effectifs')"><i class="fas fa-users"></i><span>Effectifs</span></button>
+            <button class="action-btn active" id="nav-bud" onclick="switchView('view-budget')"><i class="fas fa-wallet"></i><span class="font-bold">Budget</span></button>
+        </nav>
     </div>
 
-    <!-- VUE 5 : HÉBERGEMENT -->
-    <div id="view-hebergement" class="view-section pb-24">
-        <header class="header-af p-4 flex items-center gap-3 shadow-md">
-            <button onclick="switchView('view-hub')" class="back-btn"><i class="fas fa-chevron-left"></i></button>
-            <h1 class="font-bold flex-1 text-sm uppercase tracking-tighter">Ressources Hébergement</h1>
-            <button onclick="logout()" class="logout-btn w-8 h-8"><i class="fas fa-sign-out-alt text-xs"></i></button>
+    <!-- ===================================== -->
+    <!-- VUE HEBERGEMENT                       -->
+    <!-- ===================================== -->
+    <div id="view-hebergement" class="view-section">
+        <header class="header-af flex items-center gap-3 shrink-0">
+            <button onclick="switchView('view-hub')" class="text-white text-xl border-none bg-transparent cursor-pointer w-10 h-10 flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
+            <h1 class="font-bold text-lg m-0 text-white">Étapes du séjour</h1>
         </header>
-        <main class="p-4">
-            <div id="heb-list" class="space-y-4 mb-6"></div>
-            <button onclick="openHebForm()" class="w-full p-4 border-2 border-dashed border-blue-400 rounded-2xl text-blue-600 font-bold text-sm active:bg-blue-50 transition-colors"><i class="fas fa-hotel mr-2"></i>Ajouter un établissement</button>
+        <main class="scrollable-area p-4">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center mt-4">
+                <i class="fas fa-bed text-4xl text-gray-300 mb-3"></i>
+                <h3 class="font-bold text-gray-800 mb-1">Hébergements</h3>
+                <p class="text-sm text-gray-500">Les hébergements sont gérés par l'organisation et seront affichés ici prochainement.</p>
+            </div>
         </main>
+        <nav class="bottom-bar">
+            <button class="action-btn" id="nav-hub" onclick="switchView('view-hub')"><i class="fas fa-calendar-alt"></i><span>Calendrier</span></button>
+            <button class="action-btn active" id="nav-heb" onclick="switchView('view-hebergement')"><i class="fas fa-hotel"></i><span class="font-bold">Étapes</span></button>
+            <button class="action-btn" id="nav-eff" onclick="switchView('view-effectifs')"><i class="fas fa-users"></i><span>Effectifs</span></button>
+            <button class="action-btn" id="nav-bud" onclick="switchView('view-budget')"><i class="fas fa-wallet"></i><span>Budget</span></button>
+        </nav>
+    </div>
+    
+    <!-- ===================================== -->
+    <!-- VUE EFFECTIFS                         -->
+    <!-- ===================================== -->
+    <div id="view-effectifs" class="view-section">
+        <header class="header-af flex items-center gap-3 shrink-0">
+            <button onclick="switchView('view-hub')" class="text-white text-xl border-none bg-transparent cursor-pointer w-10 h-10 flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
+            <h1 class="font-bold text-lg m-0 text-white">Effectifs</h1>
+        </header>
+        <main class="scrollable-area p-4">
+            <div class="flex justify-between items-center mb-4 px-1 border-b pb-2 mt-2">
+                <h3 class="font-bold text-gray-700">Liste des inscrits</h3>
+                <span class="text-xs font-bold bg-[var(--af-light-blue)] text-[var(--af-blue)] px-3 py-1 rounded-full" id="count-effectifs">0</span>
+            </div>
+            <div id="effectifs-list" class="space-y-2">
+                <p class="text-sm text-gray-400 text-center italic py-4">En attente de synchronisation.</p>
+            </div>
+        </main>
+        <nav class="bottom-bar">
+            <button class="action-btn" id="nav-hub" onclick="switchView('view-hub')"><i class="fas fa-calendar-alt"></i><span>Calendrier</span></button>
+            <button class="action-btn" id="nav-heb" onclick="switchView('view-hebergement')"><i class="fas fa-hotel"></i><span>Étapes</span></button>
+            <button class="action-btn active" id="nav-eff" onclick="switchView('view-effectifs')"><i class="fas fa-users"></i><span class="font-bold">Effectifs</span></button>
+            <button class="action-btn" id="nav-bud" onclick="switchView('view-budget')"><i class="fas fa-wallet"></i><span>Budget</span></button>
+        </nav>
     </div>
 
-    <!-- AUTRES VUES -->
-    <div id="view-medias" class="view-section pb-24"><header class="header-af p-4 flex items-center gap-3"><button onclick="switchView('view-hub')" class="back-btn"><i class="fas fa-chevron-left"></i></button><h1 class="font-bold flex-1" id="media-title">Médias</h1><button onclick="logout()" class="logout-btn w-8 h-8"><i class="fas fa-sign-out-alt text-xs"></i></button></header><main class="p-4"><div id="media-folders" class="grid grid-cols-2 gap-4"><div class="bg-white p-6 rounded-2xl shadow-sm text-center border cursor-pointer" onclick="openMediaFolder('menus')"><i class="fas fa-folder-open text-orange-400 text-4xl mb-2"></i><p class="font-bold text-xs uppercase">Menus</p><p class="text-[10px] text-gray-400" id="count-menus">0</p></div><div class="bg-white p-6 rounded-2xl shadow-sm text-center border cursor-pointer" onclick="openMediaFolder('tickets')"><i class="fas fa-folder-open text-emerald-400 text-4xl mb-2"></i><p class="font-bold text-xs uppercase">Tickets</p><p class="text-[10px] text-gray-400" id="count-tickets">0</p></div></div><div id="folder-content" class="hidden"><button onclick="closeMediaFolder()" class="text-blue-500 font-bold mb-4 flex items-center gap-2 text-xs"><i class="fas fa-chevron-left"></i> Dossiers</button><div id="media-grid" class="media-grid"></div></div></main></div>
-    <div id="view-effectifs" class="view-section pb-24"><header class="header-af p-4 flex items-center gap-3"><button onclick="switchView('view-hub')" class="back-btn"><i class="fas fa-chevron-left"></i></button><h1 class="font-bold flex-1">Effectifs</h1><button onclick="logout()" class="logout-btn w-8 h-8"><i class="fas fa-sign-out-alt text-xs"></i></button></header><main class="p-4"><div class="bg-white p-6 rounded-xl border-2 border-dashed border-blue-200 text-center mb-6 cursor-pointer" onclick="document.getElementById('csv-upload').click()"><input type="file" id="csv-upload" accept=".csv" class="hidden" onchange="handleCSVUpload(event)"><i class="fas fa-file-csv text-3xl mb-2 text-blue-500"></i><p class="font-bold text-xs">Importer CSV</p></div><div id="effectifs-list" class="space-y-1"></div></main></div>
-    <div id="view-rapport" class="view-section bg-white pb-24 overflow-y-auto"><header class="header-af p-4 flex items-center gap-3 no-print shadow-md"><button onclick="switchView('view-hub')" class="back-btn"><i class="fas fa-times"></i></button><h1 class="font-bold flex-1 text-white">Road Book</h1><button onclick="logout()" class="logout-btn w-8 h-8"><i class="fas fa-sign-out-alt text-xs"></i></button></header><div id="report-content" class="p-8 bg-white"></div><div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t no-print"><button onclick="downloadPDF()" class="w-full p-4 bg-[var(--af-blue)] text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg"><i class="fas fa-file-pdf"></i> TÉLÉCHARGER LE PDF</button></div></div>
-
-    <!-- MODALS -->
-    <div id="hebModal" class="modal"><div class="modal-content">
-        <h3 class="font-bold mb-4 text-blue-900 border-b pb-2 text-xs uppercase">Nouvel Hébergement</h3>
-        <div class="space-y-3">
-            <input type="text" id="heb-name" placeholder="Nom de l'hôtel" class="w-full p-3 border rounded-xl bg-gray-50 text-sm font-bold">
-            <div class="grid grid-cols-2 gap-2">
-                <input type="date" id="heb-start" class="w-full p-2.5 border rounded-lg text-xs">
-                <input type="date" id="heb-end" class="w-full p-2.5 border rounded-lg text-xs">
-            </div>
-            <div class="grid grid-cols-3 gap-2">
-                <input type="number" id="heb-price" placeholder="Prix/N" class="p-2 border rounded text-xs">
-                <input type="number" id="heb-people" placeholder="Pers." class="p-2 border rounded text-xs">
-                <input type="number" id="heb-total" placeholder="Total €" class="p-2 border rounded text-xs font-bold">
-            </div>
-            <div class="py-2 space-y-1 border-t mt-1 text-[10px]">
-                <div class="flex justify-between items-center"><span>Propreté</span><div class="star-row" data-crit="propreté"></div></div>
-                <div class="flex justify-between items-center"><span>Emplacement</span><div class="star-row" data-crit="emplacement"></div></div>
-                <div class="flex justify-between items-center"><span>Commodités</span><div class="star-row" data-crit="commodités"></div></div>
-                <div class="flex justify-between items-center"><span>Personnel</span><div class="star-row" data-crit="personnel"></div></div>
-                <div class="flex justify-between items-center"><span>Équipement</span><div class="star-row" data-crit="équipement"></div></div>
-                <div class="flex justify-between items-center"><span>Confort</span><div class="star-row" data-crit="confort"></div></div>
-            </div>
-            <textarea id="heb-comment" placeholder="Observations..." class="w-full p-3 border rounded-xl h-16 text-xs bg-gray-50"></textarea>
-            <button class="btn-primary" onclick="saveHebergement()">Enregistrer</button>
-            <button onclick="closeModal('hebModal')" class="w-full p-2 text-gray-400 font-bold text-[9px] mt-1">Annuler</button>
+    <!-- ===================================== -->
+    <!-- VUE RAPPORT FINAL                     -->
+    <!-- ===================================== -->
+    <div id="view-rapport" class="view-section bg-white">
+        <div class="p-6 text-center bg-[var(--af-blue)] text-white relative shrink-0">
+            <button onclick="switchView('view-hub')" class="absolute top-[max(1rem,env(safe-area-inset-top))] left-4 text-white text-xl border-none bg-transparent cursor-pointer p-2"><i class="fas fa-arrow-left"></i></button>
+            <h1 class="text-xl font-black tracking-wide uppercase mt-2 m-0">Bilan du Séjour</h1>
         </div>
-    </div></div>
+        <div class="scrollable-area p-5" id="report-content"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-4 bg-white border-t flex gap-3 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+            <button id="btn-copy-report" onclick="copyReportText()" class="w-full bg-[var(--af-blue)] text-white p-3.5 rounded-xl font-bold border-none cursor-pointer shadow-md flex justify-center items-center gap-2 hover:bg-blue-900 transition-colors">
+                <i class="fas fa-copy"></i> Copier le texte
+            </button>
+        </div>
+    </div>
 
-    <div id="healthModal" class="modal"><div class="modal-content">
-        <h3 id="healthModalTitle" class="font-bold mb-4 text-red-600 text-xs">Observation</h3>
-        <input type="hidden" id="healthModalChildName">
-        <textarea id="healthModalDetails" class="w-full p-4 border rounded-xl mb-4 h-32 text-sm bg-red-50" placeholder="Soin apporté..."></textarea>
-        <button class="btn-primary !bg-red-600 shadow-md" onclick="saveHealthDetail()">Valider</button>
-    </div></div>
+    <!-- ===================================== -->
+    <!-- MODALES HAUT NIVEAU (Z-INDEX 100)     -->
+    <!-- ===================================== -->
+    
+    <div class="modal-overlay p-6" id="modal-join-trip">
+        <div class="center-modal">
+            <h3 class="font-black text-xl text-gray-800 mb-2">Rejoindre un séjour</h3>
+            <p class="text-sm text-gray-500 mb-4">Entrez le code fourni par votre administrateur.</p>
+            <input type="text" id="join-code" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-center text-xl font-mono uppercase tracking-widest focus:outline-none focus:border-[var(--af-blue)] mb-4" placeholder="CODE">
+            <div class="flex gap-2">
+                <button onclick="closeAllModals()" class="flex-1 bg-gray-200 text-gray-700 font-bold py-3.5 rounded-xl border-none cursor-pointer">Annuler</button>
+                <button onclick="submitJoinTrip()" class="flex-1 text-white font-bold py-3.5 rounded-xl border-none cursor-pointer bg-[var(--af-blue)]">Rejoindre</button>
+            </div>
+        </div>
+    </div>
 
-    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleCameraCapture(event)">
+    <div id="incidentModal" class="modal-overlay p-6">
+        <div class="center-modal border-t-4 border-[var(--af-red)]">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="font-bold text-lg text-[var(--af-red)] m-0"><i class="fas fa-exclamation-triangle mr-2"></i>Incident Majeur</h3>
+                <button onclick="closeAllModals()" class="text-gray-500 text-xl border-none bg-transparent cursor-pointer p-1"><i class="fas fa-times"></i></button>
+            </div>
+            <select id="incident-child-select" class="w-full p-3 border rounded-lg bg-gray-50 mb-3 font-semibold text-sm outline-none focus:border-[var(--af-red)]"></select>
+            <select id="incident-nature" class="w-full p-3 border rounded-lg bg-gray-50 mb-3 text-sm outline-none focus:border-[var(--af-red)]">
+                <option value="">Sélectionnez la nature...</option>
+                <option value="Hospitalisation">Hospitalisation / Urgences</option>
+                <option value="Médecin">Consultation Médecin Local</option>
+                <option value="Autre grave">Autre incident grave</option>
+            </select>
+            <textarea id="incident-desc" class="w-full p-3 border rounded-lg text-sm bg-gray-50 mb-4 min-h-[80px] outline-none focus:border-[var(--af-red)]" placeholder="Description circonstanciée..."></textarea>
+            <button class="w-full bg-[var(--af-red)] text-white p-3.5 rounded-lg font-bold border-none cursor-pointer" onclick="submitIncidentMajeur()">Déclarer & Alerter</button>
+        </div>
+    </div>
+
+    <div id="comportementModal" class="modal-overlay p-6">
+        <div class="center-modal border-t-4 border-orange-500">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="font-bold text-lg text-orange-600 m-0"><i class="fas fa-user-shield mr-2"></i>Comportemental</h3>
+                <button onclick="closeAllModals()" class="text-gray-500 text-xl border-none bg-transparent cursor-pointer p-1"><i class="fas fa-times"></i></button>
+            </div>
+            <select id="comportement-child-select" class="w-full p-3 border rounded-lg bg-gray-50 mb-3 font-semibold text-sm outline-none focus:border-orange-500"></select>
+            <textarea id="comportement-desc" class="w-full p-3 border rounded-lg text-sm bg-gray-50 mb-4 min-h-[100px] outline-none focus:border-orange-500" placeholder="Description détaillée..."></textarea>
+            <button class="w-full bg-orange-500 text-white p-3.5 rounded-lg font-bold border-none cursor-pointer" onclick="submitIncidentComportemental()">Enregistrer (Cloud)</button>
+        </div>
+    </div>
+
+    <div id="healthModal" class="modal-overlay p-6">
+        <div class="center-modal border-t-4 border-[var(--af-blue)]">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="font-bold text-lg text-[var(--af-blue)] m-0" id="healthModalTitle">Soin</h3>
+                <button onclick="closeAllModals()" class="text-gray-500 text-xl border-none bg-transparent cursor-pointer p-1"><i class="fas fa-times"></i></button>
+            </div>
+            <input type="hidden" id="healthModalChildName">
+            <textarea id="healthModalDetails" class="w-full p-3 border rounded-lg text-sm bg-gray-50 mb-4 outline-none focus:border-[var(--af-blue)]" placeholder="Précisions sur le soin apporté..."></textarea>
+            <button class="w-full bg-[var(--af-blue)] text-white p-3.5 rounded-lg font-bold text-sm border-none cursor-pointer" onclick="saveHealthDetail()">Enregistrer le soin</button>
+        </div>
+    </div>
 </div>
 
+<!-- ========================================== -->
+<!-- 1. SCRIPT UI GLOBAL                        -->
+<!-- ========================================== -->
 <script>
-    /* --- SÉCURITÉ --- */
-    const allowedDomains = ['yes-concept.com', 'www.yes-concept.com', 'localhost', '127.0.0.1', ''];
-    if (!allowedDomains.includes(window.location.hostname) && window.location.hostname !== '') {
-        document.body.innerHTML = "<div style='background:#002157; color:white; height:100vh; display:flex; align-items:center; justify-content:center; text-align:center;'>⚠️ Domaine non autorisé.</div>";
-        throw new Error("Lock.");
-    }
-    document.onkeydown = e => { if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) return false; };
+    // ETAT GLOBAL
+    window.allTrips = [];
+    window.myCodes = [];
+    window.currentTrip = null;
 
-    /* --- DATA --- */
-    window.appData = {
-        isLoggedIn: false, director: "", tripName: "", destination: "", dateDebut: "", dateFin: "",
-        expenses: [], withdrawals: [], media_menus: [], media_tickets: [],
-        effectifs: [], health: [], days: {}, hebergements: []
-    };
-    let currentEditingDay = 1;
-    let cameraTarget = "";
-    let currentMealType = "Petit-Déjeuner";
-    let currentActType = "Activité";
-    const hebRatings = { propreté: 0, emplacement: 0, commodités: 0, personnel: 0, équipement: 0, confort: 0 };
     const emojis = ["😡", "😟", "😐", "😃", "🤩"];
+    window.globalOperations = []; 
+    window.globalEffectifs = []; 
+    window.healthLogs = []; 
+    window.incidentsMajeurs = []; 
+    window.incidentsComportementaux = []; 
+    window.daysData = {};
+    window.datesSejour = [];
+    window.currentEditingDay = 1;
+    window.rawMarkdownReport = "";
 
-    /* --- PERSISTENCE --- */
-    document.addEventListener('DOMContentLoaded', () => {
-        const saved = localStorage.getItem('willypro_expert_v7');
-        if (saved) { 
-            window.appData = JSON.parse(saved); 
-            if(window.appData.isLoggedIn) { buildHub(); switchView('view-hub'); } else { switchView('view-setup'); }
-        } else { switchView('view-setup'); }
-        initStarRows();
-    });
+    // FONCTIONS D'AFFICHAGE ET NAVIGATION SÉCURISÉES
+    window.switchView = function(viewId) {
+        document.querySelectorAll('.view-section').forEach(function(el) { el.classList.remove('active'); });
+        var targetView = document.getElementById(viewId);
+        if (targetView) targetView.classList.add('active');
+        
+        document.querySelectorAll('.bottom-bar .action-btn').forEach(function(btn) { btn.classList.remove('active'); });
+        
+        if (viewId === 'view-hub') { var b = document.getElementById('nav-hub'); if(b) b.classList.add('active'); }
+        if (viewId === 'view-hebergement') { var b = document.getElementById('nav-heb'); if(b) b.classList.add('active'); }
+        if (viewId === 'view-effectifs') { var b = document.getElementById('nav-eff'); if(b) b.classList.add('active'); }
+        if (viewId === 'view-budget') { var b = document.getElementById('nav-bud'); if(b) b.classList.add('active'); window.updateGlobalBudget(); }
+    };
 
-    function save() { localStorage.setItem('willypro_expert_v7', JSON.stringify(window.appData)); }
+    window.showToast = function(msg, isError) {
+        var t = document.getElementById('global-toast');
+        document.getElementById('toast-icon').className = isError ? 'fas fa-exclamation-triangle mr-2 text-red-400' : 'fas fa-check-circle mr-2 text-[var(--af-green)]';
+        document.getElementById('toast-text').textContent = msg;
+        t.classList.remove('-translate-y-4', 'opacity-0');
+        setTimeout(function() { t.classList.add('-translate-y-4', 'opacity-0'); }, 3000);
+    };
 
-    function switchView(id) {
-        document.querySelectorAll('.view-section').forEach(v => { v.style.display='none'; v.classList.remove('active'); });
-        const t = document.getElementById(id); if(t) { t.style.display='block'; setTimeout(() => t.classList.add('active'), 10); }
-        if(id === 'view-budget') updateBudgetUI();
-        if(id === 'view-medias') renderMediaFolders();
-        if(id === 'view-hebergement') renderHebergements();
-        window.scrollTo(0,0);
-    }
-
-    function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.style.opacity = '1'; setTimeout(() => t.style.opacity = '0', 2000); }
-
-    /* --- AUTH --- */
-    function startSession() {
-        const p = document.getElementById('setup-prenom').value;
-        const n = document.getElementById('setup-nom').value;
-        window.appData.director = p + " " + n;
-        window.appData.tripName = document.getElementById('setup-sejour-nom').value;
-        window.appData.destination = document.getElementById('setup-destination').value;
-        window.appData.dateDebut = document.getElementById('setup-date-debut').value;
-        window.appData.dateFin = document.getElementById('setup-date-fin').value;
-        if(!window.appData.director.trim() || !window.appData.tripName.trim()) return showToast("Saisie incomplète.");
-        window.appData.isLoggedIn = true; save(); buildHub(); switchView('view-hub');
-    }
-
-    function logout() { if(confirm("Déconnecter ce séjour ? Les données resteront stockées sur cet appareil.")) { window.appData.isLoggedIn = false; save(); location.reload(); } }
-
-    function buildHub() {
-        document.getElementById('hub-director-display').textContent = "Directeur : " + window.appData.director;
-        document.getElementById('hub-trip-name').textContent = window.appData.tripName;
-        document.getElementById('hub-destination').textContent = "📍 " + (window.appData.destination || 'N/A');
-        const start = new Date(window.appData.dateDebut);
-        const end = new Date(window.appData.dateFin);
-        const diff = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1;
-        const cal = document.getElementById('main-calendar'); cal.innerHTML = '';
-        let doneCount = 0;
-        for(let i=1; i<=diff; i++){
-            const dStr = new Date(start.getTime() + (i-1)*86400000).toLocaleDateString('fr-FR', {day:'numeric', month:'short'});
-            const isDone = window.appData.days[i] && window.appData.days[i].isDone;
-            if(isDone) doneCount++;
-            cal.innerHTML += `<div id="day-card-${i}" class="day-card ${isDone?'day-done':'day-active'}" onclick="openDay(${i}, '${dStr}')"><span class="text-[9px] uppercase font-bold text-gray-400">${dStr}</span><span class="font-bold">Jour ${i}</span>${isDone?'<i class="fas fa-check-circle text-[10px] mt-1 text-emerald-500"></i>':''}</div>`;
-        }
-        document.getElementById('progress-bar').style.width = (doneCount / diff * 100) + '%';
-    }
-
-    function openDay(num, date) {
-        currentEditingDay = num;
-        document.getElementById('currentDate').textContent = date;
-        document.getElementById('currentDayBadge').textContent = 'JOUR ' + num;
-        if(!window.appData.days[num]) window.appData.days[num] = { meteo: {am:'', pm:''}, moral: 4, meals: [], activities: [], isDone: false, bilan: "", pointJeunes: "" };
-        const d = window.appData.days[num];
-        document.getElementById('input-bilan').value = d.bilan || "";
-        document.getElementById('input-point-jeunes').value = d.pointJeunes || "";
-        document.getElementById('input-moral').value = d.moral;
-        document.getElementById('val-enfants').textContent = emojis[d.moral-1];
-        switchView('view-flashboard'); renderSantéList(); renderDailyOps(); renderMeals(); renderActivities();
-        document.querySelectorAll('.weather-btn').forEach(b => { b.classList.remove('active'); if(b.onclick.toString().includes(d.meteo.am) || b.onclick.toString().includes(d.meteo.pm)) b.classList.add('active'); });
-    }
-
-    function submitDay() { window.appData.days[currentEditingDay].isDone = true; save(); buildHub(); switchView('view-hub'); showToast("Sauvegardé."); }
-
-    /* --- BILAN & POINT JEUNES --- */
-    function updateDayBilan(v) { window.appData.days[currentEditingDay].bilan = v; save(); }
-    function updateDayJeunes(v) { window.appData.days[currentEditingDay].pointJeunes = v; save(); }
-
-    /* --- MÉTÉO --- */
-    function updateEmoji(v, id) { document.getElementById(id).textContent = emojis[v-1]; window.appData.days[currentEditingDay].moral = parseInt(v); save(); }
-    function selectWeather(btn, time, val) {
-        btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active'); window.appData.days[currentEditingDay].meteo[time] = val; save();
-    }
-
-    /* --- REPAS --- */
-    function setMealType(btn, type) { btn.parentElement.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentMealType = type; }
-    function saveMeal() {
-        const place = document.getElementById('meal-place').value; if(!place) return;
-        window.appData.days[currentEditingDay].meals.push({ type: currentMealType, place, comment: document.getElementById('meal-comment').value });
-        document.getElementById('meal-place').value = ''; document.getElementById('meal-comment').value = ''; save(); renderMeals();
-    }
-    function renderMeals() {
-        const list = document.getElementById('day-meals-list'); list.innerHTML = '';
-        if(window.appData.days[currentEditingDay]?.meals) window.appData.days[currentEditingDay].meals.forEach(m => list.innerHTML += `<div class="p-2 bg-white border rounded-lg text-[10px] shadow-sm"><strong>${m.type}</strong> @ ${m.place}</div>`);
-    }
-
-    /* --- ACTIVITÉS --- */
-    function setActType(btn, type) { btn.parentElement.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentActType = type; }
-    function saveActivity() {
-        const name = document.getElementById('act-name').value; if(!name) return;
-        window.appData.days[currentEditingDay].activities.push({ type: currentActType, name, price: document.getElementById('act-price').value || 0, comment: document.getElementById('act-comment').value });
-        document.getElementById('act-name').value = ''; document.getElementById('act-price').value = ''; document.getElementById('act-comment').value = ''; save(); renderActivities();
-    }
-    function renderActivities() {
-        const list = document.getElementById('day-acts-list'); list.innerHTML = '';
-        if(window.appData.days[currentEditingDay]?.activities) window.appData.days[currentEditingDay].activities.forEach(a => list.innerHTML += `<div class="p-2 bg-white border rounded-lg text-[10px] shadow-sm"><strong>${a.type}: ${a.name}</strong></div>`);
-    }
-
-    /* --- BUDGET EXPERT --- */
-    function toggleCustomCurrency(sel, targetId) { document.getElementById(targetId).classList.toggle('hidden', sel.value !== 'CUSTOM'); }
+    window.openModal = function(id) { document.getElementById(id).classList.add('active'); };
+    window.closeAllModals = function() { document.querySelectorAll('.modal-overlay').forEach(function(el) { el.classList.remove('active'); }); };
     
-    function saveExpense() {
-        const amt = parseFloat(document.getElementById('exp-amount').value); if(!amt) return;
-        let curr = document.getElementById('exp-curr').value === 'CUSTOM' ? document.getElementById('exp-curr-custom').value : document.getElementById('exp-curr').value;
-        window.appData.expenses.push({ day: currentEditingDay, nature: document.getElementById('exp-nature').value, category: document.getElementById('exp-cat').value, mode: document.getElementById('exp-mode').value, amount: amt, currency: curr });
-        save(); renderDailyOps(); updateBudgetUI(); document.getElementById('exp-amount').value = ''; showToast("Dépense OK.");
-    }
-    
-    function saveWithdrawal() {
-        const amt = parseFloat(document.getElementById('ret-amount').value); if(!amt) return;
-        let curr = document.getElementById('ret-curr').value === 'CUSTOM' ? document.getElementById('ret-curr-custom').value : document.getElementById('ret-curr').value;
-        window.appData.withdrawals.push({ day: currentEditingDay, amount: amt, currency: curr, date: new Date().toLocaleDateString() });
-        save(); renderDailyOps(); updateBudgetUI(); document.getElementById('ret-amount').value = ''; showToast("Retrait OK.");
-    }
-    
-    function renderDailyOps() {
-        const list = document.getElementById('daily-ops-list'); list.innerHTML = ''; let total = 0;
-        window.appData.expenses.filter(e => e.day === currentEditingDay).forEach(e => { total += e.amount; list.innerHTML += `<div class="flex justify-between py-1 border-b"><span>${e.nature}</span><span class="font-bold">-${e.amount} ${e.currency}</span></div>`; });
-        document.getElementById('daily-total-display').textContent = total.toFixed(2) + " €";
-    }
-    
-    function updateBudgetUI() {
-        let cb = 0, cashIn = 0, cashOut = 0; const cats = { "Alimentation": 0, "Hébergement": 0, "Activités": 0, "Transports": 0, "Médical": 0, "Autres": 0 };
-        window.appData.expenses.forEach(e => { if(e.mode === 'CB') cb += e.amount; else cashOut += e.amount; if(cats[e.category] !== undefined) cats[e.category] += e.amount; });
-        window.appData.withdrawals.forEach(w => cashIn += w.amount);
-        document.getElementById('dash-tot-cb').textContent = cb.toFixed(2) + " €";
-        document.getElementById('dash-tot-cash').textContent = (cashIn - cashOut).toFixed(2) + " €";
-        const catList = document.getElementById('cat-breakdown'); catList.innerHTML = '';
-        for(let [c, v] of Object.entries(cats)) catList.innerHTML += `<div class="flex justify-between text-xs py-1 border-b"><span>${c}</span><span class="font-bold">${v.toFixed(2)} €</span></div>`;
-        const wHist = document.getElementById('withdraw-history'); wHist.innerHTML = '';
-        window.appData.withdrawals.forEach(w => wHist.innerHTML += `<div class="flex justify-between py-1 border-b text-emerald-600 font-bold"><span>J${w.day} (${w.date})</span><span>+${w.amount} ${w.currency}</span></div>`);
-    }
+    window.openJoinModal = function() { document.getElementById('join-code').value = ''; window.openModal('modal-join-trip'); };
+    window.openIncidentModal = function() { window.populateChildSelect('incident-child-select'); window.openModal('incidentModal'); };
+    window.openComportementModal = function() { window.populateChildSelect('comportement-child-select'); window.openModal('comportementModal'); };
 
-    /* --- HÉBERGEMENT --- */
-    function initStarRows() {
-        document.querySelectorAll('.star-row').forEach(row => {
-            row.innerHTML = '';
-            for(let i=1; i<=5; i++) {
-                const s = document.createElement('i'); s.className = 'fas fa-star star-rating';
-                s.onclick = () => { hebRatings[row.dataset.crit] = i; Array.from(row.children).forEach((star, idx) => star.classList.toggle('active', idx < i)); };
-                row.appendChild(s);
+    window.navToHome = function() {
+        window.currentTrip = null;
+        window.switchView('screen-home');
+    };
+
+    // INTERFACE SAISIE JOURNALIERE
+    window.toggleCard = function(cardId) {
+        var card = document.getElementById(cardId);
+        if (!card) return;
+        var header = card.querySelector('.card-header');
+        var icon = document.getElementById('icon-' + cardId);
+        card.classList.toggle('open');
+        header.classList.toggle('active');
+        if (icon) icon.style.transform = card.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+    };
+
+    window.updateEmoji = function(val, targetId) { document.getElementById(targetId).textContent = emojis[val-1]; };
+
+    window.selectWeather = function(btn, time, val) {
+        var container = btn.parentElement;
+        container.querySelectorAll('button').forEach(function(b) {
+            b.className = 'flex-1 py-2 text-gray-400 rounded-md hover:bg-white transition-all border-none cursor-pointer';
+            delete b.dataset.val;
+        });
+        var activeColor = val === 'Ensoleillé' ? 'text-yellow-500' : 'text-[var(--af-blue)]';
+        btn.className = 'flex-1 py-2 ' + activeColor + ' bg-white shadow-sm rounded-md transition-all meteo-selected border-none cursor-pointer';
+        btn.dataset.val = val;
+    };
+
+    // ENFANTS ET SOINS
+    window.populateChildSelect = function(selectId) {
+        var select = document.getElementById(selectId);
+        select.innerHTML = '<option value="">-- Sélectionner le jeune --</option>';
+        if(window.globalEffectifs.length === 0) select.innerHTML += '<option value="" disabled>⚠️ Aucun effectif</option>';
+        else window.globalEffectifs.forEach(function(e) { select.innerHTML += '<option value="'+e.prenom+' '+e.nom+'">'+e.prenom+' '+e.nom+'</option>'; });
+    };
+
+    window.renderEffectifs = function() {
+        var list = document.getElementById('effectifs-list');
+        document.getElementById('count-effectifs').textContent = window.globalEffectifs.length;
+        if(window.globalEffectifs.length === 0) return list.innerHTML = '<p class="text-sm italic text-center py-6 text-gray-500">Aucun enfant récupéré depuis le Cloud.</p>';
+        list.innerHTML = window.globalEffectifs.map(function(e) {
+            var sex = e.sexe.toUpperCase() === 'F' ? '👧' : '👦';
+            return '<div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-sm mb-2"><p class="font-bold text-gray-800 m-0">'+e.prenom+' <span class="uppercase">'+e.nom+'</span></p><div class="w-10 h-10 flex items-center justify-center bg-slate-50 rounded-full text-xl">'+sex+'</div></div>';
+        }).join('');
+    };
+
+    window.renderSantéList = function() {
+        var list = document.getElementById('childrenList');
+        if(window.globalEffectifs.length === 0) return list.innerHTML = '<p class="text-sm italic py-4 text-gray-400 text-center">Aucun inscrit.</p>';
+        list.innerHTML = window.globalEffectifs.map(function(e, idx) {
+            var alert = (e.pai || e.traitement) ? '<i class="fas fa-exclamation-circle text-[var(--af-red)] ml-2"></i>' : '';
+            return '<div class="child-item"><span class="font-medium text-gray-700">'+e.prenom+' '+e.nom.charAt(0)+'.'+alert+'</span><div class="health-badge cursor-pointer hover:bg-gray-200" onclick="window.openHealthModal(\''+e.prenom+' '+e.nom+'\')"><i class="fas fa-plus text-gray-500"></i></div></div>';
+        }).join('');
+    };
+
+    window.openHealthModal = function(nom) {
+        document.getElementById('healthModalTitle').textContent = 'Soin : ' + nom;
+        document.getElementById('healthModalChildName').value = nom;
+        document.getElementById('healthModalDetails').value = '';
+        window.openModal('healthModal');
+    };
+
+    /* --- BUDGET --- */
+    window.addOperation = function() {
+        var html = '<div class="border rounded-xl mb-4 bg-gray-50 item-card relative"><div class="p-4 edit-mode"><select class="op-type w-full p-2 border rounded mb-2 text-sm font-bold bg-white outline-none focus:border-[var(--af-blue)]" onchange="this.nextElementSibling.style.display = this.value===\'retrait\'?\'none\':\'block\'"><option value="depense">💸 Dépense</option><option value="retrait">🏧 Retrait</option></select><div class="depense-fields"><input type="text" class="op-desc w-full p-2 border rounded mb-2 text-sm bg-white outline-none focus:border-[var(--af-blue)]" placeholder="Nature (Ex: Glaces)"><div class="flex gap-2 mb-2"><select class="op-nature w-1/2 p-2 border rounded text-sm bg-white outline-none focus:border-[var(--af-blue)]"><option value="Alimentation">Alimentation</option><option value="Hébergement">Hébergement</option><option value="Activités">Activités</option><option value="Transports">Transports</option><option value="Pharmacie">Pharmacie</option><option value="Autre">Autre</option></select><select class="op-moyen w-1/2 p-2 border rounded text-sm bg-white outline-none focus:border-[var(--af-blue)]"><option value="CB">CB</option><option value="Cash">Cash</option></select></div></div><div class="flex gap-2 mb-2"><input type="number" class="op-montant w-2/3 p-2 border rounded text-sm bg-white font-bold outline-none focus:border-[var(--af-blue)]" placeholder="Montant"><select class="op-devise w-1/3 p-2 border rounded text-sm bg-white font-bold outline-none focus:border-[var(--af-blue)]"><option value="EUR">€</option><option value="GBP">£</option><option value="USD">$</option></select></div><button class="w-full bg-[var(--af-green)] text-white p-3 rounded-lg font-bold text-sm cursor-pointer border-none shadow-sm hover:opacity-90" onclick="window.saveOperation(this)">Valider l\'opération</button></div><div class="p-4 view-mode hidden bg-white rounded-xl shadow-sm border border-gray-100"><div class="flex justify-between items-center"><div class="display-title font-bold text-sm text-gray-800"></div><div class="display-montant font-black text-[var(--af-green)] text-lg"></div></div><button class="text-xs font-bold text-[var(--af-red)] mt-3 cursor-pointer border-none bg-transparent hover:underline p-0" onclick="window.deleteOp(this)"><i class="fas fa-trash-alt mr-1"></i> Supprimer</button></div></div>';
+        document.getElementById('operationsList').insertAdjacentHTML('beforeend', html);
+    };
+
+    window.saveOperation = async function(btn) {
+        var card = btn.closest('.item-card');
+        var type = card.querySelector('.op-type').value;
+        var montant = parseFloat(card.querySelector('.op-montant').value) || 0;
+        var devise = card.querySelector('.op-devise').value;
+        var desc = card.querySelector('.op-desc').value || "Retrait";
+        var nature = type === 'depense' ? card.querySelector('.op-nature').value : "Retrait";
+        var moyen = type === 'depense' ? card.querySelector('.op-moyen').value : "Cash";
+
+        var opId = Date.now().toString(); card.dataset.opId = opId;
+        window.globalOperations.push({ id: opId, date: window.datesSejour[window.currentEditingDay-1]||new Date().toLocaleDateString(), type:type, montant:montant, devise:devise, nature:nature, moyen:moyen, desc:desc });
+        
+        card.querySelector('.display-title').textContent = type === 'retrait' ? "Retrait" : nature + " - " + desc;
+        card.querySelector('.display-montant').textContent = montant.toFixed(2) + devise;
+        card.querySelector('.edit-mode').classList.add('hidden'); card.querySelector('.view-mode').classList.remove('hidden');
+        
+        window.updateGlobalBudget();
+        if(window.syncTripToFirebase) await window.syncTripToFirebase();
+    };
+    
+    window.deleteOp = async function(btn) { 
+        var id = btn.closest('.item-card').dataset.opId; 
+        window.globalOperations = window.globalOperations.filter(function(o) { return o.id !== id; }); 
+        btn.closest('.item-card').remove(); 
+        window.updateGlobalBudget(); 
+        if(window.syncTripToFirebase) await window.syncTripToFirebase();
+    };
+
+    window.updateGlobalBudget = function() {
+        var tCB=0, tCash=0; var listHtml = ''; var dailyTotal = 0;
+        window.globalOperations.forEach(function(op) { 
+            if(op.type==='depense'){ if(op.moyen==='CB') tCB+=op.montant; else tCash+=op.montant; }
+            var colorClass = op.type === 'depense' ? 'text-[var(--af-red)]' : 'text-[var(--af-green)]';
+            var sign = op.type === 'depense' ? '-' : '+';
+            var descHtml = op.desc ? '<span class="text-gray-400 text-xs ml-1">('+op.desc+')</span>' : '';
+            listHtml += '<div class="flex justify-between items-center text-sm py-3 border-b border-gray-100 last:border-0"><span class="text-gray-700 font-medium">'+op.nature+' '+descHtml+'</span><strong class="'+colorClass+' text-base">'+sign+op.montant.toFixed(2)+'€</strong></div>';
+            if(op.date === (window.datesSejour[window.currentEditingDay-1]||'') && op.type === 'depense') dailyTotal += op.montant;
+        });
+        var cbel = document.getElementById('dash-tot-cb'); if(cbel) cbel.textContent = tCB.toFixed(2);
+        var cashel = document.getElementById('dash-tot-cash'); if(cashel) cashel.textContent = tCash.toFixed(2);
+        var listel = document.getElementById('recap-budget-list'); if(listel) listel.innerHTML = listHtml || '<p class="text-sm italic text-gray-400 py-2">Aucune opération enregistrée.</p>';
+        var dailyel = document.getElementById('daily-total-display'); if(dailyel) dailyel.textContent = dailyTotal.toFixed(2) + ' €';
+    };
+
+    /* --- REPAS ET ACTIVITES --- */
+    window.addRepas = function() {
+        var html = '<div class="border rounded-xl mb-3 p-3 bg-gray-50 item-card edit-mode"><select class="input-type p-2.5 border border-gray-200 rounded-lg w-full mb-2 outline-none focus:border-[var(--af-blue)] bg-white font-medium"><option value="Déjeuner">Déjeuner</option><option value="Dîner">Dîner</option></select><input type="text" class="input-name p-2.5 border border-gray-200 rounded-lg w-full mb-2 outline-none focus:border-[var(--af-blue)] bg-white" placeholder="Lieu (Ex: Flunch)"><textarea class="input-infos p-2.5 border border-gray-200 rounded-lg w-full mb-2 outline-none focus:border-[var(--af-blue)] bg-white" placeholder="Votre avis sur le repas..."></textarea><button class="bg-orange-500 hover:bg-orange-600 transition-colors text-white p-3 w-full rounded-lg font-bold border-none cursor-pointer shadow-sm" onclick="window.saveRepasBase(this)">Valider</button></div><div class="view-mode hidden bg-white p-4 border border-gray-100 rounded-xl shadow-sm"><strong class="display-type text-orange-600"></strong> <span class="text-gray-400 mx-1">-</span> <span class="display-name font-bold text-gray-800"></span><p class="display-infos text-sm text-gray-600 mt-2"></p></div>';
+        document.getElementById('repasList').insertAdjacentHTML('beforeend', html);
+    };
+
+    window.saveRepasBase = function(btn) {
+        var card = btn.closest('.item-card');
+        card.querySelector('.display-type').textContent = card.querySelector('.input-type').value;
+        card.querySelector('.display-name').textContent = card.querySelector('.input-name').value;
+        card.querySelector('.display-infos').textContent = card.querySelector('.input-infos').value;
+        card.classList.replace('edit-mode', 'view-mode');
+        card.nextElementSibling.classList.replace('hidden', 'block');
+        card.style.display = 'none';
+    };
+
+    window.addActivity = function() {
+        var html = '<div class="border border-gray-200 rounded-xl mb-3 p-3 bg-gray-50 saved-activity flex gap-2 items-center shadow-sm"><input type="text" class="input-name p-2.5 border border-gray-200 w-2/3 rounded-lg outline-none focus:border-[var(--af-blue)] bg-white" placeholder="Nom de l\'Activité"><div class="relative w-1/3"><input type="number" class="input-prix p-2.5 border border-gray-200 w-full rounded-lg outline-none focus:border-[var(--af-blue)] bg-white pr-6" placeholder="Prix"><span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold">€</span></div></div>';
+        document.getElementById('activitiesList').insertAdjacentHTML('beforeend', html);
+    };
+
+    /* --- RAPPORT FINAL --- */
+    window.generateReport = function() {
+        if(window.currentEditingDay && window.daysData) {
+            var bilanText = document.getElementById('input-bilan-jour');
+            if(bilanText && bilanText.value.trim() !== '') {
+                if(!window.daysData[window.currentEditingDay]) window.daysData[window.currentEditingDay] = {};
+                window.daysData[window.currentEditingDay].bilan = bilanText.value;
             }
-        });
-    }
-    function openHebForm() { document.getElementById('hebModal').classList.add('show'); }
-    function saveHebergement() {
-        const name = document.getElementById('heb-name').value; if(!name) return;
-        window.appData.hebergements.push({ name, start: document.getElementById('heb-start').value, end: document.getElementById('heb-end').value, priceNight: document.getElementById('heb-price').value, people: document.getElementById('heb-people').value, total: document.getElementById('heb-total').value, ratings: {...hebRatings}, comment: document.getElementById('heb-comment').value });
-        save(); closeModal('hebModal'); renderHebergements();
-    }
-    function renderHebergements() {
-        const l = document.getElementById('heb-list'); l.innerHTML = '';
-        window.appData.hebergements.forEach((h, i) => {
-            l.innerHTML += `<div class="card p-4 border-l-4 border-blue-900 shadow relative"><button onclick="deleteHeb(${i})" class="absolute top-2 right-2 text-red-500 text-[10px] w-6 h-6 rounded flex items-center justify-center"><i class="fas fa-trash"></i></button><h3 class="font-bold text-blue-900 text-sm uppercase">${h.name}</h3><div class="grid grid-cols-2 gap-2 my-2 text-[9px]"><div class="bg-gray-50 p-2 rounded">Total : <strong>${h.total} €</strong></div><div class="bg-gray-50 p-2 rounded">Note : <strong>${(Object.values(h.ratings).reduce((a,b)=>a+b,0)/6).toFixed(1)}/5</strong></div></div></div>`;
-        });
-    }
-    function deleteHeb(i) { if(confirm("Supprimer ?")) { window.appData.hebergements.splice(i,1); save(); renderHebergements(); } }
+        }
 
-    /* --- MÉDIAS --- */
-    function triggerCamera(f) { cameraTarget = f; document.getElementById('cameraInput').click(); }
-    function handleCameraCapture(e) {
-        const file = e.target.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = evt => {
-            const photo = { url: evt.target.result, day: currentEditingDay, date: new Date().toLocaleDateString() };
-            if(cameraTarget === 'menus') window.appData.media_menus.push(photo); else window.appData.media_tickets.push(photo);
-            save(); renderMediaFolders(); showToast("Photo OK !");
-        };
-        reader.readAsDataURL(file);
-    }
-    function renderMediaFolders() {
-        document.getElementById('count-menus').textContent = window.appData.media_menus.length;
-        document.getElementById('count-tickets').textContent = window.appData.media_tickets.length;
-    }
-    function openMediaFolder(f) {
-        document.getElementById('media-folders').classList.add('hidden');
-        document.getElementById('folder-content').classList.remove('hidden');
-        document.getElementById('media-title').textContent = f.toUpperCase();
-        const grid = document.getElementById('media-grid'); grid.innerHTML = '';
-        const list = f === 'menus' ? window.appData.media_menus : window.appData.media_tickets;
-        list.forEach((img) => grid.innerHTML += `<div class="media-item border shadow-sm"><img src="${img.url}"><div class="absolute bottom-0 bg-black/70 text-white text-[8px] p-1 w-full text-center">J${img.day}</div></div>`);
-    }
-    function closeMediaFolder() { document.getElementById('media-folders').classList.remove('hidden'); document.getElementById('folder-content').classList.add('hidden'); document.getElementById('media-title').textContent = "Médias"; }
+        var bHtml='', actRows='', soinsHtml='<ul class="list-disc pl-5 mb-4 text-sm text-gray-700 space-y-1">';
+        var duree = window.datesSejour.length;
+        
+        for(var d=1; d<=duree; d++) { 
+            if(window.daysData[d] && window.daysData[d].bilan) {
+                bHtml+='<tr><td class="p-3 border-b border-gray-100 font-bold text-[var(--af-blue)] text-xs w-20 align-top">'+window.datesSejour[d-1]+'</td><td class="p-3 border-b border-gray-100 text-gray-700 text-sm leading-relaxed">'+window.daysData[d].bilan+'</td></tr>'; 
+            }
+            if(window.daysData[d] && window.daysData[d].activitesHtml) {
+                var t=document.createElement('div'); t.innerHTML=window.daysData[d].activitesHtml;
+                t.querySelectorAll('.saved-activity').forEach(function(a) {
+                    var nom = a.querySelector('.input-name') ? a.querySelector('.input-name').value : '';
+                    var prix = a.querySelector('.input-prix') ? a.querySelector('.input-prix').value : '';
+                    if(nom) actRows+='<tr><td class="p-2 border-b border-gray-100 text-xs text-gray-500">'+window.datesSejour[d-1]+'</td><td class="p-2 border-b border-gray-100 font-medium text-gray-800">'+nom+'</td><td class="p-2 border-b border-gray-100 text-right font-bold text-gray-600">'+(prix ? prix+'€' : '-')+'</td></tr>';
+                });
+            }
+        }
+        
+        if(window.healthLogs.length) {
+            window.healthLogs.forEach(function(l) { soinsHtml += '<li><strong class="text-gray-900">'+l.date+'</strong> - <span class="font-medium">'+l.nom+'</span> : '+l.detail+'</li>'; }); 
+        } else { soinsHtml += '<li class="italic text-gray-400 list-none ml-0">Aucun soin enregistré durant le séjour.</li>'; }
+        soinsHtml += '</ul>';
 
-    /* --- EFFECTIFS --- */
-    function handleCSVUpload(e) { Papa.parse(e.target.files[0], { header: true, complete: r => { window.appData.effectifs = r.data.filter(row => row.nom); save(); renderEffectifs(); renderSantéList(); showToast("Liste OK."); } }); }
-    function renderEffectifs() { const l = document.getElementById('effectifs-list'); l.innerHTML = ''; window.appData.effectifs.forEach(c => l.innerHTML += `<div class="bg-white p-2 border rounded-xl text-[10px] font-bold text-blue-900 uppercase shadow-sm"><i class="fas fa-check-circle mr-1 text-blue-400"></i>${c.prenom} ${c.nom}</div>`); }
-    function renderSantéList() {
-        const l = document.getElementById('childrenList'); l.innerHTML = '';
-        window.appData.effectifs.forEach(c => {
-            const name = `${c.prenom} ${c.nom}`;
-            const hasSoin = window.appData.health.some(h => h.child === name && h.day === currentEditingDay);
-            l.innerHTML += `<div class="flex justify-between items-center py-2 border-b text-[11px]"><span>${name}</span><div class="health-badge ${hasSoin?'active':''}" onclick="openHealthModal('${name}')"><i class="fas ${hasSoin?'fa-notes-medical':'fa-plus'}"></i></div></div>`;
-        });
-    }
-    function openHealthModal(n) { document.getElementById('healthModalTitle').textContent="Observation : "+n; document.getElementById('healthModalChildName').value=n; const existing = window.appData.health.find(h => h.child === n && h.day === currentEditingDay); document.getElementById('healthModalDetails').value = existing ? existing.detail : ""; document.getElementById('healthModal').classList.add('show'); }
-    function saveHealthDetail() {
-        const n = document.getElementById('healthModalChildName').value; const d = document.getElementById('healthModalDetails').value;
-        const idx = window.appData.health.findIndex(h => h.child === n && h.day === currentEditingDay);
-        if(d.trim() === "") { if(idx!==-1) window.appData.health.splice(idx, 1); }
-        else { if(idx!==-1) window.appData.health[idx].detail = d; else window.appData.health.push({day: currentEditingDay, child: n, detail: d}); }
-        save(); closeModal('healthModal'); renderSantéList();
-    }
+        var incidentsHtml = '<ul class="list-disc pl-5 mb-4 text-sm space-y-2">';
+        if(window.incidentsMajeurs.length) window.incidentsMajeurs.forEach(function(i) { incidentsHtml += '<li><span class="text-[var(--af-red)] font-bold bg-red-50 px-1 rounded mr-1">[MAJEUR]</span> <strong class="text-gray-900">'+i.date+'</strong> - '+i.enfant+' : '+i.desc+'</li>'; });
+        if(window.incidentsComportementaux.length) window.incidentsComportementaux.forEach(function(i) { incidentsHtml += '<li><span class="text-orange-500 font-bold bg-orange-50 px-1 rounded mr-1">[COMPORTEMENT]</span> <strong class="text-gray-900">'+i.date+'</strong> - '+i.enfant+' : '+i.desc+'</li>'; });
+        if(!window.incidentsMajeurs.length && !window.incidentsComportementaux.length) incidentsHtml += '<li class="italic text-gray-400 list-none ml-0">Aucun incident signalé.</li>';
+        incidentsHtml += '</ul>';
 
-    /* --- ROAD BOOK & PDF --- */
-    function generateRoadBook() {
-        let html = `<div id="pdf-area" style="font-family: sans-serif; padding: 20px;">
-            <div style="text-align:center; padding-bottom:30px; border-bottom:4px solid #002157;">
-                <h1 style="font-size:32px; color:#002157; margin:0;">ROAD BOOK</h1>
-                <h2 style="font-size:18px; color:#E5002B; margin:10px 0;">${window.appData.tripName.toUpperCase()}</h2>
-                <p>📍 ${window.appData.destination || 'N/A'} | Du ${window.appData.dateDebut} au ${window.appData.dateFin}</p>
-                <p style="margin-top:15px; font-style:italic;">Directeur : ${window.appData.director}</p>
+        document.getElementById('report-content').innerHTML = `
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4">
+                <h3 class="font-black text-lg text-[var(--af-blue)] border-b border-gray-100 pb-2 mb-3 flex items-center"><i class="fas fa-book-open mr-2 opacity-50"></i> Bilans Quotidiens</h3>
+                <table class="w-full border-collapse">${bHtml||'<tr><td class="p-4 italic text-gray-400 text-center">Aucun bilan rédigé.</td></tr>'}</table>
             </div>
-            <div style="margin-top:30px;">
-                <h3 style="background:#002157; color:white; padding:8px; border-radius:5px;">HÉBERGEMENTS</h3>
-                ${window.appData.hebergements.map(h => `<div style="padding:10px; border:1px solid #ddd; margin-bottom:10px; border-radius:10px;"><h4 style="margin:0;">${h.name}</h4><p style="font-size:10px;">Note: ${(Object.values(h.ratings).reduce((a,b)=>a+b,0)/6).toFixed(1)}/5 | Coût: ${h.total}€</p></div>`).join('') || '<p>Aucun.</p>'}
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4">
+                <h3 class="font-black text-lg text-[var(--af-blue)] border-b border-gray-100 pb-2 mb-3 flex items-center"><i class="fas fa-notes-medical mr-2 opacity-50"></i> Santé & Soins</h3>
+                ${soinsHtml}
             </div>
-            <div style="margin-top:30px;">
-                <h3 style="background:#10B981; color:white; padding:8px; border-radius:5px;">BILAN FINANCIER</h3>
-                <p>CB : ${document.getElementById('dash-tot-cb').textContent} | Caisse : ${document.getElementById('dash-tot-cash').textContent}</p>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4">
+                <h3 class="font-black text-lg text-[var(--af-blue)] border-b border-gray-100 pb-2 mb-3 flex items-center"><i class="fas fa-exclamation-triangle mr-2 opacity-50"></i> Incidents</h3>
+                ${incidentsHtml}
             </div>
-            <div style="margin-top:30px;">
-                <h3 style="background:#002157; color:white; padding:8px; border-radius:5px;">JOURNAL DE BORD</h3>
-                ${Object.entries(window.appData.days).map(([num, d]) => `
-                    <div style="margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">
-                        <h4 style="color:#002157;">JOUR ${num}</h4>
-                        <p style="font-size:11px;">Bilan: ${d.bilan || 'N/A'}</p>
-                        <p style="font-size:11px;">Repas: ${d.meals.map(m=>m.type).join(', ') || 'N/A'}</p>
-                        <p style="font-size:11px;">Activités: ${d.activities.map(a=>a.name).join(', ') || 'N/A'}</p>
-                    </div>
-                `).join('')}
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4">
+                <h3 class="font-black text-lg text-[var(--af-blue)] border-b border-gray-100 pb-2 mb-3 flex items-center"><i class="fas fa-hiking mr-2 opacity-50"></i> Activités</h3>
+                <table class="w-full text-sm text-left"><thead><tr class="text-gray-400"><th class="pb-2 font-medium">Date</th><th class="pb-2 font-medium">Activité</th><th class="pb-2 font-medium text-right">Coût</th></tr></thead><tbody>${actRows||'<tr><td colspan="3" class="pt-2 text-center italic text-gray-400">Aucune activité enregistrée.</td></tr>'}</tbody></table>
             </div>
-        </div>`;
-        document.getElementById('report-content').innerHTML = html; switchView('view-rapport');
-    }
+            <div class="h-10"></div>
+        `;
+        
+        window.rawMarkdownReport = "# RAPPORT DE SÉJOUR : " + (window.currentTrip ? window.currentTrip.nom : '') + "\n\n## Bilans Quotidiens\n";
+        for(var d=1; d<=duree; d++) { if(window.daysData[d]&&window.daysData[d].bilan) window.rawMarkdownReport+="- "+window.datesSejour[d-1]+": "+window.daysData[d].bilan+"\n"; }
+        window.switchView('view-rapport');
+    };
 
-    function downloadPDF() {
-        const element = document.getElementById('report-content');
-        const opt = { margin: 10, filename: `WillyPro_RoadBook.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-        html2pdf().set(opt).from(element).save();
-    }
+    window.copyReportText = function() {
+        var ta = document.createElement("textarea"); 
+        ta.value = window.rawMarkdownReport; 
+        ta.style.position="fixed"; 
+        ta.style.opacity="0"; 
+        document.body.appendChild(ta); 
+        ta.focus(); 
+        ta.select(); 
+        try { 
+            document.execCommand('copy'); 
+            window.showToast("Rapport texte copié avec succès !"); 
+        } catch(e){ 
+            alert("Copie impossible sur ce navigateur."); 
+        } 
+        document.body.removeChild(ta);
+    };
 
-    /* --- UTILS --- */
-    function toggleCard(id) { document.getElementById(id).classList.toggle('open'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+    // Stubs temporaires pour que les boutons ne plantent pas avant chargement de Firebase
+    window.loginAsDirector = function(btn) { window.showToast("Initialisation réseau en cours...", true); };
 </script>
 
+<!-- ========================================== -->
+<!-- 2. SCRIPT FIREBASE CLOUD (Production)      -->
+<!-- ========================================== -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // VRAIES CLES FIREBASE DU PROJET WILLYS-PRO
+    const firebaseConfig = {
+        apiKey: "AIzaSyD0BuJGjJMeOXd15FkrKASAXslJPtAhZLw",
+        authDomain: "willys-pro.firebaseapp.com",
+        projectId: "willys-pro",
+        storageBucket: "willys-pro.firebasestorage.app",
+        messagingSenderId: "521092947896",
+        appId: "1:521092947896:web:f1418638873b8c02d3794d"
+    };
+    
+    const app = initializeApp(firebaseConfig); 
+    const auth = getAuth(app); 
+    const db = getFirestore(app); 
+    const appIdStr = "willyspro-admin-mobile"; 
+    let dirUnsubscribe = null;
+
+    // LOGIN FIREBASE
+    window.loginAsDirector = async (btn) => {
+        const em = document.getElementById('dir-login-email').value.trim().toLowerCase(); 
+        const pw = document.getElementById('dir-login-pwd').value.trim();
+        if(!em || !pw) return window.showToast("Email et mot de passe requis.", true);
+        
+        const orig = btn.innerHTML; 
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Vérification...'; 
+        btn.disabled = true;
+        
+        try {
+            await signInAnonymously(auth);
+            const snap = await getDoc(doc(db, 'artifacts', appIdStr, 'public', 'data', 'auth_directors'));
+            let valid = null; 
+            if(snap.exists() && snap.data().list) {
+                valid = snap.data().list.find(d => d.email.toLowerCase() === em && d.password === pw);
+            }
+            if(valid) {
+                localStorage.setItem('aircamp_dir_session', JSON.stringify({ name: valid.prenom+' '+valid.nom }));
+                document.getElementById('dir-login-pwd').value = '';
+                window.switchView('screen-home'); 
+                await window.initDirectorData(); 
+                window.showToast("Bienvenue " + valid.prenom);
+            } else { 
+                window.showToast("Identifiants incorrects.", true); 
+                await signOut(auth); 
+            }
+        } catch(e) { 
+            window.showToast("Erreur réseau. Réessayez.", true); 
+            console.error(e); 
+        } finally { 
+            btn.innerHTML = orig; 
+            btn.disabled = false; 
+        }
+    };
+
+    window.logoutDir = async () => { 
+        localStorage.removeItem('aircamp_dir_session'); 
+        await signOut(auth); 
+        if(dirUnsubscribe) dirUnsubscribe(); 
+        window.switchView('screen-login'); 
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+        if(user && user.isAnonymous) {
+            const s = JSON.parse(localStorage.getItem('aircamp_dir_session'));
+            if(s) { 
+                document.getElementById('dir-name-display').textContent = s.name; 
+                document.getElementById('dir-avatar-fallback').textContent = s.name.charAt(0).toUpperCase();
+                window.switchView('screen-home'); 
+                await window.initDirectorData(); 
+            } else { await signOut(auth); }
+        } else { 
+            window.switchView('screen-login'); 
+        }
+    });
+
+    window.initDirectorData = async () => {
+        const u = auth.currentUser; if(!u) return;
+        try {
+            const snap = await getDoc(doc(db, 'artifacts', appIdStr, 'users', u.uid, 'directorData', 'state'));
+            if(snap.exists() && snap.data().codes) window.myCodes = snap.data().codes;
+            else window.myCodes = [];
+            
+            if(dirUnsubscribe) dirUnsubscribe();
+            dirUnsubscribe = onSnapshot(collection(db, 'artifacts', appIdStr, 'public', 'data', 'trips'), (snapshot) => {
+                window.allTrips = []; 
+                snapshot.forEach(d => window.allTrips.push(d.data())); 
+                window.renderHomeTrips();
+            });
+        } catch (e) { console.error("Erreur DB", e); }
+    };
+
+    window.submitJoinTrip = async () => {
+        const c = document.getElementById('join-code').value.trim().toUpperCase(); if(!c) return;
+        const tripTarget = window.allTrips.find(t=>t.code===c);
+        if(!tripTarget) return window.showToast("Ce code de séjour n'existe pas.", true);
+        
+        if(!window.myCodes.includes(c)) { 
+            window.myCodes.push(c); 
+            await setDoc(doc(db, 'artifacts', appIdStr, 'users', auth.currentUser.uid, 'directorData', 'state'), { codes: window.myCodes }, { merge: true }); 
+            window.renderHomeTrips(); 
+            window.closeAllModals(); 
+            window.showToast("Séjour " + tripTarget.nom + " déverrouillé !"); 
+        } else { 
+            window.showToast("Séjour déjà rejoint.", true); 
+        }
+    };
+
+    window.renderHomeTrips = () => {
+        const c = document.getElementById('director-trips-list'); 
+        const tr = window.allTrips.filter(t=>window.myCodes.includes(t.code));
+        if(!tr.length) return c.innerHTML = '<div class="text-center text-gray-400 mt-24"><div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-plane-departure text-4xl text-gray-300"></i></div><p class="font-medium text-gray-600">Aucun séjour rattaché</p><p class="text-sm mt-1">Utilisez le bouton + Code en haut à droite.</p></div>';
+        
+        c.innerHTML = tr.map(t => '<div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer active:scale-[0.98] transition-transform" onclick="window.openTrip(\''+t.code+'\')"><div><span class="text-xs font-bold text-[var(--af-blue)] bg-[var(--af-light-blue)] px-2.5 py-1 rounded inline-block mb-2">'+t.code+'</span><h3 class="font-black text-lg text-gray-800 leading-tight mb-1">'+t.nom+'</h3><p class="text-xs text-gray-500 font-medium"><i class="far fa-calendar-alt w-4"></i> '+t.date+'</p></div><div class="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100"><i class="fas fa-chevron-right text-gray-400"></i></div></div>').join('');
+    };
+
+    window.openTrip = (code) => {
+        const t = window.allTrips.find(x=>x.code===code); if(!t) return; 
+        window.currentTrip = t;
+        const d = t.details || {};
+        
+        window.globalEffectifs = d.enfants||[]; window.daysData = d.jours||{}; window.globalOperations = d.budget||[]; window.incidentsMajeurs = d.incidentsMajeurs||[]; window.incidentsComportementaux = d.incidentsComportement||[]; window.healthLogs = d.soins||[];
+
+        document.getElementById('hub-trip-name').textContent = t.nom; 
+        document.getElementById('hub-trip-dates').innerHTML = '<i class="far fa-calendar-alt mr-1"></i> ' + t.date; 
+        document.getElementById('hub-effectif-count').textContent = t.effectif || window.globalEffectifs.length;
+
+        let duree = d.duree ? parseInt(d.duree) : 14; 
+        window.datesSejour = Array.from({length: duree}, (_, i) => 'Jour ' + (i+1));
+        
+        const cal = document.getElementById('main-calendar'); cal.innerHTML=''; let ld=0;
+        for(let i=1; i<=duree; i++) {
+            if(window.daysData[i]) { cal.innerHTML += '<div class="day-card day-done"><i class="fas fa-check-circle icon text-2xl mb-1"></i><span class="text-[0.65rem] font-bold uppercase tracking-wider">Validé</span><span class="text-sm font-black mt-1 text-gray-800">J'+i+'</span></div>'; ld=i; } 
+            else if(i===ld+1||(i===1&&ld===0)) { cal.innerHTML += '<div class="day-card day-active" onclick="window.openDay('+i+', \'Jour '+i+'\')"><div class="pulse-dot"></div><i class="fas fa-pen text-xl text-[var(--af-red)] mb-1"></i><span class="text-[0.65rem] font-bold text-gray-500 uppercase tracking-wider mb-1">Auj.</span><span class="text-sm font-black text-[var(--af-red)]">J'+i+'</span></div>'; } 
+            else { cal.innerHTML += '<div class="day-card day-locked"><i class="fas fa-lock opacity-30 text-xl mb-1"></i><span class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-wider mb-1">À venir</span><span class="text-sm font-black text-gray-500">J'+i+'</span></div>'; }
+        }
+        
+        document.getElementById('progress-text').textContent = ld + '/' + duree + ' Jours'; 
+        document.getElementById('progress-bar').style.width = (ld/duree*100) + '%';
+
+        window.renderEffectifs();
+        window.renderSantéList();
+        window.updateGlobalBudget();
+        window.switchView('view-hub');
+    };
+
+    window.openDay = (num, str) => {
+        window.currentEditingDay = num; 
+        document.getElementById('currentDate').textContent = str; 
+        document.getElementById('currentDayBadge').textContent = 'J' + num;
+        
+        const d = window.daysData[num]||{};
+        document.getElementById('input-moral').value = d.moral||4; window.updateEmoji(d.moral||4, 'val-enfants');
+        document.querySelectorAll('.input-meteo-am button, .input-meteo-pm button').forEach(b=>{b.className='flex-1 py-2 text-gray-400 rounded-md transition-all border-none cursor-pointer bg-transparent';});
+        if(d.meteoAm) { const b = document.querySelector('.input-meteo-am button[data-val="'+d.meteoAm+'"]'); if(b) window.selectWeather(b, 'am', d.meteoAm); }
+        if(d.meteoPm) { const b = document.querySelector('.input-meteo-pm button[data-val="'+d.meteoPm+'"]'); if(b) window.selectWeather(b, 'pm', d.meteoPm); }
+        
+        document.getElementById('input-veillee-nom').value=d.veilleeNom||''; 
+        document.getElementById('input-veillee-desc').value=d.veilleeDesc||''; 
+        document.getElementById('input-bilan-jour').value=d.bilan||'';
+        document.getElementById('repasList').innerHTML = d.repasHtml || '';
+        document.getElementById('activitiesList').innerHTML = d.activitesHtml || '';
+        
+        window.switchView('view-flashboard');
+    };
+
+    window.syncTripToFirebase = async () => {
+        if(!window.currentTrip || !auth.currentUser) return;
+        const u = JSON.parse(JSON.stringify(window.currentTrip)); if(!u.details) u.details={};
+        u.details.jours = window.daysData; 
+        u.details.budget = window.globalOperations; 
+        u.details.incidentsMajeurs = window.incidentsMajeurs; 
+        u.details.incidentsComportement = window.incidentsComportementaux; 
+        u.details.soins = window.healthLogs;
+        try { await setDoc(doc(db, 'artifacts', appIdStr, 'public', 'data', 'trips', u.code), u, { merge: true }); } 
+        catch(e) { console.error("Erreur sync", e); }
+    };
+
+    window.submitDay = async () => {
+        const btn = document.getElementById('submitBtn'); const origHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Transmission...'; btn.disabled=true;
+        
+        ['repasList','activitiesList'].forEach(id => { const c=document.getElementById(id); if(c) { c.querySelectorAll('input').forEach(el=>el.setAttribute('value',el.value)); c.querySelectorAll('textarea').forEach(el=>el.textContent=el.value); }});
+        
+        window.daysData[window.currentEditingDay] = {
+            moral: parseInt(document.getElementById('input-moral').value),
+            meteoAm: document.querySelector('.input-meteo-am .meteo-selected') ? document.querySelector('.input-meteo-am .meteo-selected').dataset.val : 'Non renseigné',
+            meteoPm: document.querySelector('.input-meteo-pm .meteo-selected') ? document.querySelector('.input-meteo-pm .meteo-selected').dataset.val : 'Non renseigné',
+            veilleeNom: document.getElementById('input-veillee-nom').value, 
+            veilleeDesc: document.getElementById('input-veillee-desc').value, 
+            bilan: document.getElementById('input-bilan-jour').value,
+            repasHtml: document.getElementById('repasList').innerHTML, 
+            activitesHtml: document.getElementById('activitiesList').innerHTML
+        };
+
+        await window.syncTripToFirebase();
+        btn.innerHTML = '<i class="fas fa-check mr-2"></i> Validé !';
+        btn.classList.replace('bg-[var(--af-blue)]', 'bg-[var(--af-green)]');
+        
+        setTimeout(() => { window.openTrip(window.currentTrip.code); btn.innerHTML = origHtml; btn.disabled=false; btn.classList.replace('bg-[var(--af-green)]', 'bg-[var(--af-blue)]'); }, 1000);
+    };
+
+    window.submitIncidentMajeur = async () => { 
+        const e=document.getElementById('incident-child-select').value; const n=document.getElementById('incident-nature').value; const d=document.getElementById('incident-desc').value; 
+        if(e&&n) { window.incidentsMajeurs.push({enfant:e,nature:n,desc:d,date:new Date().toLocaleDateString('fr-FR', { hour: '2-digit', minute: '2-digit' })}); await window.syncTripToFirebase(); window.closeAllModals(); window.showToast("Alerte d'urgence envoyée à l'administrateur !"); document.getElementById('incident-desc').value = ''; } else { window.showToast("Veuillez sélectionner l'enfant et la nature", true); }
+    };
+    
+    window.submitIncidentComportemental = async () => { 
+        const e=document.getElementById('comportement-child-select').value; const d=document.getElementById('comportement-desc').value; 
+        if(e&&d) { window.incidentsComportementaux.push({enfant:e,desc:d,date:new Date().toLocaleDateString('fr-FR', { hour: '2-digit', minute: '2-digit' })}); await window.syncTripToFirebase(); window.closeAllModals(); window.showToast("Rapport de comportement enregistré."); document.getElementById('comportement-desc').value = ''; } else { window.showToast("Veuillez sélectionner l'enfant et décrire l'incident", true); }
+    };
+    
+    window.saveHealthDetail = async () => { 
+        const n=document.getElementById('healthModalChildName').value; const d=document.getElementById('healthModalDetails').value; 
+        if(d.trim() !== '') { window.healthLogs.push({nom:n,detail:d,date:window.datesSejour[window.currentEditingDay-1]||new Date().toLocaleDateString()}); await window.syncTripToFirebase(); window.closeAllModals(); window.showToast("Soin ajouté au journal médical"); } else { window.showToast("Veuillez décrire le soin apporté", true); }
+    };
+</script>
 </body>
 </html>
