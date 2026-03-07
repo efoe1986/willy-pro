@@ -1,0 +1,18 @@
+{
+  "name": "Willy Pro - Espace Directeur",
+  "short_name": "Willy Pro",
+  "description": "L'outil de gestion pour les directeurs de séjours Willy Pro.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#002157",
+  "theme_color": "#002157",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 200 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='cg' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23020014' /%3E%3Cstop offset='50%25' stop-color='%230b1768' /%3E%3Cstop offset='100%25' stop-color='%232a2adb' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 40,150 C 5,150 10,105 35,100 C 35,50 85,45 100,75 C 125,45 165,55 165,100 C 195,105 195,150 160,150 Z' fill='url(%23cg)' /%3E%3Cpath d='M 55,50 L 78,110 L 100,70 L 122,110 L 145,50' fill='none' stroke='black' stroke-width='22' stroke-linecap='round' stroke-linejoin='round' /%3E%3Cpath d='M 55,50 L 78,110 L 100,70 L 122,110 L 145,50' fill='none' stroke='white' stroke-width='18' stroke-linecap='round' stroke-linejoin='round' /%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
