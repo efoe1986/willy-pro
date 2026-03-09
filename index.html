@@ -129,6 +129,8 @@
         .login-input::placeholder { color: rgba(255,255,255,0.45); }
         .login-input:focus { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.65); }
         .login-input[type="date"] { color-scheme: dark; }
+        select.login-input { color: #ffffff; }
+        select.login-input option { color: #1e293b; background: #ffffff; }
         /* Back buttons in header — remplace bg-white/12 */
         .btn-back { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.12); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
         .btn-back:hover { background: rgba(255,255,255,0.22); }
@@ -282,9 +284,104 @@
                         <input type="date" id="login-end" class="login-input">
                     </div>
                 </div>
+
+                <!-- Devises du séjour -->
+                <div class="login-form-box w-full mt-3" style="max-width:340px;">
+                    <p style="font-size:0.68rem;font-weight:800;color:#93c5fd;text-transform:uppercase;letter-spacing:0.12em;margin:0 0 0.6rem;">💱 Devises utilisées (jusqu'à 3)</p>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;">
+                        <select id="login-devise1" class="login-input" style="font-size:0.75rem;padding:0.5rem 0.3rem;">
+                            <option value="€">€ Euro</option>
+                            <option value="$">$ Dollar US</option>
+                            <option value="£">£ Livre sterling</option>
+                            <option value="CHF">CHF Franc suisse</option>
+                            <option value="MAD">MAD Dirham marocain</option>
+                            <option value="TND">TND Dinar tunisien</option>
+                            <option value="DZD">DZD Dinar algérien</option>
+                            <option value="AED">AED Dirham EAU</option>
+                            <option value="SAR">SAR Riyal saoudien</option>
+                            <option value="QAR">QAR Riyal qatari</option>
+                            <option value="KWD">KWD Dinar koweïtien</option>
+                            <option value="TRY">TRY Lire turque</option>
+                            <option value="¥">¥ Yen/Yuan</option>
+                            <option value="THB">THB Baht thaï</option>
+                            <option value="CAD">CAD Dollar canadien</option>
+                            <option value="AUD">AUD Dollar australien</option>
+                            <option value="INR">INR Roupie indienne</option>
+                            <option value="BRL">BRL Réal brésilien</option>
+                            <option value="MXN">MXN Peso mexicain</option>
+                            <option value="PLN">PLN Zloty polonais</option>
+                            <option value="SEK">SEK Couronne suédoise</option>
+                            <option value="NOK">NOK Couronne norvégienne</option>
+                            <option value="RUB">RUB Rouble</option>
+                        </select>
+                        <select id="login-devise2" class="login-input" style="font-size:0.75rem;padding:0.5rem 0.3rem;">
+                            <option value="">— aucune —</option>
+                            <option value="€">€ Euro</option>
+                            <option value="$">$ Dollar US</option>
+                            <option value="£">£ Livre sterling</option>
+                            <option value="CHF">CHF Franc suisse</option>
+                            <option value="MAD">MAD Dirham marocain</option>
+                            <option value="TND">TND Dinar tunisien</option>
+                            <option value="DZD">DZD Dinar algérien</option>
+                            <option value="AED">AED Dirham EAU</option>
+                            <option value="SAR">SAR Riyal saoudien</option>
+                            <option value="QAR">QAR Riyal qatari</option>
+                            <option value="KWD">KWD Dinar koweïtien</option>
+                            <option value="TRY">TRY Lire turque</option>
+                            <option value="¥">¥ Yen/Yuan</option>
+                            <option value="THB">THB Baht thaï</option>
+                            <option value="CAD">CAD Dollar canadien</option>
+                            <option value="AUD">AUD Dollar australien</option>
+                            <option value="INR">INR Roupie indienne</option>
+                            <option value="BRL">BRL Réal brésilien</option>
+                            <option value="MXN">MXN Peso mexicain</option>
+                            <option value="PLN">PLN Zloty polonais</option>
+                            <option value="SEK">SEK Couronne suédoise</option>
+                            <option value="NOK">NOK Couronne norvégienne</option>
+                            <option value="RUB">RUB Rouble</option>
+                        </select>
+                        <select id="login-devise3" class="login-input" style="font-size:0.75rem;padding:0.5rem 0.3rem;">
+                            <option value="">— aucune —</option>
+                            <option value="€">€ Euro</option>
+                            <option value="$">$ Dollar US</option>
+                            <option value="£">£ Livre sterling</option>
+                            <option value="CHF">CHF Franc suisse</option>
+                            <option value="MAD">MAD Dirham marocain</option>
+                            <option value="TND">TND Dinar tunisien</option>
+                            <option value="DZD">DZD Dinar algérien</option>
+                            <option value="AED">AED Dirham EAU</option>
+                            <option value="SAR">SAR Riyal saoudien</option>
+                            <option value="QAR">QAR Riyal qatari</option>
+                            <option value="KWD">KWD Dinar koweïtien</option>
+                            <option value="TRY">TRY Lire turque</option>
+                            <option value="¥">¥ Yen/Yuan</option>
+                            <option value="THB">THB Baht thaï</option>
+                            <option value="CAD">CAD Dollar canadien</option>
+                            <option value="AUD">AUD Dollar australien</option>
+                            <option value="INR">INR Roupie indienne</option>
+                            <option value="BRL">BRL Réal brésilien</option>
+                            <option value="MXN">MXN Peso mexicain</option>
+                            <option value="PLN">PLN Zloty polonais</option>
+                            <option value="SEK">SEK Couronne suédoise</option>
+                            <option value="NOK">NOK Couronne norvégienne</option>
+                            <option value="RUB">RUB Rouble</option>
+                        </select>
+                    </div>
+                </div>
                 <button type="button" onclick="startSession()" style="width:100%;background:#ffffff;color:var(--willy-navy);padding:0.9rem;border-radius:0.85rem;font-weight:900;font-size:0.95rem;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.6rem;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform=''">
                     <i class="fas fa-sign-in-alt"></i> Ouvrir le Séjour
                 </button>
+
+                <!-- Reprendre via code séjour -->
+                <div style="margin-top:1rem;border-top:1px solid rgba(255,255,255,0.15);padding-top:1rem;">
+                    <p style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-align:center;margin:0 0 0.6rem;text-transform:uppercase;letter-spacing:0.1em;">🔑 Reprendre un séjour existant</p>
+                    <div style="display:flex;gap:0.5rem;">
+                        <input type="text" id="login-code-connexion" placeholder="Code ex: 010725-150725" class="login-input" style="flex:1;font-size:0.75rem;letter-spacing:0.06em;text-transform:uppercase;" maxlength="13">
+                        <button type="button" onclick="connecterParCode()" style="background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.25);padding:0.5rem 0.85rem;border-radius:0.75rem;font-weight:800;font-size:0.8rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+                            <i class="fas fa-key"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -305,6 +402,7 @@
                     <p class="text-xs text-blue-200 mt-1 font-medium" id="hub-director-name"><i class="fas fa-user-circle mr-1.5"></i>Directeur</p>
                     <p class="text-xs mt-0.5" style="color:rgba(255,255,255,0.5);" id="hub-trip-dates"><i class="far fa-calendar-alt mr-1.5"></i>Dates</p>
                 </div>
+                <button type="button" onclick="showCodeConnexion()" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:white;font-size:0.6rem;font-weight:800;padding:0.25rem 0.6rem;border-radius:0.5rem;cursor:pointer;letter-spacing:0.05em;" title="Code séjour"><i class="fas fa-key mr-1"></i><span id="hub-code-display">—</span></button>
                 <button type="button" onclick="logoutDir()" class="btn-back" style="width:40px;height:40px;">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
@@ -403,6 +501,11 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Commentaire météo -->
+                    <div class="border-t border-gray-100 pt-3 mt-3">
+                        <p class="section-title mb-2">💬 Commentaire du jour</p>
+                        <textarea id="input-commentaire-meteo" class="input-airy resize-none" rows="2" placeholder="Observations, ambiance générale, événement marquant..."></textarea>
+                    </div>
                 </div>
             </div>
 
@@ -446,6 +549,10 @@
                                 <span class="text-xl">🍽️</span>
                                 <span class="text-gray-400">Midi</span>
                             </button>
+                            <button type="button" class="repas-type-btn border-transparent" data-type="Goûter" id="btn-repas-3" onclick="selectRepasType(this,'Goûter')">
+                                <span class="text-xl">🧃</span>
+                                <span class="text-gray-400">Goûter</span>
+                            </button>
                             <button type="button" class="repas-type-btn border-transparent" data-type="Dîner" id="btn-repas-2" onclick="selectRepasType(this,'Dîner')">
                                 <span class="text-xl">🌙</span>
                                 <span class="text-gray-400">Soir</span>
@@ -453,6 +560,7 @@
                         </div>
                         <input type="hidden" id="restau-type-val" value="Petit-Déjeuner">
 
+                        <input type="text" id="restau-menu" placeholder="🍴 Menu du jour (entrée, plat, dessert...)" class="input-airy">
                         <input type="text" id="restau-nom" placeholder="Nom du restaurant / lieu" class="input-airy">
                         <input type="text" id="restau-adresse" placeholder="Adresse" class="input-airy">
                         <textarea id="restau-avis" placeholder="Commentaire, avis..." rows="2" class="input-airy resize-none"></textarea>
@@ -491,9 +599,9 @@
                         <input type="text" id="act-nom" class="input-airy" placeholder="Nom de l'activité">
                         <div class="grid grid-cols-2 gap-2">
                             <input type="text" id="act-lieu" class="input-airy" placeholder="Lieu / Site">
-                            <div class="relative">
-                                <input type="number" id="act-prix" class="input-airy pr-8" placeholder="Prix /pers">
-                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">€</span>
+                            <div style="display:flex;gap:0.4rem;">
+                                <input type="number" id="act-prix" class="input-airy" placeholder="Prix /pers" style="flex:1;">
+                                <select id="act-devise" class="input-airy text-xs" style="width:80px;padding-left:0.3rem;padding-right:0.3rem;flex-shrink:0;"></select>
                             </div>
                         </div>
                         <textarea id="act-infos" class="input-airy resize-none" rows="2" placeholder="Commentaire, notes..."></textarea>
@@ -549,40 +657,18 @@
 
                         <!-- Formulaire Dépense -->
                         <div id="finance-depense">
-                            <input type="text" id="op-nature" placeholder="Nature (ex : Supermarché, Entrée...)" class="input-airy">
+                            <select id="op-categorie" class="input-airy col-span-2">
+                                <option value="Alimentation">🍽️ Alimentation</option>
+                                <option value="Activités">🏃 Activités</option>
+                                <option value="Hébergement">🏨 Hébergement</option>
+                                <option value="Transports">🚌 Transports</option>
+                                <option value="Médical/Pharmacie">💊 Médical / Pharmacie</option>
+                                <option value="Autre">📦 Autre</option>
+                            </select>
+                            <input type="text" id="op-nature" placeholder="Description (ex : Supermarché, Entrée musée...)" class="input-airy">
                             <div class="grid grid-cols-3 gap-2">
                                 <input type="number" id="op-montant" placeholder="Montant" class="input-airy col-span-1">
-                                <select id="op-devise" class="input-airy col-span-1 text-xs" style="padding-left:0.5rem;padding-right:0.5rem;" onchange="checkCustomCurrency(this,'depense')">
-                                    <option value="€">€ Euro</option>
-                                    <option value="$">$ Dollar US</option>
-                                    <option value="£">£ Livre</option>
-                                    <option value="CHF">CHF Franc suisse</option>
-                                    <option value="¥">¥ Yen / Yuan</option>
-                                    <option value="MAD">MAD Dirham</option>
-                                    <option value="TND">TND Dinar</option>
-                                    <option value="DZD">DZD Dinar algérien</option>
-                                    <option value="CAD">CAD Dollar canadien</option>
-                                    <option value="AUD">AUD Dollar australien</option>
-                                    <option value="INR">INR Roupie</option>
-                                    <option value="MXN">MXN Peso mexicain</option>
-                                    <option value="BRL">BRL Réal brésilien</option>
-                                    <option value="THB">THB Baht thaï</option>
-                                    <option value="TRY">TRY Lire turque</option>
-                                    <option value="PLN">PLN Zloty</option>
-                                    <option value="SEK">SEK Couronne suédoise</option>
-                                    <option value="NOK">NOK Couronne norvégienne</option>
-                                    <option value="DKK">DKK Couronne danoise</option>
-                                    <option value="CZK">CZK Couronne tchèque</option>
-                                    <option value="HUF">HUF Forint</option>
-                                    <option value="RON">RON Leu roumain</option>
-                                    <option value="HRK">HRK Kuna croate</option>
-                                    <option value="RUB">RUB Rouble</option>
-                                    <option value="AED">AED Dirham EAU</option>
-                                    <option value="SAR">SAR Riyal saoudien</option>
-                                    <option value="QAR">QAR Riyal qatari</option>
-                                    <option value="KWD">KWD Dinar koweïtien</option>
-                                    <option value="autre">+ Autre devise</option>
-                                </select>
+                                <select id="op-devise" class="input-airy col-span-1 text-xs" style="padding-left:0.5rem;padding-right:0.5rem;"></select>
                                 <select id="op-moyen" class="input-airy col-span-1 text-xs" style="padding-left:0.5rem;padding-right:0.5rem;">
                                     <option value="CB">💳 CB</option>
                                     <option value="Cash">💵 Cash</option>
@@ -603,22 +689,7 @@
                         <div id="finance-retrait" class="hidden">
                             <div class="grid grid-cols-2 gap-2">
                                 <input type="number" id="op-retrait-montant" placeholder="Montant retiré" class="input-airy">
-                                <select id="op-retrait-devise" class="input-airy text-xs" style="padding-left:0.5rem;padding-right:0.5rem;" onchange="checkCustomCurrency(this,'retrait')">
-                                    <option value="€">€ Euro</option>
-                                    <option value="$">$ Dollar US</option>
-                                    <option value="£">£ Livre</option>
-                                    <option value="CHF">CHF Franc suisse</option>
-                                    <option value="¥">¥ Yen / Yuan</option>
-                                    <option value="MAD">MAD Dirham</option>
-                                    <option value="TND">TND Dinar</option>
-                                    <option value="DZD">DZD Dinar algérien</option>
-                                    <option value="CAD">CAD Dollar canadien</option>
-                                    <option value="AUD">AUD Dollar australien</option>
-                                    <option value="THB">THB Baht thaï</option>
-                                    <option value="TRY">TRY Lire turque</option>
-                                    <option value="AED">AED Dirham EAU</option>
-                                    <option value="autre">+ Autre devise</option>
-                                </select>
+                                <select id="op-retrait-devise" class="input-airy text-xs" style="padding-left:0.5rem;padding-right:0.5rem;"></select>
                             </div>
                             <input type="text" id="op-retrait-custom-devise" placeholder="Saisir la devise" class="input-airy hidden">
                             <div class="flex gap-2 mt-1">
@@ -667,6 +738,17 @@
                 </div>
                 <div class="card-content">
                     <input type="text" id="heb-nom" placeholder="Nom de l'hôtel / auberge / gîte" class="input-airy mt-1">
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
+                        <div>
+                            <p class="section-title">📅 Date d'arrivée</p>
+                            <input type="date" id="heb-date-debut" class="input-airy">
+                        </div>
+                        <div>
+                            <p class="section-title">📅 Date de départ</p>
+                            <input type="date" id="heb-date-fin" class="input-airy">
+                        </div>
+                    </div>
 
                     <div class="grid grid-cols-3 gap-2">
                         <div>
@@ -938,6 +1020,47 @@
         </div>
     </div>
 
+
+    <!-- Modal : Modifier fiche enfant -->
+    <div id="modal-edit-enfant" class="modal-overlay">
+        <div class="modal-content">
+            <div class="text-center mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-500 flex items-center justify-center text-xl mx-auto mb-2"><i class="fas fa-user-edit"></i></div>
+                <h3 class="font-black text-base text-gray-800 m-0">Modifier la fiche</h3>
+            </div>
+            <input type="hidden" id="edit-enfant-idx">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                <input type="text" id="edit-enfant-nom" placeholder="Nom *" class="input-airy">
+                <input type="text" id="edit-enfant-prenom" placeholder="Prénom *" class="input-airy">
+            </div>
+            <select id="edit-enfant-sexe" class="input-airy">
+                <option value="M">👦 Garçon</option>
+                <option value="F">👧 Fille</option>
+            </select>
+            <p class="section-title mt-2">🏥 Informations médicales</p>
+            <div style="display:flex;gap:0.75rem;margin-bottom:0.7rem;">
+                <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;font-weight:600;color:#374151;cursor:pointer;">
+                    <input type="checkbox" id="edit-enfant-pai" style="width:16px;height:16px;accent-color:#e05470;"> PAI
+                </label>
+                <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;font-weight:600;color:#374151;cursor:pointer;">
+                    <input type="checkbox" id="edit-enfant-traitement" style="width:16px;height:16px;accent-color:#8b5cf6;"> Sous traitement
+                </label>
+            </div>
+            <input type="text" id="edit-enfant-traitement-detail" placeholder="💊 Médicament(s), posologie..." class="input-airy">
+            <input type="text" id="edit-enfant-allergie" placeholder="⚠️ Allergies..." class="input-airy">
+            <input type="text" id="edit-enfant-regime" placeholder="🥗 Régime alimentaire..." class="input-airy">
+            <p class="section-title mt-1">📞 Contact d'urgence</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                <input type="text" id="edit-enfant-urgence-nom" placeholder="Nom contact" class="input-airy">
+                <input type="tel" id="edit-enfant-urgence-tel" placeholder="Téléphone" class="input-airy">
+            </div>
+            <textarea id="edit-enfant-notes" placeholder="📝 Notes médicales libres..." rows="2" class="input-airy resize-none"></textarea>
+            <div class="flex gap-2 mt-1">
+                <button type="button" class="btn-secondary flex-1" onclick="closeAllModals()">Annuler</button>
+                <button type="button" class="btn-primary flex-1" onclick="saveEditEnfant()" style="background:linear-gradient(135deg,#10b981,#059669);">Enregistrer</button>
+            </div>
+        </div>
+    </div>
     <!-- Modal : Fiche médicale -->
     <div id="modal-fiche-medicale" class="modal-overlay">
         <div class="modal-content" style="max-width:380px;">
@@ -963,6 +1086,34 @@
     </div>
 
     <!-- Modal : Soin médical -->
+
+    <!-- Modal : Infirmerie — rappel médical + traitement administré -->
+    <div id="modal-infirmerie" class="modal-overlay">
+        <div class="modal-content" style="max-width:370px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <div style="width:44px;height:44px;border-radius:0.875rem;background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🏥</div>
+                    <div>
+                        <h3 id="infirmerie-nom" class="font-black text-base text-gray-800 m-0"></h3>
+                        <p id="infirmerie-badges" class="m-0 mt-1" style="display:flex;gap:0.3rem;flex-wrap:wrap;"></p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAllModals()" style="background:none;border:none;font-size:1.3rem;color:#94a3b8;cursor:pointer;">✕</button>
+            </div>
+
+            <!-- Infos médicales -->
+            <div id="infirmerie-med-content" style="display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1rem;"></div>
+
+            <!-- Traitement journalier -->
+            <div id="infirmerie-traitement-section" style="display:none;background:#f5f3ff;border:1px solid #ede9fe;border-radius:0.875rem;padding:0.85rem;">
+                <p style="font-size:0.68rem;font-weight:800;color:#7c3aed;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 0.7rem;">💊 Traitement du jour</p>
+                <div id="infirmerie-prises" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+            </div>
+
+            <button type="button" class="btn-secondary w-full mt-4" onclick="closeAllModals()">Fermer</button>
+        </div>
+    </div>
+
     <div id="healthModal" class="modal-overlay">
         <div class="modal-content">
             <div class="text-center mb-4">
@@ -1059,36 +1210,104 @@ window.startSession = function() {
     const sejour = document.getElementById('login-sejour').value.trim();
     const start  = document.getElementById('login-start').value;
     const end    = document.getElementById('login-end').value;
+    const dev1   = (document.getElementById('login-devise1')||{value:'€'}).value || '€';
+    const dev2   = (document.getElementById('login-devise2')||{value:''}).value  || '';
+    const dev3   = (document.getElementById('login-devise3')||{value:''}).value  || '';
 
     if (!nom||!prenom||!orga||!sejour||!start||!end) {
-        showToast("Veuillez remplir tous les champs."); return;
+        showToast('Veuillez remplir tous les champs.'); return;
     }
     const d1 = new Date(start), d2 = new Date(end);
     const daysDiff = Math.ceil((d2-d1)/(1000*3600*24)) + 1;
     if (isNaN(daysDiff)||daysDiff<=0||daysDiff>90) {
-        showToast("Dates invalides."); return;
+        showToast('Dates invalides.'); return;
     }
+    // Code connexion = JJMMAA-JJMMAA
+    const fmtD = s => { const p=s.split('-'); return p[2].slice(-2)+p[1]+p[0].slice(-2); };
+    const codeConnexion = fmtD(start) + '-' + fmtD(end);
+    const devises = [dev1, dev2, dev3].filter(Boolean);
 
     window.currentTrip = {
         nom: sejour, organisme: orga,
         directeur: nom.toUpperCase() + ' ' + prenom,
         dateDebut: start, dateFin: end, duree: daysDiff,
+        devises: devises,
+        codeConnexion: codeConnexion,
         details: { jours:{}, budget:[], enfants:[], soins:[], medias:[], hebergements:[], incidentsMajeurs:[], incidentsComportement:[] }
     };
 
     const archiveId = 'willypro_archive_' + sejour.replace(/\s+/g,'').toLowerCase() + '_' + start;
     try {
         const archived = localStorage.getItem(archiveId);
-        if (archived && confirm("Reprendre les données existantes de ce séjour ?")) {
+        if (archived && confirm('Reprendre les données existantes de ce séjour ?')) {
             window.currentTrip = JSON.parse(archived);
         }
     } catch(e) {}
 
+    // Store by code for cross-device lookup
+    try { localStorage.setItem('willypro_code_' + codeConnexion, archiveId); } catch(e){}
+
     hydrateAppWithCurrentTrip();
     saveToLocal();
     switchView('view-hub');
-    showToast("🎉 Road Book initialisé !");
+    showToast('🎉 Road Book initialisé ! Code : ' + codeConnexion);
 };
+
+// Connexion par code séjour (autre appareil)
+window.connecterParCode = function() {
+    const code = (document.getElementById('login-code-connexion')||{value:''}).value.trim().toUpperCase();
+    if (!code) { showToast('Saisissez un code.'); return; }
+    try {
+        // Cherche directement dans localStorage par code
+        const archiveKey = localStorage.getItem('willypro_code_' + code);
+        const data = archiveKey ? localStorage.getItem(archiveKey) : localStorage.getItem('willypro_code_trip_' + code);
+        if (data) {
+            window.currentTrip = JSON.parse(data);
+            hydrateAppWithCurrentTrip();
+            saveToLocal();
+            switchView('view-hub');
+            showToast('✅ Séjour ' + window.currentTrip.nom + ' restauré !');
+        } else {
+            showToast('❌ Code introuvable sur cet appareil.');
+        }
+    } catch(e) { showToast('Erreur lors de la restauration.'); }
+};
+
+/* ── DEVISES DYNAMIQUES ── */
+window.getDevisesSejour = function() {
+    const devises = (window.currentTrip && window.currentTrip.devises) ? window.currentTrip.devises : ['€'];
+    return devises.length ? devises : ['€'];
+};
+
+window.getLastDevise = function() {
+    return localStorage.getItem('willypro_last_devise') || window.getDevisesSejour()[0];
+};
+
+window.setLastDevise = function(d) {
+    if (d) localStorage.setItem('willypro_last_devise', d);
+};
+
+window.populateDeviseSelects = function() {
+    const devises = window.getDevisesSejour();
+    const last = window.getLastDevise();
+    const makeOptions = (incl_last) => devises.map(d =>
+        `<option value="${d}" ${(incl_last && d===last) ? 'selected' : ''}>${d}</option>`
+    ).join('');
+    ['op-devise','op-retrait-devise','act-devise'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = makeOptions(true);
+        // Keep current value if still valid
+        if (devises.includes(el.value)) return;
+        el.value = last && devises.includes(last) ? last : devises[0];
+    });
+    // Remove old "custom" logic since devises are predefined
+    ['op-custom-devise','op-retrait-custom-devise'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.add('hidden'); el.value=''; }
+    });
+};
+
 
 /* ── SAVE ── */
 window.saveToLocal = function() {
@@ -1110,6 +1329,11 @@ window.saveToLocal = function() {
 };
 
 /* ── LOGOUT ── */
+window.showCodeConnexion = function() {
+    const code = window.currentTrip?.codeConnexion || '—';
+    alert('🔑 Code de connexion de ce séjour :\n\n' + code + '\n\nSaisissez ce code sur un autre appareil pour retrouver votre séjour.');
+};
+
 window.logoutDir = function() {
     if (confirm("Fermer ce séjour ? Les données restent sauvegardées sur l'appareil.")) {
         localStorage.removeItem('willypro_current_session');
@@ -1173,6 +1397,16 @@ function hydrateAppWithCurrentTrip() {
     updateGlobalBudget();
     renderMedias('Tickets');
     renderHebergements();
+    populateDeviseSelects();
+    // Restaure les selects login si on est sur le login (reprise de session)
+    if (trip.devises) {
+        ['login-devise1','login-devise2','login-devise3'].forEach((id,i) => {
+            const el = document.getElementById(id);
+            if (el && trip.devises[i]) el.value = trip.devises[i];
+        });
+    }
+    const codeEl = document.getElementById('hub-code-display');
+    if (codeEl && trip.codeConnexion) codeEl.textContent = trip.codeConnexion;
 }
 
 /* ── SWITCH VIEW ── */
@@ -1219,6 +1453,8 @@ window.openDay = function(dayNum, dateStr) {
         resetWeatherBtns();
         if(d.meteoAm) { const b=document.querySelector('.input-meteo-am [data-val="'+d.meteoAm+'"]'); if(b) selectWeather(b,'am',d.meteoAm); }
         if(d.meteoPm) { const b=document.querySelector('.input-meteo-pm [data-val="'+d.meteoPm+'"]'); if(b) selectWeather(b,'pm',d.meteoPm); }
+        const cmt=document.getElementById('input-commentaire-meteo'); if(cmt) cmt.value=d.commentaireMeteo||'';
+    populateDeviseSelects();
         if(qs('input-bilan-jour'))  qs('input-bilan-jour').value  = d.bilan        || '';
         if(qs('input-comportement')) qs('input-comportement').value = d.comportement || '';
         if(qs('repasList'))      qs('repasList').innerHTML      = d.repasHtml     || '';
@@ -1245,14 +1481,24 @@ function buildChildrenList() {
         list.innerHTML = '<p class="text-xs italic text-gray-400 py-3 text-center">Aucun inscrit dans le groupe.</p>';
         return;
     }
-    window.globalEffectifs.forEach((e,idx) => {
+    window.globalEffectifs.forEach((e, idx) => {
         const n = e.nom||'', p = e.prenom||'';
+        const hasMed = e.pai || e.traitement || e.traitementDetail || e.allergie || e.regime;
+        const medBtn = hasMed
+            ? `<button type="button" title="Fiche infirmerie" onclick="openInfirmerieModal(${idx})"
+                style="width:32px;height:32px;border-radius:50%;background:#fef2f2;border:1.5px solid #fecaca;cursor:pointer;color:#ef4444;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                🏥</button>`
+            : '';
         list.insertAdjacentHTML('beforeend',
             `<div class="child-item">
                 <span class="text-sm font-bold text-gray-700">${n} <span class="font-normal text-gray-500">${p}</span></span>
-                <button type="button" class="w-8 h-8 rounded-full bg-rose-100 text-rose-500 border-none cursor-pointer flex items-center justify-center" onclick="openHealthModal('${(n+' '+p).replace(/'/g,"\\'")}',${idx})">
-                    <i class="fas fa-plus text-xs"></i>
-                </button>
+                <div style="display:flex;gap:0.35rem;align-items:center;">
+                    ${medBtn}
+                    <button type="button" title="Consigner un soin" onclick="openHealthModal('${(n+' '+p).replace(/'/g,"\'")}',${idx})"
+                        class="w-8 h-8 rounded-full bg-rose-100 text-rose-500 border-none cursor-pointer flex items-center justify-center">
+                        <i class="fas fa-plus text-xs"></i>
+                    </button>
+                </div>
             </div>`
         );
     });
@@ -1267,6 +1513,7 @@ window.saveCurrentDayData = function() {
                      (document.querySelector('.input-meteo-am .meteo-selected-sun,.input-meteo-am .meteo-selected-cloud,.input-meteo-am .meteo-selected-rain')||{}).dataset?.val || 'Non renseigné',
         meteoPm:     (document.querySelector('.input-meteo-pm [data-selected="1"]')||{}).dataset?.val || 
                      (document.querySelector('.input-meteo-pm .meteo-selected-sun,.input-meteo-pm .meteo-selected-cloud,.input-meteo-pm .meteo-selected-rain')||{}).dataset?.val || 'Non renseigné',
+        commentaireMeteo: (document.getElementById('input-commentaire-meteo')||{value:''}).value.trim(),
         bilan:        (qs('input-bilan-jour')||{value:''}).value,
         comportement: (qs('input-comportement')||{value:''}).value,
         repasHtml:    (qs('repasList')||{innerHTML:''}).innerHTML,
@@ -1336,13 +1583,12 @@ window.selectRepasType = function(btn, type) {
 window.clearForm = function(type) {
     const qs = id => document.getElementById(id);
     if (type==='restau') {
-        ['restau-nom','restau-adresse','restau-avis'].forEach(id => { if(qs(id)) qs(id).value=''; });
+        ['restau-menu','restau-nom','restau-adresse','restau-avis'].forEach(id => { if(qs(id)) qs(id).value=''; });
     } else if (type==='act') {
         ['act-nom','act-lieu','act-prix','act-infos'].forEach(id => { if(qs(id)) qs(id).value=''; });
     } else if (type==='finance') {
-        ['op-nature','op-montant','op-retrait-montant'].forEach(id => { if(qs(id)) qs(id).value=''; });
-        if(qs('op-devise'))          qs('op-devise').value          = '€';
-        if(qs('op-retrait-devise'))  qs('op-retrait-devise').value  = '€';
+        ['op-nature','op-montant','op-retrait-montant'].forEach(id => { if(qs(id)) qs(id).value=''; }); if(qs('op-categorie')) qs('op-categorie').value='Alimentation';
+        populateDeviseSelects();
         if(qs('op-moyen'))           qs('op-moyen').value           = 'CB';
         [qs('op-custom-devise'),qs('op-retrait-custom-devise')].forEach(el => { if(el){el.value='';el.classList.add('hidden');} });
     } else if (type==='heb') {
@@ -1369,6 +1615,8 @@ window.saveHebergement = function() {
 
     window.currentTrip.details.hebergements.push({
         id: Date.now(), nom,
+        dateDebut: (qs('heb-date-debut')||{value:''}).value,
+        dateFin:   (qs('heb-date-fin')||{value:''}).value,
         prixNuit: (qs('heb-prix-nuit')||{value:''}).value,
         prixTot:  (qs('heb-prix-total')||{value:''}).value,
         pers:     (qs('heb-personnes')||{value:''}).value,
@@ -1437,7 +1685,9 @@ window.saveRepas = function() {
     if (!nom) { showToast("Indiquez le nom du lieu."); return; }
 
     const type = (qs('restau-type-val')||{value:'Repas'}).value;
-    const icon = type==='Petit-Déjeuner'?'☕':(type==='Déjeuner'?'🍽️':'🌙');
+    const icons = {'Petit-Déjeuner':'☕','Déjeuner':'🍽️','Goûter':'🧃','Dîner':'🌙'};
+    const icon = icons[type] || '🍴';
+    const menu = (qs('restau-menu')||{value:''}).value.trim();
     const adr  = (qs('restau-adresse')||{value:''}).value;
     const avis = (qs('restau-avis')||{value:''}).value;
 
@@ -1448,6 +1698,7 @@ window.saveRepas = function() {
             <span class="display-type text-xs font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded-lg border border-orange-100 uppercase tracking-wide">${type}</span>
         </div>
         <p class="display-name font-black text-gray-800 text-base m-0 leading-tight">${nom}</p>
+        ${menu ? `<p class="display-menu text-xs text-gray-700 font-semibold mt-1 mb-1"><i class="fas fa-utensils mr-1 text-orange-400"></i>${menu}</p>` : ''}
         <p class="display-adresse text-xs text-gray-400 font-medium mt-1 mb-2"><i class="fas fa-map-marker-alt mr-1 text-orange-300"></i>${adr||'Adresse non renseignée'}</p>
         <p class="display-infos text-xs text-gray-600 bg-orange-50 p-2.5 rounded-xl m-0">"${avis||'—'}"</p>
     </div>`;
@@ -1474,13 +1725,15 @@ window.saveActVeil = function() {
     const prix = (qs('act-prix')||{value:''}).value;
     const infos= (qs('act-infos')||{value:''}).value;
     const icon = type==='Veillée'?'🌙':'🏃';
+    const actDevise = (document.getElementById('act-devise')||{value:''}).value || getLastDevise();
+    if (prix) setLastDevise(actDevise);
 
     const html = `<div class="view-mode item-card">
         <button type="button" class="absolute top-3 right-3 text-gray-300 hover:text-red-400 border-none bg-transparent cursor-pointer" onclick="this.closest('.item-card').remove()"><i class="fas fa-trash text-xs"></i></button>
         <span class="display-type inline-flex items-center gap-1 text-xs font-black text-teal-600 bg-teal-50 px-2.5 py-0.5 rounded-lg border border-teal-100 uppercase tracking-wide mb-2">${icon} ${type}</span>
         <div class="flex justify-between items-start gap-2">
             <p class="display-name font-black text-gray-800 text-base m-0 leading-tight flex-1">${nom}</p>
-            <p class="display-prix font-black text-gray-600 text-sm m-0 shrink-0">${prix?prix+'€':'Gratuit'}</p>
+            <p class="display-prix font-black text-gray-600 text-sm m-0 shrink-0">${prix ? prix+' '+actDevise : 'Gratuit'}</p>
         </div>
         <p class="display-lieu text-xs text-gray-400 font-medium mt-1 mb-2"><i class="fas fa-map-marker-alt mr-1 text-teal-300"></i>${lieu||'Lieu non précisé'}</p>
         <p class="display-infos text-xs text-gray-600 bg-teal-50 p-2.5 rounded-xl m-0">"${infos||'—'}"</p>
@@ -1523,7 +1776,9 @@ window.saveFinance = function(mode) {
         if (!montant) { showToast("Montant invalide."); return; }
         const rawDev = (qs('op-devise')||{value:'€'}).value;
         devise  = rawDev==='autre' ? ((qs('op-custom-devise')||{value:'???'}).value||'???') : rawDev;
-        nature  = (qs('op-nature')||{value:'Achat'}).value || 'Achat';
+        const cat = (qs('op-categorie')||{value:'Autre'}).value || 'Autre';
+        const desc = (qs('op-nature')||{value:''}).value.trim();
+        nature  = desc ? cat + ' — ' + desc : cat;
         moyen   = (qs('op-moyen')||{value:'CB'}).value;
         type    = 'depense';
     } else {
@@ -1537,10 +1792,12 @@ window.saveFinance = function(mode) {
     }
 
     window.globalOperations.push({ id: Date.now().toString(), date: dateOp, type, montant, devise, nature, moyen });
+    setLastDevise(devise);
     clearForm('finance');
+    populateDeviseSelects();
     updateGlobalBudget();
     saveToLocal();
-    showToast(mode==='retrait' ? "💵 Retrait enregistré !" : "✅ Dépense enregistrée !");
+    showToast(mode==='retrait' ? '💵 Retrait enregistré !' : '✅ Dépense enregistrée !');
 };
 
 window.deleteOp = function(id) {
@@ -1551,16 +1808,19 @@ window.deleteOp = function(id) {
 };
 
 window.updateGlobalBudget = function() {
-    let tCB=0, tCashOut=0, tCashIn=0;
-    let listHtml='', dailyList='', dailyTotal=0;
+    // totaux par devise
+    const tByDevise = {}; // { devise: { cb:0, cashOut:0, cashIn:0 } }
+    const add = (d, key, v) => { if(!tByDevise[d]) tByDevise[d]={cb:0,cashOut:0,cashIn:0}; tByDevise[d][key]+=v; };
+    let listHtml='', dailyList='', dailyTotals={};
     const qs = id => document.getElementById(id);
 
     const ops = (window.globalOperations||[]).slice().sort((a,b)=>b.id-a.id);
     ops.forEach(op => {
+        const dev = op.devise || '€';
         if (op.type==='depense') {
-            if(op.moyen==='CB') tCB+=op.montant; else tCashOut+=op.montant;
+            if(op.moyen==='CB') add(dev,'cb',op.montant); else add(dev,'cashOut',op.montant);
         } else if(op.type==='retrait') {
-            tCashIn+=op.montant;
+            add(dev,'cashIn',op.montant);
         }
 
         const isR = op.type==='retrait';
@@ -1572,26 +1832,55 @@ window.updateGlobalBudget = function() {
             <td class="fs-xs4 text-gray-400 whitespace-nowrap">${op.date||''}</td>
             <td><strong class="text-gray-800 text-xs block leading-tight">${isR?'Retrait Cash':op.nature}</strong></td>
             <td><span class="${badge}">${op.moyen}</span></td>
-            <td class="text-right ${amtCls} text-xs">${sign}${op.montant.toFixed(2)}<span class="fs-xxs ml-0.5 text-gray-400">${op.devise}</span></td>
+            <td class="text-right ${amtCls} text-xs">${sign}${op.montant.toFixed(2)}<span class="fs-xxs ml-0.5 text-gray-400">${dev}</span></td>
         </tr>`;
 
         const todayLabel = window.datesSejour[currentEditingDay-1];
         if (op.date===todayLabel) {
-            if(op.type==='depense') dailyTotal+=op.montant;
+            if(op.type==='depense') { dailyTotals[dev]=(dailyTotals[dev]||0)+op.montant; }
             dailyList += `<tr>
                 <td class="py-2.5"><strong class="text-gray-800 text-sm block leading-tight">${isR?'Retrait Cash':op.nature}</strong><span class="${badge}">${op.moyen}</span></td>
-                <td class="text-right py-2.5 ${amtCls} text-sm">${sign}${op.montant.toFixed(2)} <span class="fs-xs3 text-gray-400">${op.devise}</span></td>
+                <td class="text-right py-2.5 ${amtCls} text-sm">${sign}${op.montant.toFixed(2)} <span class="fs-xs3 text-gray-400">${dev}</span></td>
                 <td class="text-right py-2.5"><button type="button" class="text-gray-300 hover:text-red-400 border-none bg-transparent cursor-pointer" onclick="deleteOp('${op.id}')"><i class="fas fa-times-circle"></i></button></td>
             </tr>`;
         }
     });
 
-    const resteCash = tCashIn - tCashOut;
-    if(qs('dash-tot-cb'))    qs('dash-tot-cb').textContent    = tCB.toFixed(2);
-    if(qs('dash-in-cash'))   qs('dash-in-cash').textContent   = tCashIn.toFixed(2);
-    if(qs('dash-out-cash'))  qs('dash-out-cash').textContent  = tCashOut.toFixed(2);
-    if(qs('dash-reste-cash')) qs('dash-reste-cash').textContent= resteCash.toFixed(2);
-    if(qs('daily-total-display')) qs('daily-total-display').textContent = dailyTotal.toFixed(2) + ' €';
+    // Dashboard totaux par devise
+    const devises = Object.keys(tByDevise);
+    let dashHtml = '';
+    devises.forEach(dev => {
+        const t = tByDevise[dev];
+        dashHtml += `<div style="background:#f8fafc;border-radius:0.75rem;padding:0.5rem 0.75rem;margin-bottom:0.4rem;">
+            <p style="font-size:0.65rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.3rem;">${dev}</p>
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+                <span style="font-size:0.72rem;color:#374151;">💳 CB : <strong>${t.cb.toFixed(2)}</strong></span>
+                <span style="font-size:0.72rem;color:#374151;">💵 Cash dépensé : <strong>${t.cashOut.toFixed(2)}</strong></span>
+                <span style="font-size:0.72rem;color:#10b981;">↑ Cash reçu : <strong>${t.cashIn.toFixed(2)}</strong></span>
+                <span style="font-size:0.72rem;color:#6b7280;">Reste : <strong>${(t.cashIn-t.cashOut).toFixed(2)}</strong></span>
+            </div>
+        </div>`;
+    });
+    if(qs('dash-tot-cb')) {
+        const parent = qs('dash-tot-cb').closest('.card-content') || qs('dash-tot-cb').parentElement;
+        if(parent && devises.length) {
+            const existing = document.getElementById('budget-by-devise-dash');
+            if(existing) existing.remove();
+            const div=document.createElement('div'); div.id='budget-by-devise-dash'; div.innerHTML=dashHtml;
+            parent.prepend(div);
+        }
+    }
+    // Keep original simple display for first devise
+    const firstDev = devises[0];
+    const ft = firstDev ? tByDevise[firstDev] : {cb:0,cashOut:0,cashIn:0};
+    if(qs('dash-tot-cb'))    qs('dash-tot-cb').textContent    = ft.cb.toFixed(2);
+    if(qs('dash-in-cash'))   qs('dash-in-cash').textContent   = ft.cashIn.toFixed(2);
+    if(qs('dash-out-cash'))  qs('dash-out-cash').textContent  = ft.cashOut.toFixed(2);
+    if(qs('dash-reste-cash')) qs('dash-reste-cash').textContent= (ft.cashIn-ft.cashOut).toFixed(2);
+
+    // Daily total par devise
+    const dailyTxt = Object.keys(dailyTotals).map(d => dailyTotals[d].toFixed(2)+' '+d).join(' | ') || '0.00';
+    if(qs('daily-total-display')) qs('daily-total-display').textContent = dailyTxt;
 
     const recapEl = qs('recap-budget-list');
     if(recapEl?.querySelector('tbody')) {
@@ -1652,6 +1941,7 @@ window.renderEffectifsUI = function() {
                     ${e.allergie ? `<p style="font-size:0.65rem;color:#b45309;margin:0.15rem 0 0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">⚠️ ${e.allergie}</p>` : ''}
                 </div>
                 <div style="display:flex;gap:0.4rem;flex-shrink:0;">
+                    <button type="button" onclick="openEditEnfant(${idx})" style="background:#f0fdf4;border:none;width:34px;height:34px;border-radius:0.6rem;cursor:pointer;color:#10b981;font-size:0.85rem;" title="Modifier la fiche"><i class="fas fa-pen"></i></button>
                     ${hasMedical ? `<button type="button" onclick="openFicheMedicale(${idx})" style="background:#eff6ff;border:none;width:34px;height:34px;border-radius:0.6rem;cursor:pointer;color:#3b82f6;font-size:0.85rem;" title="Fiche médicale"><i class="fas fa-file-medical"></i></button>` : `<button type="button" onclick="openFicheMedicale(${idx})" style="background:#f8fafc;border:none;width:34px;height:34px;border-radius:0.6rem;cursor:pointer;color:#94a3b8;font-size:0.85rem;" title="Fiche médicale"><i class="far fa-file"></i></button>`}
                     <button type="button" onclick="removeEnfant(${idx})" style="background:#fff5f5;border:none;width:34px;height:34px;border-radius:0.6rem;cursor:pointer;color:#f87171;font-size:0.85rem;"><i class="fas fa-trash-alt"></i></button>
                 </div>
@@ -1665,6 +1955,50 @@ window.removeEnfant = function(idx) {
         window.globalEffectifs.splice(idx,1);
         saveToLocal(); hydrateAppWithCurrentTrip();
     }
+};
+
+window.openEditEnfant = function(idx) {
+    const e = window.globalEffectifs[idx];
+    if (!e) return;
+    const qs = id => document.getElementById(id);
+    qs('edit-enfant-idx').value = idx;
+    qs('edit-enfant-nom').value = e.nom || '';
+    qs('edit-enfant-prenom').value = e.prenom || '';
+    qs('edit-enfant-sexe').value = e.sexe || 'M';
+    qs('edit-enfant-pai').checked = !!e.pai;
+    qs('edit-enfant-traitement').checked = !!e.traitement;
+    qs('edit-enfant-traitement-detail').value = e.traitementDetail || '';
+    qs('edit-enfant-allergie').value = e.allergie || '';
+    qs('edit-enfant-regime').value = e.regime || '';
+    qs('edit-enfant-urgence-nom').value = e.urgenceNom || '';
+    qs('edit-enfant-urgence-tel').value = e.urgenceTel || '';
+    qs('edit-enfant-notes').value = e.notes || '';
+    openModal('modal-edit-enfant');
+};
+
+window.saveEditEnfant = function() {
+    const qs = id => (document.getElementById(id)||{value:'',checked:false});
+    const idx = parseInt(qs('edit-enfant-idx').value);
+    if (isNaN(idx) || !window.globalEffectifs[idx]) return;
+    const nom = qs('edit-enfant-nom').value.trim();
+    const prenom = qs('edit-enfant-prenom').value.trim();
+    if (!nom||!prenom) { showToast('Renseignez nom et prénom.'); return; }
+    window.globalEffectifs[idx] = {
+        ...window.globalEffectifs[idx],
+        nom: nom.toUpperCase(), prenom,
+        sexe: qs('edit-enfant-sexe').value,
+        pai: qs('edit-enfant-pai').checked,
+        traitement: qs('edit-enfant-traitement').checked,
+        traitementDetail: qs('edit-enfant-traitement-detail').value.trim(),
+        allergie: qs('edit-enfant-allergie').value.trim(),
+        regime: qs('edit-enfant-regime').value.trim(),
+        urgenceNom: qs('edit-enfant-urgence-nom').value.trim(),
+        urgenceTel: qs('edit-enfant-urgence-tel').value.trim(),
+        notes: qs('edit-enfant-notes').value.trim()
+    };
+    saveToLocal(); hydrateAppWithCurrentTrip();
+    closeAllModals();
+    showToast('✅ Fiche mise à jour.');
 };
 
 window.openFicheMedicale = function(idx) {
@@ -1809,6 +2143,99 @@ window.openIncidentModal = function() {
     openModal('incidentModal');
 };
 
+window.openInfirmerieModal = function(idx) {
+    const e = window.globalEffectifs[idx];
+    if (!e) return;
+    const nomComplet = (e.prenom||'') + ' ' + (e.nom||'');
+    const day = currentEditingDay;
+    const dateKey = window.datesSejour[day-1] || new Date().toLocaleDateString('fr-FR');
+
+    document.getElementById('infirmerie-nom').textContent = nomComplet;
+
+    // Badges
+    const badges = [];
+    if (e.pai) badges.push('<span style="font-size:0.62rem;font-weight:800;color:#dc2626;background:#fee2e2;padding:0.2rem 0.5rem;border-radius:999px;">PAI</span>');
+    if (e.traitement||e.traitementDetail) badges.push('<span style="font-size:0.62rem;font-weight:800;color:#7c3aed;background:#ede9fe;padding:0.2rem 0.5rem;border-radius:999px;">💊 Traitement</span>');
+    if (e.allergie) badges.push('<span style="font-size:0.62rem;font-weight:800;color:#b45309;background:#fef3c7;padding:0.2rem 0.5rem;border-radius:999px;">⚠️ Allergie</span>');
+    if (e.regime)   badges.push('<span style="font-size:0.62rem;font-weight:800;color:#065f46;background:#d1fae5;padding:0.2rem 0.5rem;border-radius:999px;">🥗 Régime</span>');
+    document.getElementById('infirmerie-badges').innerHTML = badges.join('');
+
+    // Infos médicales
+    const row = (icon, label, val, color) => val ? `
+        <div style="background:#f8fafc;border-radius:0.65rem;padding:0.6rem 0.8rem;border-left:3px solid ${color};">
+            <p style="font-size:0.62rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.15rem;">${icon} ${label}</p>
+            <p style="font-size:0.82rem;font-weight:600;color:#1e293b;margin:0;">${val}</p>
+        </div>` : '';
+    let content = '';
+    if (e.pai) content += `<div style="background:#fef2f2;border-radius:0.65rem;padding:0.6rem 0.8rem;border:1px solid #fecaca;"><p style="font-size:0.75rem;font-weight:800;color:#dc2626;margin:0;">🏥 Porteur d'un PAI</p></div>`;
+    content += row('💊', 'Traitement', e.traitementDetail || (e.traitement ? 'Sous traitement' : ''), '#8b5cf6');
+    content += row('⚠️', 'Allergies', e.allergie, '#f59e0b');
+    content += row('🥗', 'Régime alimentaire', e.regime, '#10b981');
+    content += row('📝', 'Notes médicales', e.notes, '#64748b');
+    if (e.urgenceNom || e.urgenceTel) {
+        const tel = e.urgenceTel ? ` — <a href="tel:${e.urgenceTel}" style="color:#3b82f6;font-weight:700;">${e.urgenceTel}</a>` : '';
+        content += row('📞', 'Contact urgence', (e.urgenceNom||'') + tel, '#3b82f6');
+    }
+    if (!content) content = '<p style="color:#94a3b8;font-size:0.82rem;text-align:center;padding:0.5rem 0;">Aucune info médicale enregistrée.</p>';
+    document.getElementById('infirmerie-med-content').innerHTML = content;
+
+    // Section traitement journalier
+    const traitSection = document.getElementById('infirmerie-traitement-section');
+    const prisesEl = document.getElementById('infirmerie-prises');
+    if (e.traitement || e.traitementDetail) {
+        traitSection.style.display = 'block';
+        // Récupérer les prises déjà enregistrées
+        window.healthLogs = window.healthLogs || [];
+        const traitDetail = e.traitementDetail || 'Traitement';
+        // Créer 3 prises possibles : Matin / Midi / Soir
+        const prises = ['Matin ☀️','Midi 🌤️','Soir 🌙'];
+        prisesEl.innerHTML = prises.map(prise => {
+            const logKey = `TRAIT|${nomComplet}|${dateKey}|${prise}`;
+            const dejaDonne = window.healthLogs.some(l => l.logKey === logKey);
+            return `<label style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;padding:0.5rem 0.6rem;border-radius:0.6rem;background:${dejaDonne?'#ede9fe':'white'};border:1px solid ${dejaDonne?'#c4b5fd':'#e5e7eb'};">
+                <input type="checkbox" ${dejaDonne?'checked':''} onchange="toggleTraitementAdministre(this,'${nomComplet.replace(/'/g,"\'")}','${dateKey}','${prise}','${traitDetail.replace(/'/g,"\'")}')"
+                    style="width:18px;height:18px;accent-color:#7c3aed;flex-shrink:0;">
+                <span style="font-size:0.82rem;font-weight:600;color:${dejaDonne?'#5b21b6':'#374151'};">${prise}</span>
+                ${dejaDonne ? '<span style="font-size:0.65rem;color:#7c3aed;font-weight:700;margin-left:auto;">✓ Administré</span>' : '<span style="font-size:0.65rem;color:#94a3b8;margin-left:auto;">Non administré</span>'}
+            </label>`;
+        }).join('');
+    } else {
+        traitSection.style.display = 'none';
+    }
+
+    openModal('modal-infirmerie');
+};
+
+window.toggleTraitementAdministre = function(checkbox, nomComplet, dateKey, prise, traitDetail) {
+    const logKey = 'TRAIT|' + nomComplet + '|' + dateKey + '|' + prise;
+    if (checkbox.checked) {
+        window.healthLogs.push({
+            logKey, nom: nomComplet,
+            detail: '💊 Traitement administré (' + prise + ') : ' + traitDetail,
+            date: dateKey, type: 'traitement'
+        });
+        showToast('✅ Traitement ' + prise + ' enregistré pour ' + nomComplet);
+    } else {
+        window.healthLogs = window.healthLogs.filter(l => l.logKey !== logKey);
+        showToast('↩️ Annulé : ' + prise + ' pour ' + nomComplet);
+    }
+    saveToLocal();
+    // Mettre à jour visuellement la ligne sans fermer le modal
+    const label = checkbox.closest('label');
+    if (label) {
+        label.style.background = checkbox.checked ? '#ede9fe' : 'white';
+        label.style.border = '1px solid ' + (checkbox.checked ? '#c4b5fd' : '#e5e7eb');
+        const statusSpan = label.querySelectorAll('span');
+        if (statusSpan[1]) {
+            statusSpan[1].style.color = checkbox.checked ? '#5b21b6' : '#374151';
+        }
+        if (statusSpan[2]) {
+            statusSpan[2].textContent = checkbox.checked ? '✓ Administré' : 'Non administré';
+            statusSpan[2].style.color = checkbox.checked ? '#7c3aed' : '#94a3b8';
+        }
+    }
+};
+
 window.openHealthModal = function(nom) {
     const title = document.getElementById('healthModalTitle');
     const cname = document.getElementById('healthModalChildName');
@@ -1844,7 +2271,19 @@ window.submitIncidentMajeur = function() {
 window.handleImageCapture = function(event, context) {
     const file = event.target.files[0];
     if (!file) return;
-    showToast("⏳ Traitement...");
+    showToast('⏳ Traitement...');
+    // Capture the label at the moment of photo
+    let label = '';
+    if (context === 'Menus') {
+        label = (document.getElementById('restau-nom')||{value:''}).value.trim() || '(lieu non renseigné)';
+    } else if (context === 'Tickets') {
+        const cat  = (document.getElementById('op-categorie')||{value:''}).value.trim();
+        const desc = (document.getElementById('op-nature')||{value:''}).value.trim();
+        const mont = (document.getElementById('op-montant')||{value:''}).value.trim();
+        const dev  = (document.getElementById('op-devise')||{value:''}).value.trim();
+        label = [cat, desc].filter(Boolean).join(' — ') || 'Dépense';
+        if (mont) label += ' (' + mont + ' ' + dev + ')';
+    }
     const reader = new FileReader();
     reader.onload = e => {
         const img = new Image();
@@ -1856,14 +2295,14 @@ window.handleImageCapture = function(event, context) {
             canvas.getContext('2d').drawImage(img,0,0,w,h);
             try {
                 window.currentTrip.details.medias.push({
-                    id:Date.now(),
+                    id: Date.now(),
                     date: window.datesSejour[currentEditingDay-1]||new Date().toLocaleDateString('fr-FR'),
-                    context, url: canvas.toDataURL('image/jpeg',0.65)
+                    context, label, url: canvas.toDataURL('image/jpeg',0.65)
                 });
                 saveToLocal();
-                showToast("📸 " + context + " enregistré !");
+                showToast('📸 ' + context + ' enregistré !');
                 renderMedias(context);
-            } catch { alert("Mémoire pleine, impossible de stocker l'image."); }
+            } catch { alert('Mémoire pleine, impossible de stocker l\u0027image.'); }
         };
         img.src = e.target.result;
     };
@@ -1956,11 +2395,132 @@ window.generateReport = function() {
         hebs.forEach(h=>{ const r=h.ratings||{}; const avg=((r.personnel||0)+(r.equipements||0)+(r.proprete||0)+(r.confort||0)+(r.qualite||0)+(r.emplacement||0)/6).toFixed(1); hebHtml+=`<div class="mb-3 pb-3 border-b border-gray-100 last:border-0"><div class="flex justify-between items-center mb-1"><h4 class="font-bold text-gray-800 text-sm">${h.nom}</h4><span class="text-yellow-500 font-bold text-xs"><i class="fas fa-star mr-1"></i>${avg}/5</span></div>${h.comment?`<p class="text-xs italic text-gray-500">"${h.comment}"</p>`:''}</div>`; });
     } else hebHtml='<p class="text-xs italic text-gray-400">Aucune étape renseignée.</p>';
 
+    const catLabels=['Alimentation','Activités','Hébergement','Transports','Médical/Pharmacie','Autre'];
+    const catTotals={}; const devTotals={}; let totRetraits=0;
     let budgetHtml='<table class="recap-table mt-2"><thead><tr><th>Date</th><th>Nature</th><th>Moyen</th><th class="text-right">Montant</th></tr></thead><tbody>';
-    (window.globalOperations||[]).slice().sort((a,b)=>b.id-a.id).forEach(op=>{
-        if(op.type==='depense'){ tot+=op.montant; budgetHtml+=`<tr><td class="fs-xs3 text-gray-500">${op.date||''}</td><td class="text-xs font-bold text-gray-800">${op.nature}</td><td><span class="${op.moyen==='CB'?'op-badge-cb':'op-badge-cash'}">${op.moyen}</span></td><td class="text-right text-xs font-semibold">−${op.montant.toFixed(2)} ${op.devise}</td></tr>`; }
+    (window.globalOperations||[]).slice().sort((a,b)=>a.id-b.id).forEach(op=>{
+        const dev=op.devise||'€';
+        const isR=op.type==='retrait';
+        const sign=isR?'+':'−';
+        const amtCls=isR?'color:#059669;font-weight:700;':'color:#1e293b;font-weight:600;';
+        const badge=isR?'op-badge-retrait':(op.moyen==='CB'?'op-badge-cb':'op-badge-cash');
+        if(!isR){
+            const cat=op.nature||'Autre';
+            tot+=op.montant;
+            if(!catTotals[cat]) catTotals[cat]={};
+            catTotals[cat][dev]=(catTotals[cat][dev]||0)+op.montant;
+            devTotals[dev]=(devTotals[dev]||0)+op.montant;
+        } else {
+            totRetraits+=op.montant;
+        }
+        budgetHtml+=`<tr>
+            <td class="fs-xs3 text-gray-500 whitespace-nowrap">${op.date||''}</td>
+            <td class="text-xs font-bold text-gray-800">${isR?'💵 Retrait Cash':op.nature}</td>
+            <td><span class="${badge}">${op.moyen}</span></td>
+            <td class="text-right text-xs" style="${amtCls}">${sign}${op.montant.toFixed(2)} ${dev}</td>
+        </tr>`;
     });
-    budgetHtml+=`</tbody></table><div class="bg-gray-50 p-3 rounded-xl flex justify-between mt-3"><span class="font-bold text-xs text-gray-600 uppercase">Total Dépenses</span><span class="font-black text-gray-800">${tot.toFixed(2)} €</span></div>`;
+    budgetHtml+='</tbody></table>';
+
+    // ─── Calculs complets par devise ───
+    const deviseSummary = {}; // { dev: { depTotal, cbTotal, cashTotal, retraitTotal, solde } }
+    (window.globalOperations||[]).forEach(op => {
+        const dev = op.devise||'€';
+        if (!deviseSummary[dev]) deviseSummary[dev] = { dep:0, cb:0, cash:0, retrait:0 };
+        if (op.type==='depense') {
+            deviseSummary[dev].dep   += op.montant;
+            if (op.moyen==='CB')   deviseSummary[dev].cb   += op.montant;
+            else                   deviseSummary[dev].cash += op.montant;
+        } else if (op.type==='retrait') {
+            deviseSummary[dev].retrait += op.montant;
+        }
+    });
+
+    // ─── Tableau de contrôle financier par devise ───
+    const devises = Object.keys(deviseSummary);
+    if (devises.length) {
+        budgetHtml += `<div style="margin-top:1rem;">
+            <p style="font-size:0.65rem;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 0.6rem;padding-bottom:0.4rem;border-bottom:2px solid #1e293b;">
+                📋 RÉCAPITULATIF DE CONTRÔLE FINANCIER
+            </p>`;
+        devises.forEach(dev => {
+            const s = deviseSummary[dev];
+            const solde = s.retrait - s.cash; // cash retiré - cash dépensé = reste en caisse
+            const soldeColor = solde >= 0 ? '#16a34a' : '#dc2626';
+            budgetHtml += `
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:0.875rem;padding:0.9rem;margin-bottom:0.6rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
+                    <span style="font-size:0.85rem;font-weight:900;color:#0f172a;background:#e2e8f0;padding:0.2rem 0.6rem;border-radius:0.4rem;">${dev}</span>
+                    <span style="font-size:0.7rem;font-weight:700;color:${soldeColor};background:${solde>=0?'#f0fdf4':'#fef2f2'};padding:0.2rem 0.6rem;border-radius:0.4rem;">
+                        SOLDE CAISSE : ${solde>=0?'+':''}${solde.toFixed(2)} ${dev}
+                    </span>
+                </div>
+                <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
+                    <tr style="border-bottom:1px solid #e5e7eb;">
+                        <td style="padding:0.3rem 0;color:#64748b;">💳 Dépenses par CB</td>
+                        <td style="text-align:right;font-weight:700;color:#dc2626;">−${s.cb.toFixed(2)} ${dev}</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #e5e7eb;">
+                        <td style="padding:0.3rem 0;color:#64748b;">💵 Dépenses en Cash</td>
+                        <td style="text-align:right;font-weight:700;color:#dc2626;">−${s.cash.toFixed(2)} ${dev}</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #e5e7eb;background:#fef2f2;">
+                        <td style="padding:0.35rem 0.2rem;color:#b91c1c;font-weight:800;">TOTAL DÉPENSES</td>
+                        <td style="text-align:right;font-weight:900;color:#b91c1c;">−${s.dep.toFixed(2)} ${dev}</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #e5e7eb;">
+                        <td style="padding:0.3rem 0;color:#64748b;">↑ Total Retraits Cash</td>
+                        <td style="text-align:right;font-weight:700;color:#16a34a;">+${s.retrait.toFixed(2)} ${dev}</td>
+                    </tr>
+                    <tr style="background:${solde>=0?'#f0fdf4':'#fef2f2'};">
+                        <td style="padding:0.35rem 0.2rem;font-weight:800;color:${soldeColor};">SOLDE EN CAISSE</td>
+                        <td style="text-align:right;font-weight:900;color:${soldeColor};">${solde>=0?'+':''}${solde.toFixed(2)} ${dev}</td>
+                    </tr>
+                </table>
+            </div>`;
+        });
+        budgetHtml += '</div>';
+    }
+
+    // ─── Ventilation par catégorie ───
+    budgetHtml+='<div style="background:#f8fafc;border-radius:0.75rem;padding:0.75rem;margin-top:0.75rem;"><p style="font-size:0.65rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.5rem;">📊 Ventilation par catégorie</p>';
+    const allCats=[...catLabels,...Object.keys(catTotals).filter(c=>!catLabels.includes(c))];
+    allCats.forEach(cat=>{
+        if(!catTotals[cat]) return;
+        const devStr=Object.entries(catTotals[cat]).map(([d,v])=>v.toFixed(2)+' '+d).join(' | ');
+        budgetHtml+=`<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid #e5e7eb;font-size:0.78rem;"><span style="color:#374151;">${cat}</span><span style="font-weight:700;color:#1e293b;">${devStr}</span></div>`;
+    });
+    budgetHtml+='</div>';
+
+    // ─── Support Médias ───
+    const allMedias = (window.currentTrip?.details?.medias)||[];
+    const menus   = allMedias.filter(m=>m.context==='Menus');
+    const tickets = allMedias.filter(m=>m.context==='Tickets');
+
+    const buildMediaSection = (title, icon, items, emptyMsg) => {
+        if (!items.length) return `<div style="margin-bottom:1rem;">
+            <p style="font-size:0.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.5rem;">${icon} ${title}</p>
+            <p style="font-size:0.78rem;color:#94a3b8;font-style:italic;">${emptyMsg}</p>
+        </div>`;
+        const photos = items.map(m => `
+            <div style="break-inside:avoid;margin-bottom:0.6rem;">
+                <img src="${m.url}" alt="${m.label||''}" style="width:100%;border-radius:0.65rem;display:block;border:1px solid #e5e7eb;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.25rem 0.1rem 0;gap:0.5rem;">
+                    <span style="font-size:0.72rem;font-weight:700;color:#1e293b;flex:1;">${m.label||'—'}</span>
+                    <span style="font-size:0.65rem;color:#94a3b8;white-space:nowrap;">${m.date}</span>
+                </div>
+            </div>`).join('');
+        return `<div style="margin-bottom:1.5rem;">
+            <p style="font-size:0.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.75rem;">${icon} ${title} (${items.length})</p>
+            <div style="columns:2;column-gap:0.75rem;">${photos}</div>
+        </div>`;
+    };
+
+    const mediasHtml = `
+        <h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-4 uppercase tracking-wider">8. 📷 Support Médias</h3>
+        ${buildMediaSection('Menus', '🍽️', menus, 'Aucune photo de menu enregistrée.')}
+        ${buildMediaSection('Tickets', '🧾', tickets, 'Aucun ticket enregistré.')}
+    `;
 
     document.getElementById('report-content').innerHTML = `
         <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">1. ☀️ Ambiance & Météo</h3>
@@ -1974,12 +2534,16 @@ window.generateReport = function() {
             <div class="overflow-x-auto"><table class="recap-table"><thead><tr><th>Date</th><th>Type</th><th>Lieu</th><th>Avis</th></tr></thead><tbody>${repasRows||'<tr><td colspan="4" class="text-center text-xs italic text-gray-400 py-4">—</td></tr>'}</tbody></table></div>
         </div>
         <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">6. 🏃 Programme</h3>${actHtml}</div>
-        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">7. 💰 Bilan Financier</h3>${budgetHtml}</div>`;
+        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">7. 💰 Bilan Financier</h3>${budgetHtml}</div>
+        <div class="card p-5">${mediasHtml}</div>`;
 
     // Build markdown
     const trip=window.currentTrip||{};
     rawMarkdownReport = `# ROAD BOOK — ${trip.nom||''}\nOrganisme : ${trip.organisme||''}\nDirecteur : ${trip.directeur||''}\n\n## 1. Ambiance & Météo\n- Moral : ${txtMoral.join(' | ').replace(/<[^>]*>/g,'')}\n- Météo : ${txtMeteo.join(' | ').replace(/<[^>]*>/g,'')}\n\n## 2. Journal Pédagogique\n`;
-    for(let d=1;d<=duree;d++) { if(window.daysData[d]?.bilan) rawMarkdownReport+='- '+window.datesSejour[d-1]+' : '+window.daysData[d].bilan+'\n'; }
+    for(let d=1;d<=duree;d++) {
+        if(window.daysData[d]?.bilan) rawMarkdownReport+='- '+window.datesSejour[d-1]+' : '+window.daysData[d].bilan+'\n';
+        if(window.daysData[d]?.commentaireMeteo) rawMarkdownReport+='  💬 '+window.daysData[d].commentaireMeteo+'\n';
+    }
     rawMarkdownReport+='\n## 3. Hébergements\n';
     hebs.forEach(h=>rawMarkdownReport+=`- ${h.nom} (${h.prixTot}€) — ${h.comment||''}\n`);
     rawMarkdownReport+='\n## 4. Santé\n';
