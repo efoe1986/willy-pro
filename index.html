@@ -105,7 +105,7 @@
         @keyframes popIn { from{transform:scale(0.93);opacity:0;} to{transform:scale(1);opacity:1;} }
 
         /* === LOGIN PAGE === */
-        #screen-login { background: linear-gradient(160deg, #0f1f3d 0%, #1e3a5f 50%, #2d5494 100%); }
+        #screen-login { background: linear-gradient(160deg, #0f1f3d 0%, #1e3a5f 50%, #2d5494 100%); overflow-y: auto !important; overflow-x: hidden; position: absolute; inset: 0; }
         .login-logo-ring { width: 160px; height: 160px; border-radius: 50%; background: #ffffff; border: 4px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 12px 48px rgba(0,0,0,0.45), 0 0 0 10px rgba(255,255,255,0.07); overflow: hidden; }
         .login-logo-ring img { width: 92%; height: 92%; object-fit: contain; }
         .login-logo-fallback { font-size: 3.5rem; }
@@ -248,9 +248,9 @@
     <!-- ══════════════════════════════════════ -->
     <!-- ÉCRAN 0 : IDENTIFICATION              -->
     <!-- ══════════════════════════════════════ -->
-    <div id="screen-login" class="view-section active flex flex-col justify-between" style="min-height:100vh;">
+    <div id="screen-login" class="view-section active flex flex-col" style="min-height:100%; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem);">
         <!-- Partie haute : logo + form -->
-        <div class="flex-1 flex flex-col justify-center items-center px-6 py-8">
+        <div class="flex flex-col items-center px-6 pt-8 pb-4 w-full">
 
             <!-- Logo -->
             <div class="text-center mb-8">
@@ -366,6 +366,23 @@
                             <option value="NOK">NOK Couronne norvégienne</option>
                             <option value="RUB">RUB Rouble</option>
                         </select>
+                    </div>
+                    <!-- Saisie libre de devises personnalisées -->
+                    <div style="margin-top:0.6rem;">
+                        <p style="font-size:0.62rem;color:rgba(255,255,255,0.45);margin:0 0 0.4rem;font-style:italic;">
+                            Devise absente de la liste ? Saisissez-la ci-dessous (ex : IDR, CZK, SGD…)
+                        </p>
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;">
+                            <input type="text" id="login-devise-libre1" maxlength="6" placeholder="Devise libre 1 (ex : IDR)"
+                                class="login-input" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;"
+                                oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+                            <input type="text" id="login-devise-libre2" maxlength="6" placeholder="Devise libre 2 (optionnel)"
+                                class="login-input" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;"
+                                oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+                            <input type="text" id="login-devise-libre3" maxlength="6" placeholder="Devise libre 3 (optionnel)"
+                                class="login-input" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;"
+                                oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+                        </div>
                     </div>
                 </div>
                 <button type="button" onclick="startSession()" style="width:100%;background:#ffffff;color:var(--willy-navy);padding:0.9rem;border-radius:0.85rem;font-weight:900;font-size:0.95rem;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.6rem;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform=''">
@@ -1279,6 +1296,9 @@ window.startSession = function() {
     const dev1   = (document.getElementById('login-devise1')||{value:'€'}).value || '€';
     const dev2   = (document.getElementById('login-devise2')||{value:''}).value  || '';
     const dev3   = (document.getElementById('login-devise3')||{value:''}).value  || '';
+    const devL1  = ((document.getElementById('login-devise-libre1')||{value:''}).value||'').trim().toUpperCase();
+    const devL2  = ((document.getElementById('login-devise-libre2')||{value:''}).value||'').trim().toUpperCase();
+    const devL3  = ((document.getElementById('login-devise-libre3')||{value:''}).value||'').trim().toUpperCase();
 
     if (!nom||!prenom||!orga||!sejour||!start||!end) {
         showToast('Veuillez remplir tous les champs.'); return;
@@ -1292,7 +1312,8 @@ window.startSession = function() {
     const directeurFull = nom.toUpperCase() + ' ' + prenom;
     const codeConnexion = buildCodeConnexion(sejour, nom, start);
     const archiveKey    = buildArchiveKey(sejour, directeurFull, start, end);
-    const devises       = [dev1, dev2, dev3].filter(Boolean);
+    // Fusion : la devise libre remplace le select correspondant si renseignée
+    const devises = [...new Set([devL1||dev1, devL2||dev2, devL3||dev3].filter(Boolean))];
 
     // ── Recherche stricte : les 4 champs doivent correspondre exactement ──
     let restoredTrip = null;
