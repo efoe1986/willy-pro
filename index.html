@@ -374,9 +374,13 @@
 
                 <!-- Reprendre via code séjour -->
                 <div style="margin-top:1rem;border-top:1px solid rgba(255,255,255,0.15);padding-top:1rem;">
-                    <p style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-align:center;margin:0 0 0.6rem;text-transform:uppercase;letter-spacing:0.1em;">🔑 Reprendre un séjour existant</p>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-bottom:0.6rem;">
+                        <p style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-align:center;margin:0;text-transform:uppercase;letter-spacing:0.1em;">🔑 Reprendre un séjour existant</p>
+                        <button type="button" onclick="showCodeNotice()" title="Comment obtenir mon code ?"
+                            style="width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,0.22);border:1.5px solid rgba(255,255,255,0.4);color:white;font-size:0.65rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">i</button>
+                    </div>
                     <div style="display:flex;gap:0.5rem;">
-                        <input type="text" id="login-code-connexion" placeholder="Code ex: 010725-150725" class="login-input" style="flex:1;font-size:0.75rem;letter-spacing:0.06em;text-transform:uppercase;" maxlength="13">
+                        <input type="text" id="login-code-connexion" placeholder="ex: malte.leclerc110326" class="login-input" style="flex:1;font-size:0.72rem;letter-spacing:0.03em;text-transform:lowercase;" maxlength="40">
                         <button type="button" onclick="connecterParCode()" style="background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.25);padding:0.5rem 0.85rem;border-radius:0.75rem;font-weight:800;font-size:0.8rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">
                             <i class="fas fa-key"></i>
                         </button>
@@ -1087,6 +1091,44 @@
 
     <!-- Modal : Soin médical -->
 
+    <!-- Modal : Notice code de connexion -->
+    <div id="modal-code-notice" class="modal-overlay">
+        <div class="modal-content" style="max-width:360px;">
+            <div style="text-align:center;margin-bottom:1rem;">
+                <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#1e3a5f,#2563eb);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:white;margin:0 auto 0.75rem;">i</div>
+                <h3 style="font-weight:900;font-size:1rem;color:#1e293b;margin:0 0 0.25rem;">Mon code de connexion</h3>
+                <p style="font-size:0.72rem;color:#64748b;margin:0;">Ce code vous permet de retrouver votre séjour sur cet appareil.</p>
+            </div>
+
+            <div style="background:#f1f5f9;border-radius:0.875rem;padding:0.9rem;margin-bottom:1rem;">
+                <p style="font-size:0.65rem;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 0.5rem;">📐 Format du code</p>
+                <div style="font-family:monospace;font-size:0.85rem;font-weight:700;color:#1e3a5f;background:white;border-radius:0.5rem;padding:0.5rem 0.75rem;border:1px solid #e2e8f0;letter-spacing:0.04em;">
+                    nomsejour.nomdefamille<span style="color:#dc2626;">JJMMAA</span>
+                </div>
+                <p style="font-size:0.68rem;color:#64748b;margin:0.5rem 0 0;">Tout en minuscules, sans espace ni accent.<br>
+                Date de <strong>départ</strong> au format JJMMAA.</p>
+            </div>
+
+            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:0.875rem;padding:0.9rem;margin-bottom:1rem;">
+                <p style="font-size:0.65rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 0.6rem;">💡 Exemple</p>
+                <div style="font-size:0.78rem;color:#334155;line-height:1.6;">
+                    Séjour <strong>Malte</strong>, directrice <strong>Delphine Leclerc</strong>,<br>
+                    départ le <strong>11 mars 2026</strong>
+                </div>
+                <div style="font-family:monospace;font-size:0.9rem;font-weight:900;color:#1d4ed8;background:white;border-radius:0.5rem;padding:0.45rem 0.75rem;border:1px solid #bfdbfe;margin-top:0.5rem;letter-spacing:0.03em;">
+                    malte.leclerc<span style="color:#dc2626;">110326</span>
+                </div>
+            </div>
+
+            <div id="notice-code-current" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:0.875rem;padding:0.75rem;margin-bottom:1rem;">
+                <p style="font-size:0.65rem;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 0.4rem;">🔑 Votre code actuel</p>
+                <div id="notice-code-value" style="font-family:monospace;font-size:0.88rem;font-weight:900;color:#15803d;letter-spacing:0.04em;"></div>
+            </div>
+
+            <button type="button" class="btn-primary w-full" onclick="closeAllModals()">Compris !</button>
+        </div>
+    </div>
+
     <!-- Modal : Infirmerie — rappel médical + traitement administré -->
     <div id="modal-infirmerie" class="modal-overlay">
         <div class="modal-content" style="max-width:370px;">
@@ -1187,19 +1229,43 @@ let currentEditingDay      = 1;
 let rawMarkdownReport      = "";
 let tempHebRatings         = { personnel:0, equipements:0, proprete:0, confort:0, qualite:0, emplacement:0 };
 
+/* ── NORMALIZE (accents, espaces, casse) ── */
+function normalizeStr(s) {
+    return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/gi,'').toLowerCase();
+}
+
+function buildCodeConnexion(sejour, nomFamille, dateDebut) {
+    // Format : nomsejour.nomfamille JJMMAA  ex: malte.leclerc110326
+    const ns  = normalizeStr(sejour);
+    const nf  = normalizeStr(nomFamille);
+    const parts = (dateDebut||'').split('-'); // YYYY-MM-DD
+    const jjmmaa = parts.length===3 ? parts[2].slice(-2)+parts[1]+parts[0].slice(-2) : '';
+    return ns + '.' + nf + jjmmaa;
+}
+
+function buildArchiveKey(sejour, directeurFull, dateDebut, dateFin) {
+    // Clé unique sur les 4 champs : nom séjour + nom directeur + date début + date fin
+    return 'willypro_v2_' + normalizeStr(sejour) + '_' + normalizeStr(directeurFull) + '_' + (dateDebut||'') + '_' + (dateFin||'');
+}
+
 /* ── INIT ── */
 window.onload = function() {
     try {
         const saved = localStorage.getItem('willypro_current_session');
         if (saved) {
-            window.currentTrip = JSON.parse(saved);
-            hydrateAppWithCurrentTrip();
-            switchView('view-hub');
+            const trip = JSON.parse(saved);
+            // Vérification d'intégrité : les 4 champs clés doivent être présents
+            if (trip && trip.nom && trip.directeur && trip.dateDebut && trip.dateFin) {
+                window.currentTrip = trip;
+                hydrateAppWithCurrentTrip();
+                switchView('view-hub');
+                return;
+            }
         }
     } catch(e) {
-        console.error("Session corrompue, nettoyage.", e);
-        localStorage.removeItem('willypro_current_session');
+        console.error('Session corrompue, nettoyage.', e);
     }
+    localStorage.removeItem('willypro_current_session');
 };
 
 /* ── START SESSION ── */
@@ -1222,55 +1288,79 @@ window.startSession = function() {
     if (isNaN(daysDiff)||daysDiff<=0||daysDiff>90) {
         showToast('Dates invalides.'); return;
     }
-    // Code connexion = JJMMAA-JJMMAA
-    const fmtD = s => { const p=s.split('-'); return p[2].slice(-2)+p[1]+p[0].slice(-2); };
-    const codeConnexion = fmtD(start) + '-' + fmtD(end);
-    const devises = [dev1, dev2, dev3].filter(Boolean);
 
-    window.currentTrip = {
-        nom: sejour, organisme: orga,
-        directeur: nom.toUpperCase() + ' ' + prenom,
-        dateDebut: start, dateFin: end, duree: daysDiff,
-        devises: devises,
-        codeConnexion: codeConnexion,
-        details: { jours:{}, budget:[], enfants:[], soins:[], medias:[], hebergements:[], incidentsMajeurs:[], incidentsComportement:[] }
-    };
+    const directeurFull = nom.toUpperCase() + ' ' + prenom;
+    const codeConnexion = buildCodeConnexion(sejour, nom, start);
+    const archiveKey    = buildArchiveKey(sejour, directeurFull, start, end);
+    const devises       = [dev1, dev2, dev3].filter(Boolean);
 
-    const archiveId = 'willypro_archive_' + sejour.replace(/\s+/g,'').toLowerCase() + '_' + start;
+    // ── Recherche stricte : les 4 champs doivent correspondre exactement ──
+    let restoredTrip = null;
     try {
-        const archived = localStorage.getItem(archiveId);
-        if (archived && confirm('Reprendre les données existantes de ce séjour ?')) {
-            window.currentTrip = JSON.parse(archived);
+        const archived = localStorage.getItem(archiveKey);
+        if (archived) {
+            const parsed = JSON.parse(archived);
+            // Double vérification des 4 champs
+            const sameNom   = normalizeStr(parsed.nom)       === normalizeStr(sejour);
+            const sameDir   = normalizeStr(parsed.directeur) === normalizeStr(directeurFull);
+            const sameStart = parsed.dateDebut === start;
+            const sameEnd   = parsed.dateFin   === end;
+            if (sameNom && sameDir && sameStart && sameEnd) {
+                restoredTrip = parsed;
+            }
         }
     } catch(e) {}
 
-    // Store by code for cross-device lookup
-    try { localStorage.setItem('willypro_code_' + codeConnexion, archiveId); } catch(e){}
+    if (restoredTrip && confirm('Un séjour "' + sejour + '" avec les mêmes dates existe déjà.\nReprendre les données ?')) {
+        window.currentTrip = restoredTrip;
+    } else {
+        window.currentTrip = {
+            nom: sejour, organisme: orga,
+            directeur: directeurFull,
+            dateDebut: start, dateFin: end, duree: daysDiff,
+            devises: devises,
+            codeConnexion: codeConnexion,
+            archiveKey: archiveKey,
+            details: { jours:{}, budget:[], enfants:[], soins:[], medias:[], hebergements:[], incidentsMajeurs:[], incidentsComportement:[] }
+        };
+    }
+    // Toujours mettre à jour le code et la clé d'archive
+    window.currentTrip.codeConnexion = codeConnexion;
+    window.currentTrip.archiveKey    = archiveKey;
 
     hydrateAppWithCurrentTrip();
     saveToLocal();
     switchView('view-hub');
-    showToast('🎉 Road Book initialisé ! Code : ' + codeConnexion);
+    showToast('🎉 Séjour ouvert ! Code : ' + codeConnexion);
 };
 
-// Connexion par code séjour (autre appareil)
+// Connexion par code séjour
 window.connecterParCode = function() {
-    const code = (document.getElementById('login-code-connexion')||{value:''}).value.trim().toUpperCase();
+    const code = ((document.getElementById('login-code-connexion')||{value:''}).value||'').trim().toLowerCase();
     if (!code) { showToast('Saisissez un code.'); return; }
+    // Parcourt tout le localStorage pour trouver un séjour dont le code correspond
+    let found = null;
     try {
-        // Cherche directement dans localStorage par code
-        const archiveKey = localStorage.getItem('willypro_code_' + code);
-        const data = archiveKey ? localStorage.getItem(archiveKey) : localStorage.getItem('willypro_code_trip_' + code);
-        if (data) {
-            window.currentTrip = JSON.parse(data);
-            hydrateAppWithCurrentTrip();
-            saveToLocal();
-            switchView('view-hub');
-            showToast('✅ Séjour ' + window.currentTrip.nom + ' restauré !');
-        } else {
-            showToast('❌ Code introuvable sur cet appareil.');
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (!key || !key.startsWith('willypro_v2_')) continue;
+            const raw = localStorage.getItem(key);
+            if (!raw) continue;
+            const trip = JSON.parse(raw);
+            if (trip && trip.codeConnexion && trip.codeConnexion.toLowerCase() === code) {
+                found = trip; break;
+            }
         }
-    } catch(e) { showToast('Erreur lors de la restauration.'); }
+    } catch(e) {}
+    if (found) {
+        window.currentTrip = found;
+        hydrateAppWithCurrentTrip();
+        saveToLocal();
+        switchView('view-hub');
+        showToast('✅ Séjour ' + found.nom + ' restauré !');
+    } else {
+        showToast('❌ Code introuvable sur cet appareil.');
+    }
 };
 
 /* ── DEVISES DYNAMIQUES ── */
@@ -1322,16 +1412,46 @@ window.saveToLocal = function() {
     window.currentTrip.details.medias             = window.currentTrip.details.medias       || [];
     window.currentTrip.details.hebergements       = window.currentTrip.details.hebergements || [];
     try {
+        // Recalcul de l'archiveKey si absente (rétro-compatibilité)
+        if (!window.currentTrip.archiveKey) {
+            window.currentTrip.archiveKey = buildArchiveKey(
+                window.currentTrip.nom,
+                window.currentTrip.directeur,
+                window.currentTrip.dateDebut,
+                window.currentTrip.dateFin
+            );
+        }
+        if (!window.currentTrip.codeConnexion) {
+            const nomFamille = (window.currentTrip.directeur||'').split(' ')[0];
+            window.currentTrip.codeConnexion = buildCodeConnexion(
+                window.currentTrip.nom, nomFamille, window.currentTrip.dateDebut
+            );
+        }
         localStorage.setItem('willypro_current_session', JSON.stringify(window.currentTrip));
-        const archiveId = 'willypro_archive_' + window.currentTrip.nom.replace(/\s+/g,'').toLowerCase() + '_' + window.currentTrip.dateDebut;
-        localStorage.setItem(archiveId, JSON.stringify(window.currentTrip));
-    } catch(e) { console.warn("Sauvegarde échouée (localStorage plein ?)"); }
+        localStorage.setItem(window.currentTrip.archiveKey, JSON.stringify(window.currentTrip));
+    } catch(e) { console.warn('Sauvegarde échouée (localStorage plein ?)'); }
 };
 
 /* ── LOGOUT ── */
 window.showCodeConnexion = function() {
     const code = window.currentTrip?.codeConnexion || '—';
-    alert('🔑 Code de connexion de ce séjour :\n\n' + code + '\n\nSaisissez ce code sur un autre appareil pour retrouver votre séjour.');
+    const el = document.getElementById('notice-code-value');
+    const block = document.getElementById('notice-code-current');
+    if (el) el.textContent = code;
+    if (block) block.style.display = 'block';
+    openModal('modal-code-notice');
+};
+
+window.showCodeNotice = function() {
+    const block = document.getElementById('notice-code-current');
+    const el    = document.getElementById('notice-code-value');
+    if (window.currentTrip?.codeConnexion && el) {
+        el.textContent = window.currentTrip.codeConnexion;
+        if (block) block.style.display = 'block';
+    } else {
+        if (block) block.style.display = 'none';
+    }
+    openModal('modal-code-notice');
 };
 
 window.logoutDir = function() {
