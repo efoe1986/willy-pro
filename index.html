@@ -263,10 +263,14 @@
 
         // Détection ouverture DevTools (technique de détimming)
         let devOpen = false;
+        // Seuil élevé : le clavier iOS peut réduire innerHeight de 250-300px
+        // On ne surveille QUE la largeur (jamais affectée par le clavier)
         const threshold = 160;
         setInterval(function() {
-            if (window.outerWidth - window.innerWidth > threshold ||
-                window.outerHeight - window.innerHeight > threshold) {
+            const widthDiff = window.outerWidth - window.innerWidth;
+            // On ignore la hauteur : le clavier virtuel iOS/Android la réduit
+            // et déclencherait un faux positif "Accès non autorisé"
+            if (widthDiff > threshold) {
                 if (!devOpen) {
                     devOpen = true;
                     document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1f3d;color:white;font-family:sans-serif;flex-direction:column;gap:1rem;"><div style="font-size:3rem;">🔒</div><p style="font-size:1.1rem;font-weight:700;">Accès non autorisé</p><p style="font-size:0.8rem;opacity:0.6;">Veuillez fermer les outils de développement.</p></div>';
