@@ -18,9 +18,19 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="WILLY PRO">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icon-192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icon-192.png">
+    <!-- Icônes en chemin absolu — requis par Safari pour l'écran d'accueil -->
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon-192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/icon-192.png">
+    <!-- Splash screen iOS (évite l'écran blanc au démarrage) -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+      /* Fond de lancement iOS — évite l'écran blanc */
+      @media (display-mode: standalone) {
+        html, body { background: #0f1f3d !important; }
+      }
+    </style>
 
     <!-- Android / Chrome -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -2868,38 +2878,13 @@ window.copyReportText = function() {
     </div>
 
     <script>
-    // ═══ Service Worker (cache offline) ══════════════════════════
+    // ═══ Service Worker (cache offline — fichier sw.js requis par iOS Safari) ══
     if ('serviceWorker' in navigator) {
-        const swCode = `
-const CACHE = 'willypro-v2';
-const URLS  = [self.location.href.replace(/\/sw-[^/]+\.js$/, '')];
-self.addEventListener('install', e => {
-    e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS)).catch(() => {}));
-    self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-    e.waitUntil(caches.keys().then(keys =>
-        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ));
-    self.clients.claim();
-});
-self.addEventListener('fetch', e => {
-    if (e.request.method !== 'GET') return;
-    e.respondWith(
-        caches.match(e.request).then(cached => {
-            const net = fetch(e.request).then(resp => {
-                caches.open(CACHE).then(c => c.put(e.request, resp.clone())).catch(() => {});
-                return resp;
-            }).catch(() => cached);
-            return cached || net;
-        })
-    );
-});`;
-        const blob = new Blob([swCode], {type: 'application/javascript'});
-        const swUrl = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl, {scope: '/'}).catch(() => {
-            // Blob SW scope peut être refusé selon l'hébergeur — mode dégradé silencieux
-        });
+        // Safari refuse les Blob URL — on utilise un fichier sw.js réel
+        navigator.serviceWorker.register('./sw.js', { scope: './' })
+            .catch(() => {
+                // Mode dégradé silencieux si l'hébergeur bloque les SW
+            });
     }
 
     // ═══ Icône PWA inline ══════════════════════════════════════
