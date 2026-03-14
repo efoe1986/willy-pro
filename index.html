@@ -219,20 +219,22 @@
         document.addEventListener('selectstart', function(e) { e.preventDefault(); return false; });
         document.addEventListener('dragstart',   function(e) { e.preventDefault(); return false; });
 
-        // Détection ouverture DevTools (technique de détimming)
-        let devOpen = false;
-        const threshold = 160;
-        setInterval(function() {
-            if (window.outerWidth - window.innerWidth > threshold ||
-                window.outerHeight - window.innerHeight > threshold) {
-                if (!devOpen) {
-                    devOpen = true;
-                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1f3d;color:white;font-family:sans-serif;flex-direction:column;gap:1rem;"><div style="font-size:3rem;">🔒</div><p style="font-size:1.1rem;font-weight:700;">Accès non autorisé</p><p style="font-size:0.8rem;opacity:0.6;">Veuillez fermer les outils de développement.</p></div>';
+        // Détection ouverture DevTools (uniquement sur desktop via la largeur)
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+        if (!isMobile) {
+            let devOpen = false;
+            const threshold = 160;
+            setInterval(function() {
+                if (window.outerWidth - window.innerWidth > threshold) {
+                    if (!devOpen) {
+                        devOpen = true;
+                        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1f3d;color:white;font-family:sans-serif;flex-direction:column;gap:1rem;"><div style="font-size:3rem;">🔒</div><p style="font-size:1.1rem;font-weight:700;">Accès non autorisé</p><p style="font-size:0.8rem;opacity:0.6;">Veuillez fermer les outils de développement.</p></div>';
+                    }
+                } else {
+                    devOpen = false;
                 }
-            } else {
-                devOpen = false;
-            }
-        }, 1000);
+            }, 1000);
+        }
     })();
     </script>
 </head>
