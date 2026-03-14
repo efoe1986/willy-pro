@@ -4,6 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WILLY PRO - Road Book Manager</title>
+
+    <!-- ═══ PWA — Progressive Web App ═══ -->
+
+    <!-- Manifest embarqué en data URI (app installable sans fichier externe) -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Theme color (barre de statut mobile) -->
+    <meta name="theme-color" content="#1e3a5f">
+    <meta name="background-color" content="#0f1f3d">
+
+    <!-- iOS / Safari PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WILLY PRO">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-192.png">
+
+    <!-- Android / Chrome -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="WILLY PRO">
+
+    <!-- Microsoft (Edge / PWA Store) -->
+    <meta name="msapplication-TileColor" content="#1e3a5f">
+    <meta name="msapplication-TileImage" content="icon-192.png">
+
+    <!-- SEO / partage -->
+    <meta name="description" content="Road Book Manager pour directeurs de séjour — WILLY PRO by Yes Concept">
+    <meta name="author" content="Yes Concept">
+    <meta property="og:title" content="WILLY PRO - Road Book Manager">
+    <meta property="og:description" content="Application mobile de gestion de séjour pour directeurs BAFA/BAFD">
+    <meta property="og:type" content="website">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -105,7 +137,7 @@
         @keyframes popIn { from{transform:scale(0.93);opacity:0;} to{transform:scale(1);opacity:1;} }
 
         /* === LOGIN PAGE === */
-        #screen-login { background: linear-gradient(160deg, #0f1f3d 0%, #1e3a5f 50%, #2d5494 100%); }
+        #screen-login { background: linear-gradient(160deg, #0f1f3d 0%, #1e3a5f 50%, #2d5494 100%); overflow-y: auto !important; overflow-x: hidden; position: absolute; inset: 0; }
         .login-logo-ring { width: 160px; height: 160px; border-radius: 50%; background: #ffffff; border: 4px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 12px 48px rgba(0,0,0,0.45), 0 0 0 10px rgba(255,255,255,0.07); overflow: hidden; }
         .login-logo-ring img { width: 92%; height: 92%; object-fit: contain; }
         .login-logo-fallback { font-size: 3.5rem; }
@@ -200,19 +232,19 @@
         // Désactive les raccourcis clavier dangereux
         document.addEventListener('keydown', function(e) {
             // F12
-            if (e.keyCode === 123) { e.preventDefault(); return false; }
+            if (e.keyCode === 0x7b) { e.preventDefault(); return false; }
             // Ctrl+U (view source)
-            if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.keyCode === 0x55) { e.preventDefault(); return false; }
             // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C (DevTools)
-            if (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && [0x49, 0x4a, 0x43].includes(e.keyCode)) { e.preventDefault(); return false; }
             // Ctrl+S (save)
-            if (e.ctrlKey && e.keyCode === 83) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.keyCode === 0x53) { e.preventDefault(); return false; }
             // Ctrl+A (select all)
-            if (e.ctrlKey && e.keyCode === 65) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.keyCode === 0x41) { e.preventDefault(); return false; }
             // Cmd+Option+I / Cmd+Option+J (Mac DevTools)
-            if (e.metaKey && e.altKey && [73, 74].includes(e.keyCode)) { e.preventDefault(); return false; }
+            if (e.metaKey && e.altKey && [0x49, 0x4a].includes(e.keyCode)) { e.preventDefault(); return false; }
             // Cmd+U (Mac view source)
-            if (e.metaKey && e.keyCode === 85) { e.preventDefault(); return false; }
+            if (e.metaKey && e.keyCode === 0x55) { e.preventDefault(); return false; }
         });
 
         // Désactive la sélection de texte
@@ -221,18 +253,18 @@
 
         // Détection ouverture DevTools (technique de détimming)
         let devOpen = false;
-        const threshold = 160;
+        const threshold = 0xa0;
         setInterval(function() {
             if (window.outerWidth - window.innerWidth > threshold ||
                 window.outerHeight - window.innerHeight > threshold) {
                 if (!devOpen) {
                     devOpen = true;
-                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1f3d;color:white;font-family:sans-serif;flex-direction:column;gap:1rem;"><div style="font-size:3rem;">🔒</div><p style="font-size:1.1rem;font-weight:700;">Accès non autorisé</p><p style="font-size:0.8rem;opacity:0.6;">Veuillez fermer les outils de développement.</p></div>';
+                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1f3d;color:white;font-family:sans-serif;flex-direction:column;gap:1rem;"><div style="font-size:3rem;">🔒</div><p style="font-size:1.1rem;font-weight:0x2bc;">Accès non autorisé</p><p style="font-size:0.8rem;opacity:0.6;">Veuillez fermer les outils de développement.</p></div>';
                 }
             } else {
                 devOpen = false;
             }
-        }, 1000);
+        }, 0x3e8);
     })();
     </script>
 </head>
@@ -248,9 +280,9 @@
     <!-- ══════════════════════════════════════ -->
     <!-- ÉCRAN 0 : IDENTIFICATION              -->
     <!-- ══════════════════════════════════════ -->
-    <div id="screen-login" class="view-section active flex flex-col justify-between" style="min-height:100vh;">
+    <div id="screen-login" class="view-section active flex flex-col" style="min-height:100%; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem);">
         <!-- Partie haute : logo + form -->
-        <div class="flex-1 flex flex-col justify-center items-center px-6 py-8">
+        <div class="flex flex-col items-center px-6 pt-8 pb-4 w-full">
 
             <!-- Logo -->
             <div class="text-center mb-8">
@@ -367,6 +399,23 @@
                             <option value="RUB">RUB Rouble</option>
                         </select>
                     </div>
+                    <!-- Saisie libre de devises personnalisées -->
+                    <div style="margin-top:0.6rem;">
+                        <p style="font-size:0.62rem;color:rgba(255,255,255,0.45);margin:0 0 0.4rem;font-style:italic;">
+                            Devise absente de la liste ? Saisissez-la ci-dessous (ex : IDR, CZK, SGD…)
+                        </p>
+                        <div style="display:flex;flex-direction:column;gap:0.35rem;">
+                            <input type="text" id="login-devise-libre1" maxlength="6" placeholder="Devise libre 1 (ex : IDR)"
+                                class="login-input" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;"
+                                oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+                            <input type="text" id="login-devise-libre2" maxlength="6" placeholder="Devise libre 2 (optionnel)"
+                                class="login-input" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;"
+                                oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+                            <input type="text" id="login-devise-libre3" maxlength="6" placeholder="Devise libre 3 (optionnel)"
+                                class="login-input" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;"
+                                oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+                        </div>
+                    </div>
                 </div>
                 <button type="button" onclick="startSession()" style="width:100%;background:#ffffff;color:var(--willy-navy);padding:0.9rem;border-radius:0.85rem;font-weight:900;font-size:0.95rem;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.6rem;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform=''">
                     <i class="fas fa-sign-in-alt"></i> Ouvrir le Séjour
@@ -374,9 +423,13 @@
 
                 <!-- Reprendre via code séjour -->
                 <div style="margin-top:1rem;border-top:1px solid rgba(255,255,255,0.15);padding-top:1rem;">
-                    <p style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-align:center;margin:0 0 0.6rem;text-transform:uppercase;letter-spacing:0.1em;">🔑 Reprendre un séjour existant</p>
+                    <div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-bottom:0.6rem;">
+                        <p style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-align:center;margin:0;text-transform:uppercase;letter-spacing:0.1em;">🔑 Reprendre un séjour existant</p>
+                        <button type="button" onclick="showCodeNotice()" title="Comment obtenir mon code ?"
+                            style="width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,0.22);border:1.5px solid rgba(255,255,255,0.4);color:white;font-size:0.65rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">i</button>
+                    </div>
                     <div style="display:flex;gap:0.5rem;">
-                        <input type="text" id="login-code-connexion" placeholder="Code ex: 010725-150725" class="login-input" style="flex:1;font-size:0.75rem;letter-spacing:0.06em;text-transform:uppercase;" maxlength="13">
+                        <input type="text" id="login-code-connexion" placeholder="ex: malte.leclerc110326" class="login-input" style="flex:1;font-size:0.72rem;letter-spacing:0.03em;text-transform:lowercase;" maxlength="40">
                         <button type="button" onclick="connecterParCode()" style="background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.25);padding:0.5rem 0.85rem;border-radius:0.75rem;font-weight:800;font-size:0.8rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">
                             <i class="fas fa-key"></i>
                         </button>
@@ -1087,6 +1140,44 @@
 
     <!-- Modal : Soin médical -->
 
+    <!-- Modal : Notice code de connexion -->
+    <div id="modal-code-notice" class="modal-overlay">
+        <div class="modal-content" style="max-width:360px;">
+            <div style="text-align:center;margin-bottom:1rem;">
+                <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#1e3a5f,#2563eb);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:white;margin:0 auto 0.75rem;">i</div>
+                <h3 style="font-weight:900;font-size:1rem;color:#1e293b;margin:0 0 0.25rem;">Mon code de connexion</h3>
+                <p style="font-size:0.72rem;color:#64748b;margin:0;">Ce code vous permet de retrouver votre séjour sur cet appareil.</p>
+            </div>
+
+            <div style="background:#f1f5f9;border-radius:0.875rem;padding:0.9rem;margin-bottom:1rem;">
+                <p style="font-size:0.65rem;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 0.5rem;">📐 Format du code</p>
+                <div style="font-family:monospace;font-size:0.85rem;font-weight:700;color:#1e3a5f;background:white;border-radius:0.5rem;padding:0.5rem 0.75rem;border:1px solid #e2e8f0;letter-spacing:0.04em;">
+                    nomsejour.nomdefamille<span style="color:#dc2626;">JJMMAA</span>
+                </div>
+                <p style="font-size:0.68rem;color:#64748b;margin:0.5rem 0 0;">Tout en minuscules, sans espace ni accent.<br>
+                Date de <strong>départ</strong> au format JJMMAA.</p>
+            </div>
+
+            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:0.875rem;padding:0.9rem;margin-bottom:1rem;">
+                <p style="font-size:0.65rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 0.6rem;">💡 Exemple</p>
+                <div style="font-size:0.78rem;color:#334155;line-height:1.6;">
+                    Séjour <strong>Malte</strong>, directrice <strong>Delphine Leclerc</strong>,<br>
+                    départ le <strong>11 mars 2026</strong>
+                </div>
+                <div style="font-family:monospace;font-size:0.9rem;font-weight:900;color:#1d4ed8;background:white;border-radius:0.5rem;padding:0.45rem 0.75rem;border:1px solid #bfdbfe;margin-top:0.5rem;letter-spacing:0.03em;">
+                    malte.leclerc<span style="color:#dc2626;">110326</span>
+                </div>
+            </div>
+
+            <div id="notice-code-current" style="display:none;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:0.875rem;padding:0.75rem;margin-bottom:1rem;">
+                <p style="font-size:0.65rem;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:0.07em;margin:0 0 0.4rem;">🔑 Votre code actuel</p>
+                <div id="notice-code-value" style="font-family:monospace;font-size:0.88rem;font-weight:900;color:#15803d;letter-spacing:0.04em;"></div>
+            </div>
+
+            <button type="button" class="btn-primary w-full" onclick="closeAllModals()">Compris !</button>
+        </div>
+    </div>
+
     <!-- Modal : Infirmerie — rappel médical + traitement administré -->
     <div id="modal-infirmerie" class="modal-overlay">
         <div class="modal-content" style="max-width:370px;">
@@ -1171,6 +1262,20 @@
 <!-- JAVASCRIPT                                   -->
 <!-- ══════════════════════════════════════════════ -->
 <script>
+(function(){
+    var _t=function(){
+        var _x=new Date();
+        debugger;
+        if(new Date()-_x>100){
+            document.body.innerHTML='';
+            window.location.reload();
+        }
+    };
+    try{setInterval(_t,3000);}catch(e){}
+    var _c=0;
+    Object.defineProperty({},'id',{get:function(){_c++;if(_c>3){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1f3d;color:white;font-size:1.1rem;font-weight:700;">🔒 Accès non autorisé</div>';}}});
+})();
+
 'use strict';
 
 /* ── GLOBALS ── */
@@ -1187,19 +1292,43 @@ let currentEditingDay      = 1;
 let rawMarkdownReport      = "";
 let tempHebRatings         = { personnel:0, equipements:0, proprete:0, confort:0, qualite:0, emplacement:0 };
 
+/* ── NORMALIZE (accents, espaces, casse) ── */
+function normalizeStr(s) {
+    return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/gi,'').toLowerCase();
+}
+
+function buildCodeConnexion(sejour, nomFamille, dateDebut) {
+    // Format : nomsejour.nomfamille JJMMAA  ex: malte.leclerc110326
+    const ns  = normalizeStr(sejour);
+    const nf  = normalizeStr(nomFamille);
+    const parts = (dateDebut||'').split('-'); // YYYY-MM-DD
+    const jjmmaa = parts.length===3 ? parts[2].slice(-2)+parts[1]+parts[0].slice(-2) : '';
+    return ns + '.' + nf + jjmmaa;
+}
+
+function buildArchiveKey(sejour, directeurFull, dateDebut, dateFin) {
+    // Clé unique sur les 4 champs : nom séjour + nom directeur + date début + date fin
+    return 'willy'+'pro'+'_v2_' + normalizeStr(sejour) + '_' + normalizeStr(directeurFull) + '_' + (dateDebut||'') + '_' + (dateFin||'');
+}
+
 /* ── INIT ── */
 window.onload = function() {
     try {
-        const saved = localStorage.getItem('willypro_current_session');
+        const saved = localStorage.getItem('willy'+'pro_cur'+'rent_ses'+'sion');
         if (saved) {
-            window.currentTrip = JSON.parse(saved);
-            hydrateAppWithCurrentTrip();
-            switchView('view-hub');
+            const trip = JSON.parse(saved);
+            // Vérification d'intégrité : les 4 champs clés doivent être présents
+            if (trip && trip.nom && trip.directeur && trip.dateDebut && trip.dateFin) {
+                window.currentTrip = trip;
+                hydrateAppWithCurrentTrip();
+                switchView('view-hub');
+                return;
+            }
         }
     } catch(e) {
-        console.error("Session corrompue, nettoyage.", e);
-        localStorage.removeItem('willypro_current_session');
+        console.error('Session corrompue, nettoyage.', e);
     }
+    localStorage.removeItem('willy'+'pro_cur'+'rent_ses'+'sion');
 };
 
 /* ── START SESSION ── */
@@ -1213,64 +1342,92 @@ window.startSession = function() {
     const dev1   = (document.getElementById('login-devise1')||{value:'€'}).value || '€';
     const dev2   = (document.getElementById('login-devise2')||{value:''}).value  || '';
     const dev3   = (document.getElementById('login-devise3')||{value:''}).value  || '';
+    const devL1  = ((document.getElementById('login-devise-libre1')||{value:''}).value||'').trim().toUpperCase();
+    const devL2  = ((document.getElementById('login-devise-libre2')||{value:''}).value||'').trim().toUpperCase();
+    const devL3  = ((document.getElementById('login-devise-libre3')||{value:''}).value||'').trim().toUpperCase();
 
     if (!nom||!prenom||!orga||!sejour||!start||!end) {
         showToast('Veuillez remplir tous les champs.'); return;
     }
     const d1 = new Date(start), d2 = new Date(end);
-    const daysDiff = Math.ceil((d2-d1)/(1000*3600*24)) + 1;
-    if (isNaN(daysDiff)||daysDiff<=0||daysDiff>90) {
+    const daysDiff = Math.ceil((d2-d1)/(0x3e8*0xe10*0x18)) + 1;
+    if (isNaN(daysDiff)||daysDiff<=0||daysDiff>0x5a) {
         showToast('Dates invalides.'); return;
     }
-    // Code connexion = JJMMAA-JJMMAA
-    const fmtD = s => { const p=s.split('-'); return p[2].slice(-2)+p[1]+p[0].slice(-2); };
-    const codeConnexion = fmtD(start) + '-' + fmtD(end);
-    const devises = [dev1, dev2, dev3].filter(Boolean);
 
-    window.currentTrip = {
-        nom: sejour, organisme: orga,
-        directeur: nom.toUpperCase() + ' ' + prenom,
-        dateDebut: start, dateFin: end, duree: daysDiff,
-        devises: devises,
-        codeConnexion: codeConnexion,
-        details: { jours:{}, budget:[], enfants:[], soins:[], medias:[], hebergements:[], incidentsMajeurs:[], incidentsComportement:[] }
-    };
+    const directeurFull = nom.toUpperCase() + ' ' + prenom;
+    const codeConnexion = buildCodeConnexion(sejour, nom, start);
+    const archiveKey    = buildArchiveKey(sejour, directeurFull, start, end);
+    // Fusion : la devise libre remplace le select correspondant si renseignée
+    const devises = [...new Set([devL1||dev1, devL2||dev2, devL3||dev3].filter(Boolean))];
 
-    const archiveId = 'willypro_archive_' + sejour.replace(/\s+/g,'').toLowerCase() + '_' + start;
+    // ── Recherche stricte : les 4 champs doivent correspondre exactement ──
+    let restoredTrip = null;
     try {
-        const archived = localStorage.getItem(archiveId);
-        if (archived && confirm('Reprendre les données existantes de ce séjour ?')) {
-            window.currentTrip = JSON.parse(archived);
+        const archived = localStorage.getItem(archiveKey);
+        if (archived) {
+            const parsed = JSON.parse(archived);
+            // Double vérification des 4 champs
+            const sameNom   = normalizeStr(parsed.nom)       === normalizeStr(sejour);
+            const sameDir   = normalizeStr(parsed.directeur) === normalizeStr(directeurFull);
+            const sameStart = parsed.dateDebut === start;
+            const sameEnd   = parsed.dateFin   === end;
+            if (sameNom && sameDir && sameStart && sameEnd) {
+                restoredTrip = parsed;
+            }
         }
     } catch(e) {}
 
-    // Store by code for cross-device lookup
-    try { localStorage.setItem('willypro_code_' + codeConnexion, archiveId); } catch(e){}
+    if (restoredTrip && confirm('Un séjour "' + sejour + '" avec les mêmes dates existe déjà.\nReprendre les données ?')) {
+        window.currentTrip = restoredTrip;
+    } else {
+        window.currentTrip = {
+            nom: sejour, organisme: orga,
+            directeur: directeurFull,
+            dateDebut: start, dateFin: end, duree: daysDiff,
+            devises: devises,
+            codeConnexion: codeConnexion,
+            archiveKey: archiveKey,
+            details: { jours:{}, budget:[], enfants:[], soins:[], medias:[], hebergements:[], incidentsMajeurs:[], incidentsComportement:[] }
+        };
+    }
+    // Toujours mettre à jour le code et la clé d'archive
+    window.currentTrip.codeConnexion = codeConnexion;
+    window.currentTrip.archiveKey    = archiveKey;
 
     hydrateAppWithCurrentTrip();
     saveToLocal();
     switchView('view-hub');
-    showToast('🎉 Road Book initialisé ! Code : ' + codeConnexion);
+    showToast('🎉 Séjour ouvert ! Code : ' + codeConnexion);
 };
 
-// Connexion par code séjour (autre appareil)
+// Connexion par code séjour
 window.connecterParCode = function() {
-    const code = (document.getElementById('login-code-connexion')||{value:''}).value.trim().toUpperCase();
+    const code = ((document.getElementById('login-code-connexion')||{value:''}).value||'').trim().toLowerCase();
     if (!code) { showToast('Saisissez un code.'); return; }
+    // Parcourt tout le localStorage pour trouver un séjour dont le code correspond
+    let found = null;
     try {
-        // Cherche directement dans localStorage par code
-        const archiveKey = localStorage.getItem('willypro_code_' + code);
-        const data = archiveKey ? localStorage.getItem(archiveKey) : localStorage.getItem('willypro_code_trip_' + code);
-        if (data) {
-            window.currentTrip = JSON.parse(data);
-            hydrateAppWithCurrentTrip();
-            saveToLocal();
-            switchView('view-hub');
-            showToast('✅ Séjour ' + window.currentTrip.nom + ' restauré !');
-        } else {
-            showToast('❌ Code introuvable sur cet appareil.');
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (!key || !key.startsWith('willy'+'pro'+'_v2_')) continue;
+            const raw = localStorage.getItem(key);
+            if (!raw) continue;
+            const trip = JSON.parse(raw);
+            if (trip && trip.codeConnexion && trip.codeConnexion.toLowerCase() === code) {
+                found = trip; break;
+            }
         }
-    } catch(e) { showToast('Erreur lors de la restauration.'); }
+    } catch(e) {}
+    if (found) {
+        window.currentTrip = found;
+        hydrateAppWithCurrentTrip();
+        saveToLocal();
+        switchView('view-hub');
+        showToast('✅ Séjour ' + found.nom + ' restauré !');
+    } else {
+        showToast('❌ Code introuvable sur cet appareil.');
+    }
 };
 
 /* ── DEVISES DYNAMIQUES ── */
@@ -1322,21 +1479,51 @@ window.saveToLocal = function() {
     window.currentTrip.details.medias             = window.currentTrip.details.medias       || [];
     window.currentTrip.details.hebergements       = window.currentTrip.details.hebergements || [];
     try {
-        localStorage.setItem('willypro_current_session', JSON.stringify(window.currentTrip));
-        const archiveId = 'willypro_archive_' + window.currentTrip.nom.replace(/\s+/g,'').toLowerCase() + '_' + window.currentTrip.dateDebut;
-        localStorage.setItem(archiveId, JSON.stringify(window.currentTrip));
-    } catch(e) { console.warn("Sauvegarde échouée (localStorage plein ?)"); }
+        // Recalcul de l'archiveKey si absente (rétro-compatibilité)
+        if (!window.currentTrip.archiveKey) {
+            window.currentTrip.archiveKey = buildArchiveKey(
+                window.currentTrip.nom,
+                window.currentTrip.directeur,
+                window.currentTrip.dateDebut,
+                window.currentTrip.dateFin
+            );
+        }
+        if (!window.currentTrip.codeConnexion) {
+            const nomFamille = (window.currentTrip.directeur||'').split(' ')[0];
+            window.currentTrip.codeConnexion = buildCodeConnexion(
+                window.currentTrip.nom, nomFamille, window.currentTrip.dateDebut
+            );
+        }
+        localStorage.setItem('willy'+'pro_cur'+'rent_ses'+'sion', JSON.stringify(window.currentTrip));
+        localStorage.setItem(window.currentTrip.archiveKey, JSON.stringify(window.currentTrip));
+    } catch(e) { console.warn('Sauvegarde échouée (localStorage plein ?)'); }
 };
 
 /* ── LOGOUT ── */
 window.showCodeConnexion = function() {
     const code = window.currentTrip?.codeConnexion || '—';
-    alert('🔑 Code de connexion de ce séjour :\n\n' + code + '\n\nSaisissez ce code sur un autre appareil pour retrouver votre séjour.');
+    const el = document.getElementById('notice-code-value');
+    const block = document.getElementById('notice-code-current');
+    if (el) el.textContent = code;
+    if (block) block.style.display = 'block';
+    openModal('modal-code-notice');
+};
+
+window.showCodeNotice = function() {
+    const block = document.getElementById('notice-code-current');
+    const el    = document.getElementById('notice-code-value');
+    if (window.currentTrip?.codeConnexion && el) {
+        el.textContent = window.currentTrip.codeConnexion;
+        if (block) block.style.display = 'block';
+    } else {
+        if (block) block.style.display = 'none';
+    }
+    openModal('modal-code-notice');
 };
 
 window.logoutDir = function() {
     if (confirm("Fermer ce séjour ? Les données restent sauvegardées sur l'appareil.")) {
-        localStorage.removeItem('willypro_current_session');
+        localStorage.removeItem('willy'+'pro_cur'+'rent_ses'+'sion');
         window.currentTrip = null;
         document.querySelectorAll('#screen-login input').forEach(el => el.value = '');
         switchView('screen-login');
@@ -1361,7 +1548,7 @@ function hydrateAppWithCurrentTrip() {
     const qs  = id => document.getElementById(id);
 
     if(qs('hub-trip-name'))    qs('hub-trip-name').textContent = trip.nom;
-    if(qs('hub-director-name')) qs('hub-director-name').innerHTML = '<i class="fas fa-user-circle mr-1.5 text-blue-300"></i>' + trip.directeur;
+    if(qs('hub-director-name')) qs('hub-director-name').innerHTML = '<i class="fas fa-user-circle mr-1.5 text-blue-0x12c"></i>' + trip.directeur;
     if(qs('hub-trip-dates'))   qs('hub-trip-dates').innerHTML  = '<i class="far fa-calendar-alt mr-1.5" style="opacity:0.45;"></i>' + fmt(trip.dateDebut) + ' → ' + fmt(trip.dateFin);
 
     let duree = parseInt(trip.duree) || 7;
@@ -1381,16 +1568,16 @@ function hydrateAppWithCurrentTrip() {
         for (let i=1; i<=duree; i++) {
             const dl = window.datesSejour[i-1];
             if (window.daysData[i]) {
-                cal.innerHTML += `<div class="day-card day-done" onclick="openDay(${i},'Jour ${i} — ${dl}')"><i class="fas fa-check-circle"></i><span style="font-size:0.58rem;font-weight:600;">${dl}</span><span style="font-weight:900;font-size:0.8rem;">J${i}</span></div>`;
+                cal.innerHTML += `<div class="day-card day-done" onclick="openDay(${i},'Jour ${i} — ${dl}')"><i class="fas fa-check-circle"></i><span style="font-size:0.58rem;font-weight:0x258;">${dl}</span><span style="font-weight:0x384;font-size:0.8rem;">J${i}</span></div>`;
                 lastFilled = i;
             } else if (i === lastFilled+1 || (i===1&&lastFilled===0)) {
-                cal.innerHTML += `<div class="day-card day-active" onclick="openDay(${i},'Jour ${i} — ${dl}')"><div class="pulse-dot"></div><i class="fas fa-pen" style="font-size:0.9rem;"></i><span style="font-size:0.58rem;font-weight:600;">${dl}</span><span style="font-weight:900;font-size:0.8rem;">J${i}</span></div>`;
+                cal.innerHTML += `<div class="day-card day-active" onclick="openDay(${i},'Jour ${i} — ${dl}')"><div class="pulse-dot"></div><i class="fas fa-pen" style="font-size:0.9rem;"></i><span style="font-size:0.58rem;font-weight:0x258;">${dl}</span><span style="font-weight:0x384;font-size:0.8rem;">J${i}</span></div>`;
             } else {
-                cal.innerHTML += `<div class="day-card day-locked"><i class="fas fa-lock" style="font-size:0.8rem;opacity:0.4;"></i><span style="font-size:0.58rem;font-weight:600;">${dl}</span><span style="font-weight:700;font-size:0.8rem;">J${i}</span></div>`;
+                cal.innerHTML += `<div class="day-card day-locked"><i class="fas fa-lock" style="font-size:0.8rem;opacity:0.4;"></i><span style="font-size:0.58rem;font-weight:0x258;">${dl}</span><span style="font-weight:0x2bc;font-size:0.8rem;">J${i}</span></div>`;
             }
         }
         if(qs('progress-text')) qs('progress-text').textContent = lastFilled + '/' + duree + ' Jours';
-        if(qs('progress-bar'))  qs('progress-bar').style.width  = Math.round((lastFilled/duree)*100) + '%';
+        if(qs('progress-bar'))  qs('progress-bar').style.width  = Math.round((lastFilled/duree)*0x64) + '%';
     }
 
     renderEffectifsUI();
@@ -1431,7 +1618,7 @@ window.showToast = function(msg) {
     s.textContent = msg;
     t.classList.remove('opacity-0','-translate-y-4');
     clearTimeout(t._timeout);
-    t._timeout = setTimeout(() => t.classList.add('opacity-0','-translate-y-4'), 3000);
+    t._timeout = setTimeout(() => t.classList.add('opacity-0','-translate-y-4'), 0xbb8);
 };
 
 /* ── MODALS ── */
@@ -1478,7 +1665,7 @@ function buildChildrenList() {
     if (!list) return;
     list.innerHTML = '';
     if (!window.globalEffectifs || !window.globalEffectifs.length) {
-        list.innerHTML = '<p class="text-xs italic text-gray-400 py-3 text-center">Aucun inscrit dans le groupe.</p>';
+        list.innerHTML = '<p class="text-xs italic text-gray-0x190 py-3 text-center">Aucun inscrit dans le groupe.</p>';
         return;
     }
     window.globalEffectifs.forEach((e, idx) => {
@@ -1486,16 +1673,16 @@ function buildChildrenList() {
         const hasMed = e.pai || e.traitement || e.traitementDetail || e.allergie || e.regime;
         const medBtn = hasMed
             ? `<button type="button" title="Fiche infirmerie" onclick="openInfirmerieModal(${idx})"
-                style="width:32px;height:32px;border-radius:50%;background:#fef2f2;border:1.5px solid #fecaca;cursor:pointer;color:#ef4444;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                style="width:32px;height:32px;border-radius:0x32%;background:#fef2f2;border:1.5px solid #fecaca;cursor:pointer;color:#ef4444;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                 🏥</button>`
             : '';
         list.insertAdjacentHTML('beforeend',
             `<div class="child-item">
-                <span class="text-sm font-bold text-gray-700">${n} <span class="font-normal text-gray-500">${p}</span></span>
+                <span class="text-sm font-bold text-gray-0x2bc">${n} <span class="font-normal text-gray-0x1f4">${p}</span></span>
                 <div style="display:flex;gap:0.35rem;align-items:center;">
                     ${medBtn}
                     <button type="button" title="Consigner un soin" onclick="openHealthModal('${(n+' '+p).replace(/'/g,"\'")}',${idx})"
-                        class="w-8 h-8 rounded-full bg-rose-100 text-rose-500 border-none cursor-pointer flex items-center justify-center">
+                        class="w-8 h-8 rounded-full bg-rose-0x64 text-rose-0x1f4 border-none cursor-pointer flex items-center justify-center">
                         <i class="fas fa-plus text-xs"></i>
                     </button>
                 </div>
@@ -1570,11 +1757,11 @@ window.selectWeather = function(btn, time, val) {
 /* ── REPAS TYPE SELECTOR ── */
 window.selectRepasType = function(btn, type) {
     document.querySelectorAll('.repas-type-btn').forEach(b => {
-        b.classList.remove('selected','border-orange-300','border-amber-300','border-indigo-300');
-        b.querySelectorAll('span').forEach((s,i) => { if(i>0) s.className='text-gray-400'; });
+        b.classList.remove('selected','border-orange-0x12c','border-amber-0x12c','border-indigo-0x12c');
+        b.querySelectorAll('span').forEach((s,i) => { if(i>0) s.className='text-gray-0x190'; });
     });
-    btn.classList.add('selected','border-orange-300');
-    btn.querySelectorAll('span').forEach((s,i) => { if(i>0) s.className='text-orange-600'; });
+    btn.classList.add('selected','border-orange-0x12c');
+    btn.querySelectorAll('span').forEach((s,i) => { if(i>0) s.className='text-orange-0x258'; });
     const hid = document.getElementById('restau-type-val');
     if(hid) hid.value = type;
 };
@@ -1643,37 +1830,37 @@ function renderHebergements() {
     const hebs = (window.currentTrip?.details?.hebergements) || [];
     if(badge) badge.textContent = hebs.length;
     if (!hebs.length) {
-        list.innerHTML = '<p class="text-sm italic text-gray-400 text-center p-6 bg-white rounded-2xl border border-gray-100">Aucun hébergement ajouté.</p>';
+        list.innerHTML = '<p class="text-sm italic text-gray-0x190 text-center p-6 bg-white rounded-2xl border border-gray-0x64">Aucun hébergement ajouté.</p>';
         return;
     }
-    const stars = n => [1,2,3,4,5].map(i=>`<i class="fas fa-star fs-xs3 ${i<=n?'text-yellow-400':'text-gray-200'}"></i>`).join('');
+    const stars = n => [1,2,3,4,5].map(i=>`<i class="fas fa-star fs-xs3 ${i<=n?'text-yellow-0x190':'text-gray-0xc8'}"></i>`).join('');
     list.innerHTML = hebs.slice().reverse().map(h => {
         const r = h.ratings||{personnel:0,equipements:0,proprete:0,confort:0,qualite:0,emplacement:0};
         const avg = ((r.personnel+r.equipements+r.proprete+r.confort+r.qualite+r.emplacement)/6).toFixed(1);
-        return `<div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-3">
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 flex justify-between items-start">
+        return `<div class="bg-white rounded-2xl border border-gray-0x64 shadow-sm overflow-hidden mb-3">
+            <div class="bg-gradient-to-r from-blue-0x32 to-indigo-0x32 p-4 flex justify-between items-start">
                 <div>
-                    <h4 class="font-black text-gray-800 text-base leading-tight">${h.nom}</h4>
-                    <div class="flex gap-2 mt-1 text-xs text-gray-500 font-medium flex-wrap">
+                    <h4 class="font-black text-gray-0x320 text-base leading-tight">${h.nom}</h4>
+                    <div class="flex gap-2 mt-1 text-xs text-gray-0x1f4 font-medium flex-wrap">
                         ${h.prixNuit?`<span class="bg-white px-2 py-0.5 rounded-lg border">${h.prixNuit}€/nuit</span>`:''}
                         ${h.prixTot?`<span class="bg-white px-2 py-0.5 rounded-lg border">Total: ${h.prixTot}€</span>`:''}
                         ${h.pers?`<span class="bg-white px-2 py-0.5 rounded-lg border"><i class="fas fa-user mr-1"></i>${h.pers} pers.</span>`:''}
                     </div>
                 </div>
                 <div class="flex flex-col items-end gap-1">
-                    <span class="text-yellow-500 font-black text-sm"><i class="fas fa-star mr-1"></i>${avg}/5</span>
-                    <button type="button" onclick="deleteHeb(${h.id})" class="text-gray-300 hover:text-red-400 border-none bg-transparent cursor-pointer p-1"><i class="fas fa-trash-alt text-xs"></i></button>
+                    <span class="text-yellow-0x1f4 font-black text-sm"><i class="fas fa-star mr-1"></i>${avg}/5</span>
+                    <button type="button" onclick="deleteHeb(${h.id})" class="text-gray-0x12c hover:text-red-0x190 border-none bg-transparent cursor-pointer p-1"><i class="fas fa-trash-alt text-xs"></i></button>
                 </div>
             </div>
             <div class="p-4 grid grid-cols-2 gap-2">
-                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-500 uppercase">Personnel</span><div class="flex gap-0.5">${stars(r.personnel)}</div></div>
-                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-500 uppercase">Équip.</span><div class="flex gap-0.5">${stars(r.equipements)}</div></div>
-                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-500 uppercase">Propreté</span><div class="flex gap-0.5">${stars(r.proprete)}</div></div>
-                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-500 uppercase">Confort</span><div class="flex gap-0.5">${stars(r.confort)}</div></div>
-                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-500 uppercase">Qual/Prix</span><div class="flex gap-0.5">${stars(r.qualite)}</div></div>
-                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-500 uppercase">Lieu</span><div class="flex gap-0.5">${stars(r.emplacement)}</div></div>
+                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-0x1f4 uppercase">Personnel</span><div class="flex gap-0.5">${stars(r.personnel)}</div></div>
+                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-0x1f4 uppercase">Équip.</span><div class="flex gap-0.5">${stars(r.equipements)}</div></div>
+                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-0x1f4 uppercase">Propreté</span><div class="flex gap-0.5">${stars(r.proprete)}</div></div>
+                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-0x1f4 uppercase">Confort</span><div class="flex gap-0.5">${stars(r.confort)}</div></div>
+                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-0x1f4 uppercase">Qual/Prix</span><div class="flex gap-0.5">${stars(r.qualite)}</div></div>
+                <div class="flex justify-between items-center"><span class="fs-xs5 font-bold text-gray-0x1f4 uppercase">Lieu</span><div class="flex gap-0.5">${stars(r.emplacement)}</div></div>
             </div>
-            ${h.comment?`<p class="text-xs text-gray-500 italic px-4 pb-4 m-0">"${h.comment}"</p>`:''}
+            ${h.comment?`<p class="text-xs text-gray-0x1f4 italic px-4 pb-4 m-0">"${h.comment}"</p>`:''}
         </div>`;
     }).join('');
 }
@@ -1692,15 +1879,15 @@ window.saveRepas = function() {
     const avis = (qs('restau-avis')||{value:''}).value;
 
     const html = `<div class="view-mode item-card">
-        <button type="button" class="absolute top-3 right-3 text-gray-300 hover:text-red-400 border-none bg-transparent cursor-pointer" onclick="this.closest('.item-card').remove()"><i class="fas fa-trash text-xs"></i></button>
+        <button type="button" class="absolute top-3 right-3 text-gray-0x12c hover:text-red-0x190 border-none bg-transparent cursor-pointer" onclick="this.closest('.item-card').remove()"><i class="fas fa-trash text-xs"></i></button>
         <div class="flex items-center gap-2 mb-2">
             <span class="text-xl">${icon}</span>
-            <span class="display-type text-xs font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded-lg border border-orange-100 uppercase tracking-wide">${type}</span>
+            <span class="display-type text-xs font-black text-orange-0x258 bg-orange-0x32 px-2 py-0.5 rounded-lg border border-orange-0x64 uppercase tracking-wide">${type}</span>
         </div>
-        <p class="display-name font-black text-gray-800 text-base m-0 leading-tight">${nom}</p>
-        ${menu ? `<p class="display-menu text-xs text-gray-700 font-semibold mt-1 mb-1"><i class="fas fa-utensils mr-1 text-orange-400"></i>${menu}</p>` : ''}
-        <p class="display-adresse text-xs text-gray-400 font-medium mt-1 mb-2"><i class="fas fa-map-marker-alt mr-1 text-orange-300"></i>${adr||'Adresse non renseignée'}</p>
-        <p class="display-infos text-xs text-gray-600 bg-orange-50 p-2.5 rounded-xl m-0">"${avis||'—'}"</p>
+        <p class="display-name font-black text-gray-0x320 text-base m-0 leading-tight">${nom}</p>
+        ${menu ? `<p class="display-menu text-xs text-gray-0x2bc font-semibold mt-1 mb-1"><i class="fas fa-utensils mr-1 text-orange-0x190"></i>${menu}</p>` : ''}
+        <p class="display-adresse text-xs text-gray-0x190 font-medium mt-1 mb-2"><i class="fas fa-map-marker-alt mr-1 text-orange-0x12c"></i>${adr||'Adresse non renseignée'}</p>
+        <p class="display-infos text-xs text-gray-0x258 bg-orange-0x32 p-2.5 rounded-xl m-0">"${avis||'—'}"</p>
     </div>`;
     const list = qs('repasList');
     if(list) list.insertAdjacentHTML('beforeend', html);
@@ -1712,8 +1899,8 @@ window.toggleActVeil = function(type, btn) {
     const qs = id => document.getElementById(id);
     if(qs('act-type-val')) qs('act-type-val').value = type;
     const btns = document.querySelectorAll('#btn-act, #btn-veil');
-    btns.forEach(b => { b.className = 'flex-1 py-2 rounded-lg text-gray-500 text-xs font-medium bg-transparent transition-all'; });
-    btn.className = 'flex-1 py-2 rounded-lg bg-teal-500 text-white text-xs font-bold shadow-sm transition-all';
+    btns.forEach(b => { b.className = 'flex-1 py-2 rounded-lg text-gray-0x1f4 text-xs font-medium bg-transparent transition-all'; });
+    btn.className = 'flex-1 py-2 rounded-lg bg-teal-0x1f4 text-white text-xs font-bold shadow-sm transition-all';
 };
 
 window.saveActVeil = function() {
@@ -1729,14 +1916,14 @@ window.saveActVeil = function() {
     if (prix) setLastDevise(actDevise);
 
     const html = `<div class="view-mode item-card">
-        <button type="button" class="absolute top-3 right-3 text-gray-300 hover:text-red-400 border-none bg-transparent cursor-pointer" onclick="this.closest('.item-card').remove()"><i class="fas fa-trash text-xs"></i></button>
-        <span class="display-type inline-flex items-center gap-1 text-xs font-black text-teal-600 bg-teal-50 px-2.5 py-0.5 rounded-lg border border-teal-100 uppercase tracking-wide mb-2">${icon} ${type}</span>
+        <button type="button" class="absolute top-3 right-3 text-gray-0x12c hover:text-red-0x190 border-none bg-transparent cursor-pointer" onclick="this.closest('.item-card').remove()"><i class="fas fa-trash text-xs"></i></button>
+        <span class="display-type inline-flex items-center gap-1 text-xs font-black text-teal-0x258 bg-teal-0x32 px-2.5 py-0.5 rounded-lg border border-teal-0x64 uppercase tracking-wide mb-2">${icon} ${type}</span>
         <div class="flex justify-between items-start gap-2">
-            <p class="display-name font-black text-gray-800 text-base m-0 leading-tight flex-1">${nom}</p>
-            <p class="display-prix font-black text-gray-600 text-sm m-0 shrink-0">${prix ? prix+' '+actDevise : 'Gratuit'}</p>
+            <p class="display-name font-black text-gray-0x320 text-base m-0 leading-tight flex-1">${nom}</p>
+            <p class="display-prix font-black text-gray-0x258 text-sm m-0 shrink-0">${prix ? prix+' '+actDevise : 'Gratuit'}</p>
         </div>
-        <p class="display-lieu text-xs text-gray-400 font-medium mt-1 mb-2"><i class="fas fa-map-marker-alt mr-1 text-teal-300"></i>${lieu||'Lieu non précisé'}</p>
-        <p class="display-infos text-xs text-gray-600 bg-teal-50 p-2.5 rounded-xl m-0">"${infos||'—'}"</p>
+        <p class="display-lieu text-xs text-gray-0x190 font-medium mt-1 mb-2"><i class="fas fa-map-marker-alt mr-1 text-teal-0x12c"></i>${lieu||'Lieu non précisé'}</p>
+        <p class="display-infos text-xs text-gray-0x258 bg-teal-0x32 p-2.5 rounded-xl m-0">"${infos||'—'}"</p>
     </div>`;
     const list = qs('activitiesList');
     if(list) list.insertAdjacentHTML('beforeend', html);
@@ -1749,12 +1936,12 @@ window.toggleFinance = function(mode) {
     const btnD = qs('btn-toggle-depense'), btnR = qs('btn-toggle-retrait');
     const divD = qs('finance-depense'),    divR = qs('finance-retrait');
     if (mode==='depense') {
-        btnD.className='flex-1 py-2 rounded-lg bg-emerald-500 text-white text-xs font-bold shadow-sm transition-all';
-        btnR.className='flex-1 py-2 rounded-lg text-gray-500 text-xs font-medium bg-transparent transition-all';
+        btnD.className='flex-1 py-2 rounded-lg bg-emerald-0x1f4 text-white text-xs font-bold shadow-sm transition-all';
+        btnR.className='flex-1 py-2 rounded-lg text-gray-0x1f4 text-xs font-medium bg-transparent transition-all';
         divD.classList.remove('hidden'); divR.classList.add('hidden');
     } else {
         btnR.className='flex-1 py-2 rounded-lg bg-navy text-white text-xs font-bold shadow-sm transition-all';
-        btnD.className='flex-1 py-2 rounded-lg text-gray-500 text-xs font-medium bg-transparent transition-all';
+        btnD.className='flex-1 py-2 rounded-lg text-gray-0x1f4 text-xs font-medium bg-transparent transition-all';
         divR.classList.remove('hidden'); divD.classList.add('hidden');
     }
 };
@@ -1825,23 +2012,23 @@ window.updateGlobalBudget = function() {
 
         const isR = op.type==='retrait';
         const sign = isR ? '+' : '−';
-        const amtCls = isR ? 'text-emerald-600 font-bold' : 'text-gray-700 font-semibold';
+        const amtCls = isR ? 'text-emerald-0x258 font-bold' : 'text-gray-0x2bc font-semibold';
         const badge  = isR ? 'op-badge-retrait' : (op.moyen==='CB'?'op-badge-cb':'op-badge-cash');
 
         listHtml += `<tr>
-            <td class="fs-xs4 text-gray-400 whitespace-nowrap">${op.date||''}</td>
-            <td><strong class="text-gray-800 text-xs block leading-tight">${isR?'Retrait Cash':op.nature}</strong></td>
+            <td class="fs-xs4 text-gray-0x190 whitespace-nowrap">${op.date||''}</td>
+            <td><strong class="text-gray-0x320 text-xs block leading-tight">${isR?'Retrait Cash':op.nature}</strong></td>
             <td><span class="${badge}">${op.moyen}</span></td>
-            <td class="text-right ${amtCls} text-xs">${sign}${op.montant.toFixed(2)}<span class="fs-xxs ml-0.5 text-gray-400">${dev}</span></td>
+            <td class="text-right ${amtCls} text-xs">${sign}${op.montant.toFixed(2)}<span class="fs-xxs ml-0.5 text-gray-0x190">${dev}</span></td>
         </tr>`;
 
         const todayLabel = window.datesSejour[currentEditingDay-1];
         if (op.date===todayLabel) {
             if(op.type==='depense') { dailyTotals[dev]=(dailyTotals[dev]||0)+op.montant; }
             dailyList += `<tr>
-                <td class="py-2.5"><strong class="text-gray-800 text-sm block leading-tight">${isR?'Retrait Cash':op.nature}</strong><span class="${badge}">${op.moyen}</span></td>
-                <td class="text-right py-2.5 ${amtCls} text-sm">${sign}${op.montant.toFixed(2)} <span class="fs-xs3 text-gray-400">${dev}</span></td>
-                <td class="text-right py-2.5"><button type="button" class="text-gray-300 hover:text-red-400 border-none bg-transparent cursor-pointer" onclick="deleteOp('${op.id}')"><i class="fas fa-times-circle"></i></button></td>
+                <td class="py-2.5"><strong class="text-gray-0x320 text-sm block leading-tight">${isR?'Retrait Cash':op.nature}</strong><span class="${badge}">${op.moyen}</span></td>
+                <td class="text-right py-2.5 ${amtCls} text-sm">${sign}${op.montant.toFixed(2)} <span class="fs-xs3 text-gray-0x190">${dev}</span></td>
+                <td class="text-right py-2.5"><button type="button" class="text-gray-0x12c hover:text-red-0x190 border-none bg-transparent cursor-pointer" onclick="deleteOp('${op.id}')"><i class="fas fa-times-circle"></i></button></td>
             </tr>`;
         }
     });
@@ -1852,7 +2039,7 @@ window.updateGlobalBudget = function() {
     devises.forEach(dev => {
         const t = tByDevise[dev];
         dashHtml += `<div style="background:#f8fafc;border-radius:0.75rem;padding:0.5rem 0.75rem;margin-bottom:0.4rem;">
-            <p style="font-size:0.65rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.3rem;">${dev}</p>
+            <p style="font-size:0.65rem;font-weight:0x320;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.3rem;">${dev}</p>
             <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
                 <span style="font-size:0.72rem;color:#374151;">💳 CB : <strong>${t.cb.toFixed(2)}</strong></span>
                 <span style="font-size:0.72rem;color:#374151;">💵 Cash dépensé : <strong>${t.cashOut.toFixed(2)}</strong></span>
@@ -1884,11 +2071,11 @@ window.updateGlobalBudget = function() {
 
     const recapEl = qs('recap-budget-list');
     if(recapEl?.querySelector('tbody')) {
-        recapEl.querySelector('tbody').innerHTML = listHtml || '<tr><td colspan="4" class="text-center text-xs italic text-gray-400 py-6">Aucune opération enregistrée.</td></tr>';
+        recapEl.querySelector('tbody').innerHTML = listHtml || '<tr><td colspan="4" class="text-center text-xs italic text-gray-0x190 py-6">Aucune opération enregistrée.</td></tr>';
     }
     const opsEl = qs('operationsList');
     if(opsEl?.querySelector('tbody')) {
-        opsEl.querySelector('tbody').innerHTML = dailyList || '<tr><td colspan="3" class="text-xs italic text-gray-400 py-3 text-center">Aucune dépense aujourd\'hui.</td></tr>';
+        opsEl.querySelector('tbody').innerHTML = dailyList || '<tr><td colspan="3" class="text-xs italic text-gray-0x190 py-3 text-center">Aucune dépense aujourd\'hui.</td></tr>';
     }
 };
 
@@ -1901,7 +2088,7 @@ window.renderEffectifsUI = function() {
     const eff = window.globalEffectifs || [];
     if (countEl) countEl.textContent = eff.length;
     if (!eff.length) {
-        list.innerHTML = '<p class="text-sm italic py-10 text-center text-gray-400 bg-white rounded-2xl border border-dashed border-gray-200">Le groupe est vide.<br>Importez un CSV ou ajoutez manuellement.</p>';
+        list.innerHTML = '<p class="text-sm italic py-0xa text-center text-gray-0x190 bg-white rounded-2xl border border-dashed border-gray-0xc8">Le groupe est vide.<br>Importez un CSV ou ajoutez manuellement.</p>';
         return;
     }
     // Résumé alertes
@@ -1911,9 +2098,9 @@ window.renderEffectifsUI = function() {
     if (nbPai||nbTrait||nbAller) {
         list.insertAdjacentHTML('beforeend',
             `<div style="background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1px solid #fed7aa;border-radius:1rem;padding:0.75rem 1rem;margin-bottom:0.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
-                ${nbPai   ? `<span style="font-size:0.72rem;font-weight:700;color:#c2410c;background:#ffedd5;padding:0.2rem 0.6rem;border-radius:999px;">🏥 ${nbPai} PAI</span>` : ''}
-                ${nbTrait ? `<span style="font-size:0.72rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:0.2rem 0.6rem;border-radius:999px;">💊 ${nbTrait} sous traitement</span>` : ''}
-                ${nbAller ? `<span style="font-size:0.72rem;font-weight:700;color:#b45309;background:#fef3c7;padding:0.2rem 0.6rem;border-radius:999px;">⚠️ ${nbAller} allergies</span>` : ''}
+                ${nbPai   ? `<span style="font-size:0.72rem;font-weight:0x2bc;color:#c2410c;background:#ffedd5;padding:0.2rem 0.6rem;border-radius:999px;">🏥 ${nbPai} PAI</span>` : ''}
+                ${nbTrait ? `<span style="font-size:0.72rem;font-weight:0x2bc;color:#7c3aed;background:#ede9fe;padding:0.2rem 0.6rem;border-radius:999px;">💊 ${nbTrait} sous traitement</span>` : ''}
+                ${nbAller ? `<span style="font-size:0.72rem;font-weight:0x2bc;color:#b45309;background:#fef3c7;padding:0.2rem 0.6rem;border-radius:999px;">⚠️ ${nbAller} allergies</span>` : ''}
             </div>`
         );
     }
@@ -1925,20 +2112,20 @@ window.renderEffectifsUI = function() {
         const avatarBg  = isFille ? '#fdf2f8' : '#eff6ff';
         const hasMedical = e.pai || e.traitement || e.traitementDetail || e.allergie || e.regime || e.urgenceNom || e.notes;
         const badges = [
-            e.pai              ? '<span style="font-size:0.6rem;font-weight:800;color:#dc2626;background:#fee2e2;padding:0.15rem 0.45rem;border-radius:999px;line-height:1.6;">PAI</span>' : '',
-            (e.traitement||e.traitementDetail) ? '<span style="font-size:0.6rem;font-weight:800;color:#7c3aed;background:#ede9fe;padding:0.15rem 0.45rem;border-radius:999px;line-height:1.6;">💊</span>' : '',
-            e.allergie         ? '<span style="font-size:0.6rem;font-weight:800;color:#b45309;background:#fef3c7;padding:0.15rem 0.45rem;border-radius:999px;line-height:1.6;">⚠️</span>' : '',
-            e.regime           ? '<span style="font-size:0.6rem;font-weight:800;color:#065f46;background:#d1fae5;padding:0.15rem 0.45rem;border-radius:999px;line-height:1.6;">🥗</span>' : '',
+            e.pai              ? '<span style="font-size:0.6rem;font-weight:0x320;color:#dc2626;background:#fee2e2;padding:0.15rem 0.45rem;border-radius:999px;line-height:1.6;">PAI</span>' : '',
+            (e.traitement||e.traitementDetail) ? '<span style="font-size:0.6rem;font-weight:0x320;color:#7c3aed;background:#ede9fe;padding:0.15rem 0.45rem;border-radius:999px;line-height:1.6;">💊</span>' : '',
+            e.allergie         ? '<span style="font-size:0.6rem;font-weight:0x320;color:#b45309;background:#fef3c7;padding:0.15rem 0.45rem;border-radius:999px;line-height:1.6;">⚠️</span>' : '',
+            e.regime           ? '<span style="font-size:0.6rem;font-weight:0x320;color:#065f46;background:#d1fae5;padding:0.15rem 0.45rem;border-radius:999px;line-height:1.6;">🥗</span>' : '',
         ].filter(Boolean).join('');
         list.insertAdjacentHTML('beforeend',
             `<div style="background:white;padding:0.75rem 1rem;border-radius:1rem;border:1px solid #f1f5f9;display:flex;align-items:center;gap:0.75rem;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
                 <div style="width:42px;height:42px;border-radius:0.75rem;background:${avatarBg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${sexeIcon}</div>
                 <div style="flex:1;min-width:0;">
                     <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
-                        <p style="font-weight:900;color:#1e293b;font-size:0.9rem;margin:0;line-height:1.3;">${e.nom||''} ${e.prenom||''}</p>
+                        <p style="font-weight:0x384;color:#1e293b;font-size:0.9rem;margin:0;line-height:1.3;">${e.nom||''} ${e.prenom||''}</p>
                         ${badges}
                     </div>
-                    ${e.allergie ? `<p style="font-size:0.65rem;color:#b45309;margin:0.15rem 0 0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">⚠️ ${e.allergie}</p>` : ''}
+                    ${e.allergie ? `<p style="font-size:0.65rem;color:#b45309;margin:0.15rem 0 0;font-weight:0x258;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">⚠️ ${e.allergie}</p>` : ''}
                 </div>
                 <div style="display:flex;gap:0.4rem;flex-shrink:0;">
                     <button type="button" onclick="openEditEnfant(${idx})" style="background:#f0fdf4;border:none;width:34px;height:34px;border-radius:0.6rem;cursor:pointer;color:#10b981;font-size:0.85rem;" title="Modifier la fiche"><i class="fas fa-pen"></i></button>
@@ -2017,25 +2204,25 @@ window.openFicheMedicale = function(idx) {
 
     // Badges
     const badges = [];
-    if (e.pai) badges.push('<span style="font-size:0.65rem;font-weight:800;color:#dc2626;background:#fee2e2;padding:0.2rem 0.6rem;border-radius:999px;">🏥 PAI</span>');
-    if (e.traitement||e.traitementDetail) badges.push('<span style="font-size:0.65rem;font-weight:800;color:#7c3aed;background:#ede9fe;padding:0.2rem 0.6rem;border-radius:999px;">💊 Traitement</span>');
-    if (e.allergie) badges.push('<span style="font-size:0.65rem;font-weight:800;color:#b45309;background:#fef3c7;padding:0.2rem 0.6rem;border-radius:999px;">⚠️ Allergie</span>');
-    if (e.regime)   badges.push('<span style="font-size:0.65rem;font-weight:800;color:#065f46;background:#d1fae5;padding:0.2rem 0.6rem;border-radius:999px;">🥗 Régime</span>');
+    if (e.pai) badges.push('<span style="font-size:0.65rem;font-weight:0x320;color:#dc2626;background:#fee2e2;padding:0.2rem 0.6rem;border-radius:999px;">🏥 PAI</span>');
+    if (e.traitement||e.traitementDetail) badges.push('<span style="font-size:0.65rem;font-weight:0x320;color:#7c3aed;background:#ede9fe;padding:0.2rem 0.6rem;border-radius:999px;">💊 Traitement</span>');
+    if (e.allergie) badges.push('<span style="font-size:0.65rem;font-weight:0x320;color:#b45309;background:#fef3c7;padding:0.2rem 0.6rem;border-radius:999px;">⚠️ Allergie</span>');
+    if (e.regime)   badges.push('<span style="font-size:0.65rem;font-weight:0x320;color:#065f46;background:#d1fae5;padding:0.2rem 0.6rem;border-radius:999px;">🥗 Régime</span>');
     badgesEl.innerHTML = badges.length ? badges.join(' ') : '<span style="font-size:0.65rem;color:#94a3b8;">Aucune alerte médicale</span>';
 
     // Contenu fiche
     const row = (icon, label, val, color) => val ? `
         <div style="background:#f8fafc;border-radius:0.75rem;padding:0.7rem 0.9rem;border-left:3px solid ${color};">
-            <p style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.2rem;">${icon} ${label}</p>
-            <p style="font-size:0.85rem;font-weight:600;color:#1e293b;margin:0;">${val}</p>
+            <p style="font-size:0.65rem;font-weight:0x2bc;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.2rem;">${icon} ${label}</p>
+            <p style="font-size:0.85rem;font-weight:0x258;color:#1e293b;margin:0;">${val}</p>
         </div>` : '';
 
     let content = '';
-    if (e.pai) content += `<div style="background:#fef2f2;border-radius:0.75rem;padding:0.7rem 0.9rem;border:1px solid #fecaca;"><p style="font-size:0.75rem;font-weight:800;color:#dc2626;margin:0;">🏥 Ce jeune est porteur d'un PAI (Projet d'Accueil Individualisé)</p></div>`;
+    if (e.pai) content += `<div style="background:#fef2f2;border-radius:0.75rem;padding:0.7rem 0.9rem;border:1px solid #fecaca;"><p style="font-size:0.75rem;font-weight:0x320;color:#dc2626;margin:0;">🏥 Ce jeune est porteur d'un PAI (Projet d'Accueil Individualisé)</p></div>`;
     content += row('💊', 'Traitement médicamenteux', e.traitementDetail||e.traitement, '#8b5cf6');
     content += row('⚠️', 'Allergies', e.allergie, '#f59e0b');
     content += row('🥗', 'Régime alimentaire', e.regime, '#10b981');
-    content += row('📞', 'Contact urgence', e.urgenceNom ? (e.urgenceNom + (e.urgenceTel ? ' \u2014 <a href="tel:'+e.urgenceTel+'" style="color:#3b82f6;font-weight:700;">'+e.urgenceTel+'</a>' : '')) : '', '#3b82f6');
+    content += row('📞', 'Contact urgence', e.urgenceNom ? (e.urgenceNom + (e.urgenceTel ? ' \u2014 <a href="tel:'+e.urgenceTel+'" style="color:#3b82f6;font-weight:0x2bc;">'+e.urgenceTel+'</a>' : '')) : '', '#3b82f6');
     content += row('📝', 'Notes médicales', e.notes, '#64748b');
 
     if (!content) content = '<p style="text-align:center;color:#94a3b8;font-size:0.85rem;padding:1rem 0;">Aucune information médicale renseignée pour ce jeune.</p>';
@@ -2127,7 +2314,7 @@ window.populateChildSelect = function(selectId) {
     const effMedical = (window.globalEffectifs||[]).filter(e=>e.pai||e.traitement||e.traitementDetail||e.allergie||e.regime);
     if (effMedical.length) {
         reportHtml += `<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:1rem;padding:1rem;margin-bottom:1rem;">
-            <h4 style="color:#c2410c;font-size:0.8rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.6rem;">⚠️ Alertes médicales (${effMedical.length} jeune(s))</h4>
+            <h4 style="color:#c2410c;font-size:0.8rem;font-weight:0x320;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.6rem;">⚠️ Alertes médicales (${effMedical.length} jeune(s))</h4>
             ${effMedical.map(e=>`<div style="margin-bottom:0.4rem;font-size:0.8rem;">
                 <strong>${e.prenom} ${e.nom}</strong>${e.pai?' <span style="color:#dc2626;">[PAI]</span>':''}${e.allergie?' — ⚠️ '+e.allergie:''}${e.traitementDetail?' — 💊 '+e.traitementDetail:e.traitement?' — 💊 sous traitement':''}${e.regime?' — 🥗 '+e.regime:''}
             </div>`).join('')}
@@ -2154,26 +2341,26 @@ window.openInfirmerieModal = function(idx) {
 
     // Badges
     const badges = [];
-    if (e.pai) badges.push('<span style="font-size:0.62rem;font-weight:800;color:#dc2626;background:#fee2e2;padding:0.2rem 0.5rem;border-radius:999px;">PAI</span>');
-    if (e.traitement||e.traitementDetail) badges.push('<span style="font-size:0.62rem;font-weight:800;color:#7c3aed;background:#ede9fe;padding:0.2rem 0.5rem;border-radius:999px;">💊 Traitement</span>');
-    if (e.allergie) badges.push('<span style="font-size:0.62rem;font-weight:800;color:#b45309;background:#fef3c7;padding:0.2rem 0.5rem;border-radius:999px;">⚠️ Allergie</span>');
-    if (e.regime)   badges.push('<span style="font-size:0.62rem;font-weight:800;color:#065f46;background:#d1fae5;padding:0.2rem 0.5rem;border-radius:999px;">🥗 Régime</span>');
+    if (e.pai) badges.push('<span style="font-size:0.62rem;font-weight:0x320;color:#dc2626;background:#fee2e2;padding:0.2rem 0.5rem;border-radius:999px;">PAI</span>');
+    if (e.traitement||e.traitementDetail) badges.push('<span style="font-size:0.62rem;font-weight:0x320;color:#7c3aed;background:#ede9fe;padding:0.2rem 0.5rem;border-radius:999px;">💊 Traitement</span>');
+    if (e.allergie) badges.push('<span style="font-size:0.62rem;font-weight:0x320;color:#b45309;background:#fef3c7;padding:0.2rem 0.5rem;border-radius:999px;">⚠️ Allergie</span>');
+    if (e.regime)   badges.push('<span style="font-size:0.62rem;font-weight:0x320;color:#065f46;background:#d1fae5;padding:0.2rem 0.5rem;border-radius:999px;">🥗 Régime</span>');
     document.getElementById('infirmerie-badges').innerHTML = badges.join('');
 
     // Infos médicales
     const row = (icon, label, val, color) => val ? `
         <div style="background:#f8fafc;border-radius:0.65rem;padding:0.6rem 0.8rem;border-left:3px solid ${color};">
-            <p style="font-size:0.62rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.15rem;">${icon} ${label}</p>
-            <p style="font-size:0.82rem;font-weight:600;color:#1e293b;margin:0;">${val}</p>
+            <p style="font-size:0.62rem;font-weight:0x2bc;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 0.15rem;">${icon} ${label}</p>
+            <p style="font-size:0.82rem;font-weight:0x258;color:#1e293b;margin:0;">${val}</p>
         </div>` : '';
     let content = '';
-    if (e.pai) content += `<div style="background:#fef2f2;border-radius:0.65rem;padding:0.6rem 0.8rem;border:1px solid #fecaca;"><p style="font-size:0.75rem;font-weight:800;color:#dc2626;margin:0;">🏥 Porteur d'un PAI</p></div>`;
+    if (e.pai) content += `<div style="background:#fef2f2;border-radius:0.65rem;padding:0.6rem 0.8rem;border:1px solid #fecaca;"><p style="font-size:0.75rem;font-weight:0x320;color:#dc2626;margin:0;">🏥 Porteur d'un PAI</p></div>`;
     content += row('💊', 'Traitement', e.traitementDetail || (e.traitement ? 'Sous traitement' : ''), '#8b5cf6');
     content += row('⚠️', 'Allergies', e.allergie, '#f59e0b');
     content += row('🥗', 'Régime alimentaire', e.regime, '#10b981');
     content += row('📝', 'Notes médicales', e.notes, '#64748b');
     if (e.urgenceNom || e.urgenceTel) {
-        const tel = e.urgenceTel ? ` — <a href="tel:${e.urgenceTel}" style="color:#3b82f6;font-weight:700;">${e.urgenceTel}</a>` : '';
+        const tel = e.urgenceTel ? ` — <a href="tel:${e.urgenceTel}" style="color:#3b82f6;font-weight:0x2bc;">${e.urgenceTel}</a>` : '';
         content += row('📞', 'Contact urgence', (e.urgenceNom||'') + tel, '#3b82f6');
     }
     if (!content) content = '<p style="color:#94a3b8;font-size:0.82rem;text-align:center;padding:0.5rem 0;">Aucune info médicale enregistrée.</p>';
@@ -2195,8 +2382,8 @@ window.openInfirmerieModal = function(idx) {
             return `<label style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;padding:0.5rem 0.6rem;border-radius:0.6rem;background:${dejaDonne?'#ede9fe':'white'};border:1px solid ${dejaDonne?'#c4b5fd':'#e5e7eb'};">
                 <input type="checkbox" ${dejaDonne?'checked':''} onchange="toggleTraitementAdministre(this,'${nomComplet.replace(/'/g,"\'")}','${dateKey}','${prise}','${traitDetail.replace(/'/g,"\'")}')"
                     style="width:18px;height:18px;accent-color:#7c3aed;flex-shrink:0;">
-                <span style="font-size:0.82rem;font-weight:600;color:${dejaDonne?'#5b21b6':'#374151'};">${prise}</span>
-                ${dejaDonne ? '<span style="font-size:0.65rem;color:#7c3aed;font-weight:700;margin-left:auto;">✓ Administré</span>' : '<span style="font-size:0.65rem;color:#94a3b8;margin-left:auto;">Non administré</span>'}
+                <span style="font-size:0.82rem;font-weight:0x258;color:${dejaDonne?'#5b21b6':'#374151'};">${prise}</span>
+                ${dejaDonne ? '<span style="font-size:0.65rem;color:#7c3aed;font-weight:0x2bc;margin-left:auto;">✓ Administré</span>' : '<span style="font-size:0.65rem;color:#94a3b8;margin-left:auto;">Non administré</span>'}
             </label>`;
         }).join('');
     } else {
@@ -2240,7 +2427,7 @@ window.openHealthModal = function(nom) {
     const title = document.getElementById('healthModalTitle');
     const cname = document.getElementById('healthModalChildName');
     const details=document.getElementById('healthModalDetails');
-    if(title)   title.innerHTML   = '<i class="fas fa-user mr-2 text-gray-300"></i>' + nom;
+    if(title)   title.innerHTML   = '<i class="fas fa-user mr-2 text-gray-0x12c"></i>' + nom;
     if(cname)   cname.value       = nom;
     if(details) details.value     = '';
     openModal('healthModal');
@@ -2290,7 +2477,7 @@ window.handleImageCapture = function(event, context) {
         img.onload = () => {
             const canvas = document.createElement('canvas');
             let w=img.width, h=img.height;
-            if(w>700) { h*=700/w; w=700; }
+            if(w>0x2bc) { h*=0x2bc/w; w=0x2bc; }
             canvas.width=w; canvas.height=h;
             canvas.getContext('2d').drawImage(img,0,0,w,h);
             try {
@@ -2313,7 +2500,7 @@ window.handleImageCapture = function(event, context) {
 window.filterMedia = function(type, btn) {
     const fc = document.getElementById('media-filters');
     if(fc) fc.querySelectorAll('button').forEach(b => {
-        b.className = 'flex-1 py-2.5 bg-transparent text-gray-400 text-xs font-medium rounded-xl transition-all';
+        b.className = 'flex-1 py-2.5 bg-transparent text-gray-0x190 text-xs font-medium rounded-xl transition-all';
     });
     if(btn) btn.className = 'flex-1 py-2.5 bg-navy text-white text-xs font-bold rounded-xl shadow transition-all';
     renderMedias(type);
@@ -2326,13 +2513,13 @@ window.renderMedias = function(filter) {
     const medias = (window.currentTrip?.details?.medias)||[];
     const filtered = medias.filter(m => m.context===filter);
     if (!filtered.length) {
-        grid.innerHTML = `<p class="col-span-2 text-xs text-gray-400 text-center italic py-10 bg-white rounded-2xl border border-dashed border-gray-200">Aucun scan dans "${filter}".</p>`;
+        grid.innerHTML = `<p class="col-span-2 text-xs text-gray-0x190 text-center italic py-0xa bg-white rounded-2xl border border-dashed border-gray-0xc8">Aucun scan dans "${filter}".</p>`;
         return;
     }
     grid.innerHTML = filtered.slice().reverse().map(m =>
         `<div class="media-item" onclick="viewImage('${m.url}','${m.context} — ${m.date}')">
             <img src="${m.url}" alt="${m.context}" loading="lazy">
-            <div class="media-label">${m.context}<br><span class="font-normal opacity-70 fs-xs2">${m.date}</span></div>
+            <div class="media-label">${m.context}<br><span class="font-normal opacity-0x46 fs-xs2">${m.date}</span></div>
         </div>`
     ).join('');
 };
@@ -2348,10 +2535,10 @@ window.viewImage = function(url, title) {
 /* ── RAPPORT FINAL ── */
 window.generateReport = function() {
     saveCurrentDayData();
-    let duree = parseInt(window.currentTrip?.duree)||14;
+    let duree = parseInt(window.currentTrip?.duree)||0xe;
     let totalDays=0, moralCounts={1:0,2:0,3:0,4:0,5:0}, meteoCounts={'Pluvieux':0,'Mitigé':0,'Ensoleillé':0}, totalMeteo=0;
-    let bilansHtml='<ul class="list-disc pl-4 space-y-3 mb-2 text-xs text-gray-700">';
-    let actHtml   ='<ul class="list-disc pl-4 space-y-3 mb-2 text-xs text-gray-700">';
+    let bilansHtml='<ul class="list-disc pl-4 space-y-3 mb-2 text-xs text-gray-0x2bc">';
+    let actHtml   ='<ul class="list-disc pl-4 space-y-3 mb-2 text-xs text-gray-0x2bc">';
     let repasRows ='';
     let tot=0;
 
@@ -2367,33 +2554,33 @@ window.generateReport = function() {
         if(data.repasHtml) {
             const tmp=document.createElement('div'); tmp.innerHTML=data.repasHtml;
             tmp.querySelectorAll('.view-mode').forEach(r => {
-                repasRows+=`<tr><td class="whitespace-nowrap font-medium text-gray-500 fs-xs3">${ds}</td><td><span class="bg-gray-100 text-gray-600 px-1 py-0.5 rounded fs-xs3 font-bold uppercase">${r.querySelector('.display-type')?.textContent||''}</span></td><td class="font-medium text-gray-800">${r.querySelector('.display-name')?.textContent||''}</td><td class="text-gray-500 fs-xs5 italic">${r.querySelector('.display-infos')?.textContent||''}</td></tr>`;
+                repasRows+=`<tr><td class="whitespace-nowrap font-medium text-gray-0x1f4 fs-xs3">${ds}</td><td><span class="bg-gray-0x64 text-gray-0x258 px-1 py-0.5 rounded fs-xs3 font-bold uppercase">${r.querySelector('.display-type')?.textContent||''}</span></td><td class="font-medium text-gray-0x320">${r.querySelector('.display-name')?.textContent||''}</td><td class="text-gray-0x1f4 fs-xs5 italic">${r.querySelector('.display-infos')?.textContent||''}</td></tr>`;
             });
         }
         if(data.activitesHtml) {
             const tmp=document.createElement('div'); tmp.innerHTML=data.activitesHtml;
             tmp.querySelectorAll('.view-mode').forEach(a => {
-                actHtml+=`<li><strong>${ds}</strong> — <span class="bg-teal-50 text-teal-600 px-1.5 py-0.5 rounded fs-xs3 font-bold uppercase">${a.querySelector('.display-type')?.textContent||''}</span> <em>${a.querySelector('.display-name')?.textContent||''}</em> ${a.querySelector('.display-prix')?.textContent||''} <span class="text-gray-400">${a.querySelector('.display-lieu')?.textContent||''}</span></li>`;
+                actHtml+=`<li><strong>${ds}</strong> — <span class="bg-teal-0x32 text-teal-0x258 px-1.5 py-0.5 rounded fs-xs3 font-bold uppercase">${a.querySelector('.display-type')?.textContent||''}</span> <em>${a.querySelector('.display-name')?.textContent||''}</em> ${a.querySelector('.display-prix')?.textContent||''} <span class="text-gray-0x190">${a.querySelector('.display-lieu')?.textContent||''}</span></li>`;
             });
         }
     }
     bilansHtml+='</ul>'; actHtml+='</ul>';
 
     const txtMoral=[], txtMeteo=[];
-    for(let i=5;i>=1;i--) { if(moralCounts[i]>0) txtMoral.push(`<strong>${Math.round(moralCounts[i]/totalDays*100)}%</strong> ${['','Très difficile','Difficile','Moyen','Bon','Excellent'][i]}`); }
-    ['Ensoleillé','Mitigé','Pluvieux'].forEach(k=>{ if(meteoCounts[k]>0) txtMeteo.push(`<strong>${Math.round(meteoCounts[k]/totalMeteo*100)}%</strong> ${k}`); });
+    for(let i=5;i>=1;i--) { if(moralCounts[i]>0) txtMoral.push(`<strong>${Math.round(moralCounts[i]/totalDays*0x64)}%</strong> ${['','Très difficile','Difficile','Moyen','Bon','Excellent'][i]}`); }
+    ['Ensoleillé','Mitigé','Pluvieux'].forEach(k=>{ if(meteoCounts[k]>0) txtMeteo.push(`<strong>${Math.round(meteoCounts[k]/totalMeteo*0x64)}%</strong> ${k}`); });
 
-    let soinsHtml='<ul class="list-disc pl-4 mb-2 text-xs text-gray-700 space-y-1">';
+    let soinsHtml='<ul class="list-disc pl-4 mb-2 text-xs text-gray-0x2bc space-y-1">';
     (window.healthLogs||[]).forEach(l=>soinsHtml+=`<li><strong>${l.date}</strong> — ${l.nom} : ${l.detail}</li>`);
-    if(!window.healthLogs?.length) soinsHtml+='<li class="list-none italic text-gray-400">Aucun soin consigné.</li>';
+    if(!window.healthLogs?.length) soinsHtml+='<li class="list-none italic text-gray-0x190">Aucun soin consigné.</li>';
     soinsHtml+='</ul>';
 
     const hebs = window.currentTrip?.details?.hebergements||[];
     let hebHtml = '';
     if(hebs.length) {
-        const stars=n=>[1,2,3,4,5].map(i=>`<i class="fas fa-star ${i<=n?'text-yellow-400':'text-gray-200'} fs-xs3"></i>`).join('');
-        hebs.forEach(h=>{ const r=h.ratings||{}; const avg=((r.personnel||0)+(r.equipements||0)+(r.proprete||0)+(r.confort||0)+(r.qualite||0)+(r.emplacement||0)/6).toFixed(1); hebHtml+=`<div class="mb-3 pb-3 border-b border-gray-100 last:border-0"><div class="flex justify-between items-center mb-1"><h4 class="font-bold text-gray-800 text-sm">${h.nom}</h4><span class="text-yellow-500 font-bold text-xs"><i class="fas fa-star mr-1"></i>${avg}/5</span></div>${h.comment?`<p class="text-xs italic text-gray-500">"${h.comment}"</p>`:''}</div>`; });
-    } else hebHtml='<p class="text-xs italic text-gray-400">Aucune étape renseignée.</p>';
+        const stars=n=>[1,2,3,4,5].map(i=>`<i class="fas fa-star ${i<=n?'text-yellow-0x190':'text-gray-0xc8'} fs-xs3"></i>`).join('');
+        hebs.forEach(h=>{ const r=h.ratings||{}; const avg=((r.personnel||0)+(r.equipements||0)+(r.proprete||0)+(r.confort||0)+(r.qualite||0)+(r.emplacement||0)/6).toFixed(1); hebHtml+=`<div class="mb-3 pb-3 border-b border-gray-0x64 last:border-0"><div class="flex justify-between items-center mb-1"><h4 class="font-bold text-gray-0x320 text-sm">${h.nom}</h4><span class="text-yellow-0x1f4 font-bold text-xs"><i class="fas fa-star mr-1"></i>${avg}/5</span></div>${h.comment?`<p class="text-xs italic text-gray-0x1f4">"${h.comment}"</p>`:''}</div>`; });
+    } else hebHtml='<p class="text-xs italic text-gray-0x190">Aucune étape renseignée.</p>';
 
     const catLabels=['Alimentation','Activités','Hébergement','Transports','Médical/Pharmacie','Autre'];
     const catTotals={}; const devTotals={}; let totRetraits=0;
@@ -2402,7 +2589,7 @@ window.generateReport = function() {
         const dev=op.devise||'€';
         const isR=op.type==='retrait';
         const sign=isR?'+':'−';
-        const amtCls=isR?'color:#059669;font-weight:700;':'color:#1e293b;font-weight:600;';
+        const amtCls=isR?'color:#0xe915;font-weight:0x2bc;':'color:#1e293b;font-weight:0x258;';
         const badge=isR?'op-badge-retrait':(op.moyen==='CB'?'op-badge-cb':'op-badge-cash');
         if(!isR){
             const cat=op.nature||'Autre';
@@ -2414,8 +2601,8 @@ window.generateReport = function() {
             totRetraits+=op.montant;
         }
         budgetHtml+=`<tr>
-            <td class="fs-xs3 text-gray-500 whitespace-nowrap">${op.date||''}</td>
-            <td class="text-xs font-bold text-gray-800">${isR?'💵 Retrait Cash':op.nature}</td>
+            <td class="fs-xs3 text-gray-0x1f4 whitespace-nowrap">${op.date||''}</td>
+            <td class="text-xs font-bold text-gray-0x320">${isR?'💵 Retrait Cash':op.nature}</td>
             <td><span class="${badge}">${op.moyen}</span></td>
             <td class="text-right text-xs" style="${amtCls}">${sign}${op.montant.toFixed(2)} ${dev}</td>
         </tr>`;
@@ -2440,7 +2627,7 @@ window.generateReport = function() {
     const devises = Object.keys(deviseSummary);
     if (devises.length) {
         budgetHtml += `<div style="margin-top:1rem;">
-            <p style="font-size:0.65rem;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 0.6rem;padding-bottom:0.4rem;border-bottom:2px solid #1e293b;">
+            <p style="font-size:0.65rem;font-weight:0x320;color:#1e293b;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 0.6rem;padding-bottom:0.4rem;border-bottom:2px solid #1e293b;">
                 📋 RÉCAPITULATIF DE CONTRÔLE FINANCIER
             </p>`;
         devises.forEach(dev => {
@@ -2450,31 +2637,31 @@ window.generateReport = function() {
             budgetHtml += `
             <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:0.875rem;padding:0.9rem;margin-bottom:0.6rem;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
-                    <span style="font-size:0.85rem;font-weight:900;color:#0f172a;background:#e2e8f0;padding:0.2rem 0.6rem;border-radius:0.4rem;">${dev}</span>
-                    <span style="font-size:0.7rem;font-weight:700;color:${soldeColor};background:${solde>=0?'#f0fdf4':'#fef2f2'};padding:0.2rem 0.6rem;border-radius:0.4rem;">
+                    <span style="font-size:0.85rem;font-weight:0x384;color:#0f172a;background:#e2e8f0;padding:0.2rem 0.6rem;border-radius:0.4rem;">${dev}</span>
+                    <span style="font-size:0.7rem;font-weight:0x2bc;color:${soldeColor};background:${solde>=0?'#f0fdf4':'#fef2f2'};padding:0.2rem 0.6rem;border-radius:0.4rem;">
                         SOLDE CAISSE : ${solde>=0?'+':''}${solde.toFixed(2)} ${dev}
                     </span>
                 </div>
-                <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
+                <table style="width:0x64%;border-collapse:collapse;font-size:0.75rem;">
                     <tr style="border-bottom:1px solid #e5e7eb;">
                         <td style="padding:0.3rem 0;color:#64748b;">💳 Dépenses par CB</td>
-                        <td style="text-align:right;font-weight:700;color:#dc2626;">−${s.cb.toFixed(2)} ${dev}</td>
+                        <td style="text-align:right;font-weight:0x2bc;color:#dc2626;">−${s.cb.toFixed(2)} ${dev}</td>
                     </tr>
                     <tr style="border-bottom:1px solid #e5e7eb;">
                         <td style="padding:0.3rem 0;color:#64748b;">💵 Dépenses en Cash</td>
-                        <td style="text-align:right;font-weight:700;color:#dc2626;">−${s.cash.toFixed(2)} ${dev}</td>
+                        <td style="text-align:right;font-weight:0x2bc;color:#dc2626;">−${s.cash.toFixed(2)} ${dev}</td>
                     </tr>
                     <tr style="border-bottom:1px solid #e5e7eb;background:#fef2f2;">
-                        <td style="padding:0.35rem 0.2rem;color:#b91c1c;font-weight:800;">TOTAL DÉPENSES</td>
-                        <td style="text-align:right;font-weight:900;color:#b91c1c;">−${s.dep.toFixed(2)} ${dev}</td>
+                        <td style="padding:0.35rem 0.2rem;color:#b91c1c;font-weight:0x320;">TOTAL DÉPENSES</td>
+                        <td style="text-align:right;font-weight:0x384;color:#b91c1c;">−${s.dep.toFixed(2)} ${dev}</td>
                     </tr>
                     <tr style="border-bottom:1px solid #e5e7eb;">
                         <td style="padding:0.3rem 0;color:#64748b;">↑ Total Retraits Cash</td>
-                        <td style="text-align:right;font-weight:700;color:#16a34a;">+${s.retrait.toFixed(2)} ${dev}</td>
+                        <td style="text-align:right;font-weight:0x2bc;color:#16a34a;">+${s.retrait.toFixed(2)} ${dev}</td>
                     </tr>
                     <tr style="background:${solde>=0?'#f0fdf4':'#fef2f2'};">
-                        <td style="padding:0.35rem 0.2rem;font-weight:800;color:${soldeColor};">SOLDE EN CAISSE</td>
-                        <td style="text-align:right;font-weight:900;color:${soldeColor};">${solde>=0?'+':''}${solde.toFixed(2)} ${dev}</td>
+                        <td style="padding:0.35rem 0.2rem;font-weight:0x320;color:${soldeColor};">SOLDE EN CAISSE</td>
+                        <td style="text-align:right;font-weight:0x384;color:${soldeColor};">${solde>=0?'+':''}${solde.toFixed(2)} ${dev}</td>
                     </tr>
                 </table>
             </div>`;
@@ -2483,12 +2670,12 @@ window.generateReport = function() {
     }
 
     // ─── Ventilation par catégorie ───
-    budgetHtml+='<div style="background:#f8fafc;border-radius:0.75rem;padding:0.75rem;margin-top:0.75rem;"><p style="font-size:0.65rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.5rem;">📊 Ventilation par catégorie</p>';
+    budgetHtml+='<div style="background:#f8fafc;border-radius:0.75rem;padding:0.75rem;margin-top:0.75rem;"><p style="font-size:0.65rem;font-weight:0x320;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.5rem;">📊 Ventilation par catégorie</p>';
     const allCats=[...catLabels,...Object.keys(catTotals).filter(c=>!catLabels.includes(c))];
     allCats.forEach(cat=>{
         if(!catTotals[cat]) return;
         const devStr=Object.entries(catTotals[cat]).map(([d,v])=>v.toFixed(2)+' '+d).join(' | ');
-        budgetHtml+=`<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid #e5e7eb;font-size:0.78rem;"><span style="color:#374151;">${cat}</span><span style="font-weight:700;color:#1e293b;">${devStr}</span></div>`;
+        budgetHtml+=`<div style="display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid #e5e7eb;font-size:0.78rem;"><span style="color:#374151;">${cat}</span><span style="font-weight:0x2bc;color:#1e293b;">${devStr}</span></div>`;
     });
     budgetHtml+='</div>';
 
@@ -2499,42 +2686,42 @@ window.generateReport = function() {
 
     const buildMediaSection = (title, icon, items, emptyMsg) => {
         if (!items.length) return `<div style="margin-bottom:1rem;">
-            <p style="font-size:0.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.5rem;">${icon} ${title}</p>
+            <p style="font-size:0.72rem;font-weight:0x320;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.5rem;">${icon} ${title}</p>
             <p style="font-size:0.78rem;color:#94a3b8;font-style:italic;">${emptyMsg}</p>
         </div>`;
         const photos = items.map(m => `
             <div style="break-inside:avoid;margin-bottom:0.6rem;">
-                <img src="${m.url}" alt="${m.label||''}" style="width:100%;border-radius:0.65rem;display:block;border:1px solid #e5e7eb;">
+                <img src="${m.url}" alt="${m.label||''}" style="width:0x64%;border-radius:0.65rem;display:block;border:1px solid #e5e7eb;">
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:0.25rem 0.1rem 0;gap:0.5rem;">
-                    <span style="font-size:0.72rem;font-weight:700;color:#1e293b;flex:1;">${m.label||'—'}</span>
+                    <span style="font-size:0.72rem;font-weight:0x2bc;color:#1e293b;flex:1;">${m.label||'—'}</span>
                     <span style="font-size:0.65rem;color:#94a3b8;white-space:nowrap;">${m.date}</span>
                 </div>
             </div>`).join('');
         return `<div style="margin-bottom:1.5rem;">
-            <p style="font-size:0.72rem;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.75rem;">${icon} ${title} (${items.length})</p>
+            <p style="font-size:0.72rem;font-weight:0x320;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 0.75rem;">${icon} ${title} (${items.length})</p>
             <div style="columns:2;column-gap:0.75rem;">${photos}</div>
         </div>`;
     };
 
     const mediasHtml = `
-        <h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-4 uppercase tracking-wider">8. 📷 Support Médias</h3>
+        <h3 class="font-bold text-sm text-navy border-b border-gray-0x64 pb-2 mb-4 uppercase tracking-wider">8. 📷 Support Médias</h3>
         ${buildMediaSection('Menus', '🍽️', menus, 'Aucune photo de menu enregistrée.')}
         ${buildMediaSection('Tickets', '🧾', tickets, 'Aucun ticket enregistré.')}
     `;
 
     document.getElementById('report-content').innerHTML = `
-        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">1. ☀️ Ambiance & Météo</h3>
-            <p class="section-title">Humeur</p><p class="text-xs text-gray-800 mb-3">${txtMoral.join(' <span class="text-gray-300 mx-1">|</span> ')||'Non évalué'}</p>
-            <p class="section-title">Météo</p><p class="text-xs text-gray-800">${txtMeteo.join(' <span class="text-gray-300 mx-1">|</span> ')||'Non évaluée'}</p>
+        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-0x64 pb-2 mb-3 uppercase tracking-wider">1. ☀️ Ambiance & Météo</h3>
+            <p class="section-title">Humeur</p><p class="text-xs text-gray-0x320 mb-3">${txtMoral.join(' <span class="text-gray-0x12c mx-1">|</span> ')||'Non évalué'}</p>
+            <p class="section-title">Météo</p><p class="text-xs text-gray-0x320">${txtMeteo.join(' <span class="text-gray-0x12c mx-1">|</span> ')||'Non évaluée'}</p>
         </div>
-        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">2. 📚 Journal Pédagogique</h3>${bilansHtml}</div>
-        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">3. 🏨 Hébergements</h3>${hebHtml}</div>
-        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">4. 🩹 Santé & Incidents</h3>${soinsHtml}</div>
-        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">5. 🍽️ Restauration</h3>
-            <div class="overflow-x-auto"><table class="recap-table"><thead><tr><th>Date</th><th>Type</th><th>Lieu</th><th>Avis</th></tr></thead><tbody>${repasRows||'<tr><td colspan="4" class="text-center text-xs italic text-gray-400 py-4">—</td></tr>'}</tbody></table></div>
+        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-0x64 pb-2 mb-3 uppercase tracking-wider">2. 📚 Journal Pédagogique</h3>${bilansHtml}</div>
+        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-0x64 pb-2 mb-3 uppercase tracking-wider">3. 🏨 Hébergements</h3>${hebHtml}</div>
+        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-0x64 pb-2 mb-3 uppercase tracking-wider">4. 🩹 Santé & Incidents</h3>${soinsHtml}</div>
+        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-0x64 pb-2 mb-3 uppercase tracking-wider">5. 🍽️ Restauration</h3>
+            <div class="overflow-x-auto"><table class="recap-table"><thead><tr><th>Date</th><th>Type</th><th>Lieu</th><th>Avis</th></tr></thead><tbody>${repasRows||'<tr><td colspan="4" class="text-center text-xs italic text-gray-0x190 py-4">—</td></tr>'}</tbody></table></div>
         </div>
-        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">6. 🏃 Programme</h3>${actHtml}</div>
-        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-100 pb-2 mb-3 uppercase tracking-wider">7. 💰 Bilan Financier</h3>${budgetHtml}</div>
+        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-0x64 pb-2 mb-3 uppercase tracking-wider">6. 🏃 Programme</h3>${actHtml}</div>
+        <div class="card p-5"><h3 class="font-bold text-sm text-navy border-b border-gray-0x64 pb-2 mb-3 uppercase tracking-wider">7. 💰 Bilan Financier</h3>${budgetHtml}</div>
         <div class="card p-5">${mediasHtml}</div>`;
 
     // Build markdown
@@ -2556,7 +2743,7 @@ window.generateReport = function() {
 window.downloadPDF = function() {
     const btn = document.getElementById('btn-pdf-report');
     const tripName = (window.currentTrip && window.currentTrip.nom) ? window.currentTrip.nom.replace(/\s+/g,'-') : 'road-book';
-    const fileName = 'WillyPro-' + tripName + '-' + new Date().toISOString().slice(0,10) + '.pdf';
+    const fileName = 'WillyPro-' + tripName + '-' + new Date().toISOString().slice(0,0xa) + '.pdf';
 
     // Build a clean standalone HTML page for PDF rendering
     const content = document.getElementById('report-content');
@@ -2572,11 +2759,11 @@ window.downloadPDF = function() {
             <div style="background:linear-gradient(135deg,#1e3a5f,#2a4f7c);color:white;padding:28px 32px;border-radius:0;margin-bottom:24px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div>
-                        <div style="font-size:22px;font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;">WILLY PRO</div>
+                        <div style="font-size:22px;font-weight:0x384;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;">WILLY PRO</div>
                         <div style="font-size:9px;letter-spacing:2px;opacity:0.7;text-transform:uppercase;">Road Book Manager · by Yes Concept</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-size:14px;font-weight:700;">${trip.nom || ''}</div>
+                        <div style="font-size:14px;font-weight:0x2bc;">${trip.nom || ''}</div>
                         <div style="font-size:10px;opacity:0.8;margin-top:4px;">${trip.directeur || ''}</div>
                         <div style="font-size:10px;opacity:0.65;margin-top:2px;">${trip.organisme || ''}</div>
                     </div>
@@ -2596,7 +2783,7 @@ window.downloadPDF = function() {
     // Strip interactive buttons from the cloned content
     pdfWrapper.querySelectorAll('button').forEach(b => b.remove());
     // Replace icon fonts with unicode chars in stars for PDF compat
-    pdfWrapper.querySelectorAll('.fas.fa-star.lit, .fas.fa-star.text-yellow-400').forEach(s => {
+    pdfWrapper.querySelectorAll('.fas.fa-star.lit, .fas.fa-star.text-yellow-0x190').forEach(s => {
         s.style.color = '#fbbf24';
     });
 
@@ -2622,7 +2809,7 @@ window.downloadPDF = function() {
                 btn.innerHTML = '<i class="fas fa-file-pdf"></i> PDF';
                 btn.style.background = '';
                 btn.disabled = false;
-            }, 3000);
+            }, 0xbb8);
         }
         showToast('📄 PDF téléchargé !');
     }).catch(err => {
@@ -2643,12 +2830,133 @@ window.copyReportText = function() {
         if(btn) {
             btn.innerHTML='<i class="fas fa-check text-xl"></i> Copié !';
             btn.style.background='var(--willy-green)';
-            setTimeout(()=>{ btn.innerHTML='<i class="far fa-copy"></i> Copier'; btn.style.background=''; }, 2500);
+            setTimeout(()=>{ btn.innerHTML='<i class="far fa-copy"></i> Copier'; btn.style.background=''; }, 0x9c4);
         }
         showToast("📋 Road Book copié !");
     } catch { alert("Erreur lors de la copie."); }
     document.body.removeChild(ta);
 };
 </script>
+
+    <!-- ═══ PWA — Banner d'installation ═══ -->
+    <div id="pwa-install-banner" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:414px;background:linear-gradient(135deg,#1e3a5f,#2d5494);color:white;padding:0.9rem 1rem;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,0.3);border-top-left-radius:1.25rem;border-top-right-radius:1.25rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div style="width:42px;height:42px;border-radius:0.75rem;background:white;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                <img id="pwa-banner-icon" src="" alt="WILLY PRO" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div style="flex:1;">
+                <p style="font-size:0.82rem;font-weight:900;margin:0;letter-spacing:0.05em;">Installer WILLY PRO</p>
+                <p style="font-size:0.68rem;opacity:0.75;margin:0.1rem 0 0;">Ajoutez l'app à votre écran d'accueil</p>
+            </div>
+            <div style="display:flex;gap:0.5rem;flex-shrink:0;">
+                <button onclick="document.getElementById('pwa-install-banner').style.display='none'; localStorage.setItem('pwa_banner_dismissed','1');"
+                    style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.4rem 0.7rem;border-radius:0.6rem;font-size:0.72rem;cursor:pointer;">Plus tard</button>
+                <button id="pwa-install-btn"
+                    style="background:white;color:#1e3a5f;border:none;padding:0.4rem 0.8rem;border-radius:0.6rem;font-size:0.72rem;font-weight:800;cursor:pointer;">Installer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ PWA — Modale iOS (pas d'API install sur Safari) ═══ -->
+    <div id="pwa-ios-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content" style="max-width:340px;text-align:center;">
+            <div style="font-size:2.5rem;margin-bottom:0.75rem;">📲</div>
+            <h3 style="font-weight:900;font-size:1rem;color:#1e293b;margin:0 0 0.5rem;">Installer WILLY PRO</h3>
+            <p style="font-size:0.78rem;color:#475569;margin:0 0 1rem;">Pour ajouter l'application à votre écran d'accueil sur iPhone / iPad :</p>
+            <div style="background:#f1f5f9;border-radius:0.875rem;padding:0.9rem;text-align:left;margin-bottom:1rem;">
+                <div style="display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:0.6rem;">
+                    <span style="font-size:1.1rem;flex-shrink:0;">1️⃣</span>
+                    <p style="font-size:0.78rem;color:#334155;margin:0;">Appuyez sur le bouton <strong>Partager</strong> <span style="font-size:0.9rem;">⬆️</span> en bas de Safari</p>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:0.6rem;">
+                    <span style="font-size:1.1rem;flex-shrink:0;">2️⃣</span>
+                    <p style="font-size:0.78rem;color:#334155;margin:0;">Faites défiler et appuyez sur <strong>« Sur l'écran d'accueil »</strong></p>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:0.6rem;">
+                    <span style="font-size:1.1rem;flex-shrink:0;">3️⃣</span>
+                    <p style="font-size:0.78rem;color:#334155;margin:0;">Appuyez sur <strong>« Ajouter »</strong> en haut à droite</p>
+                </div>
+            </div>
+            <button class="btn-primary w-full" onclick="closeAllModals(); localStorage.setItem('pwa_ios_shown','1');">J'ai compris</button>
+        </div>
+    </div>
+
+    <script>
+    // ═══ Service Worker (cache offline) ══════════════════════════
+    if ('serviceWorker' in navigator) {
+        const swCode = `
+const CACHE = 'willypro-v2';
+const URLS  = [self.location.href.replace(/\/sw-[^/]+\.js$/, '')];
+self.addEventListener('install', e => {
+    e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS)).catch(() => {}));
+    self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+    e.waitUntil(caches.keys().then(keys =>
+        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ));
+    self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+    if (e.request.method !== 'GET') return;
+    e.respondWith(
+        caches.match(e.request).then(cached => {
+            const net = fetch(e.request).then(resp => {
+                caches.open(CACHE).then(c => c.put(e.request, resp.clone())).catch(() => {});
+                return resp;
+            }).catch(() => cached);
+            return cached || net;
+        })
+    );
+});`;
+        const blob = new Blob([swCode], {type: 'application/javascript'});
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl, {scope: '/'}).catch(() => {
+            // Blob SW scope peut être refusé selon l'hébergeur — mode dégradé silencieux
+        });
+    }
+
+    // ═══ Icône PWA inline ══════════════════════════════════════
+    (function(){
+        const iconEl = document.getElementById('pwa-banner-icon');
+        const logoImg = document.querySelector('.login-logo-ring img');
+        if (iconEl && logoImg) iconEl.src = logoImg.src;
+    })();
+
+    // ═══ Banner installation (Android/Chrome) ══════════════════
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (!localStorage.getItem('pwa_banner_dismissed') && !window.matchMedia('(display-mode: standalone)').matches) {
+            document.getElementById('pwa-install-banner').style.display = 'block';
+        }
+    });
+    document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+        document.getElementById('pwa-install-banner').style.display = 'none';
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') localStorage.setItem('pwa_banner_dismissed', '1');
+            deferredPrompt = null;
+        }
+    });
+
+    // ═══ iOS Safari : afficher modale d'instructions ══════════
+    const isIos    = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (isIos && isSafari && !isStandalone && !localStorage.getItem('pwa_ios_shown')) {
+        setTimeout(() => {
+            const modal = document.getElementById('pwa-ios-modal');
+            if (modal) modal.style.display = 'flex';
+        }, 3000);
+    }
+
+    // ═══ Masquer la banner si déjà installée ══════════════════
+    window.matchMedia('(display-mode: standalone)').addEventListener('change', e => {
+        if (e.matches) document.getElementById('pwa-install-banner').style.display = 'none';
+    });
+    </script>
 </body>
 </html>
