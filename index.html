@@ -219,19 +219,32 @@
         document.addEventListener('selectstart', function(e) { e.preventDefault(); return false; });
         document.addEventListener('dragstart',   function(e) { e.preventDefault(); return false; });
 
-        // Détection ouverture DevTools (uniquement sur desktop via la largeur)
+        // Détection ouverture DevTools — affichage d'un avertissement sans détruire la page
         const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
         if (!isMobile) {
+            // Création d'une bannière d'avertissement discrète (non destructive)
+            const devWarning = document.createElement('div');
+            devWarning.id = 'dev-warning';
+            devWarning.style.cssText = 'display:none;position:fixed;inset:0;z-index:99999;background:#0f1f3d;color:white;font-family:sans-serif;flex-direction:column;align-items:center;justify-content:center;gap:1rem;';
+            devWarning.innerHTML = '<div style="font-size:3rem;">🔒</div><p style="font-size:1.1rem;font-weight:700;">Accès non autorisé</p><p style="font-size:0.8rem;opacity:0.6;">Veuillez fermer les outils de développement.</p>';
+            document.addEventListener('DOMContentLoaded', function() {
+                document.body.appendChild(devWarning);
+            });
             let devOpen = false;
-            const threshold = 160;
+            const threshold = 200;
             setInterval(function() {
+                const w = devWarning || document.getElementById('dev-warning');
+                if (!w) return;
                 if (window.outerWidth - window.innerWidth > threshold) {
                     if (!devOpen) {
                         devOpen = true;
-                        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1f3d;color:white;font-family:sans-serif;flex-direction:column;gap:1rem;"><div style="font-size:3rem;">🔒</div><p style="font-size:1.1rem;font-weight:700;">Accès non autorisé</p><p style="font-size:0.8rem;opacity:0.6;">Veuillez fermer les outils de développement.</p></div>';
+                        w.style.display = 'flex';
                     }
                 } else {
-                    devOpen = false;
+                    if (devOpen) {
+                        devOpen = false;
+                        w.style.display = 'none';
+                    }
                 }
             }, 1000);
         }
