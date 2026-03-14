@@ -18,15 +18,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="WILLY PRO">
-    <!-- Icônes en chemin absolu — requis par Safari pour l'écran d'accueil -->
     <link rel="apple-touch-icon" href="/icon-192.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/icon-192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/icon-192.png">
     <link rel="apple-touch-icon" sizes="167x167" href="/icon-192.png">
-    <!-- Splash screen iOS (évite l'écran blanc au démarrage) -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon-192.png">
     <style>
-      /* Fond de lancement iOS — évite l'écran blanc */
       @media (display-mode: standalone) {
         html, body { background: #0f1f3d !important; }
       }
@@ -261,24 +257,9 @@
         document.addEventListener('selectstart', function(e) { e.preventDefault(); return false; });
         document.addEventListener('dragstart',   function(e) { e.preventDefault(); return false; });
 
-        // Détection ouverture DevTools (technique de détimming)
-        let devOpen = false;
-        // Seuil élevé : le clavier iOS peut réduire innerHeight de 250-300px
-        // On ne surveille QUE la largeur (jamais affectée par le clavier)
-        const threshold = 160;
-        setInterval(function() {
-            const widthDiff = window.outerWidth - window.innerWidth;
-            // On ignore la hauteur : le clavier virtuel iOS/Android la réduit
-            // et déclencherait un faux positif "Accès non autorisé"
-            if (widthDiff > threshold) {
-                if (!devOpen) {
-                    devOpen = true;
-                    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0f1f3d;color:white;font-family:sans-serif;flex-direction:column;gap:1rem;"><div style="font-size:3rem;">🔒</div><p style="font-size:1.1rem;font-weight:700;">Accès non autorisé</p><p style="font-size:0.8rem;opacity:0.6;">Veuillez fermer les outils de développement.</p></div>';
-                }
-            } else {
-                devOpen = false;
-            }
-        }, 1000);
+        // Détection DevTools désactivée — incompatible avec iOS Safari
+        // (clavier virtuel, barre d'adresse, mode standalone réduisent innerHeight
+        //  et déclenchent des faux positifs qui détruisent le DOM de l'app)
     })();
     </script>
 </head>
@@ -1267,6 +1248,52 @@
             <div class="flex-1 flex items-center justify-center p-3 overflow-hidden">
                 <img id="viewer-img" src="" class="max-w-full max-h-full object-contain rounded-2xl shadow-2xl">
             </div>
+        </div>
+    </div>
+
+    <!-- ═══ PWA — Banner installation (Android/Chrome) ═══ -->
+    <div id="pwa-install-banner" style="display:none;position:absolute;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1e3a5f,#2d5494);color:white;padding:0.9rem 1rem;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,0.3);border-top-left-radius:1.25rem;border-top-right-radius:1.25rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div style="width:42px;height:42px;border-radius:0.75rem;background:white;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                <img id="pwa-banner-icon" src="" alt="WILLY PRO" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div style="flex:1;">
+                <p style="font-size:0.82rem;font-weight:900;margin:0;letter-spacing:0.05em;">Installer WILLY PRO</p>
+                <p style="font-size:0.68rem;opacity:0.75;margin:0.1rem 0 0;">Ajoutez l'app à votre écran d'accueil</p>
+            </div>
+            <div style="display:flex;gap:0.5rem;flex-shrink:0;">
+                <button onclick="document.getElementById('pwa-install-banner').style.display='none';localStorage.setItem('pwa_banner_dismissed','1');"
+                    style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.4rem 0.7rem;border-radius:0.6rem;font-size:0.72rem;cursor:pointer;">Plus tard</button>
+                <button id="pwa-install-btn"
+                    style="background:white;color:#1e3a5f;border:none;padding:0.4rem 0.8rem;border-radius:0.6rem;font-size:0.72rem;font-weight:800;cursor:pointer;">Installer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ PWA — Modale iOS ═══ -->
+    <div id="pwa-ios-modal" style="display:none;position:absolute;inset:0;background:rgba(15,30,60,0.75);z-index:9999;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(6px);">
+        <div style="background:white;width:100%;max-width:340px;border-radius:1.75rem;padding:1.75rem;text-align:center;box-shadow:0 25px 50px -10px rgba(0,0,0,0.35);max-height:90vh;overflow-y:auto;">
+            <div style="font-size:2.5rem;margin-bottom:0.75rem;">📲</div>
+            <h3 style="font-weight:900;font-size:1rem;color:#1e293b;margin:0 0 0.5rem;">Installer WILLY PRO</h3>
+            <p style="font-size:0.78rem;color:#475569;margin:0 0 1rem;">Pour ajouter l'application à votre écran d'accueil sur iPhone / iPad :</p>
+            <div style="background:#f1f5f9;border-radius:0.875rem;padding:0.9rem;text-align:left;margin-bottom:1.25rem;">
+                <div style="display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:0.6rem;">
+                    <span style="font-size:1.1rem;flex-shrink:0;">1️⃣</span>
+                    <p style="font-size:0.78rem;color:#334155;margin:0;">Appuyez sur le bouton <strong>Partager</strong> <span style="font-size:0.9rem;">⬆️</span> en bas de Safari</p>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:0.6rem;">
+                    <span style="font-size:1.1rem;flex-shrink:0;">2️⃣</span>
+                    <p style="font-size:0.78rem;color:#334155;margin:0;">Faites défiler et appuyez sur <strong>« Sur l'écran d'accueil »</strong></p>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:0.6rem;">
+                    <span style="font-size:1.1rem;flex-shrink:0;">3️⃣</span>
+                    <p style="font-size:0.78rem;color:#334155;margin:0;">Appuyez sur <strong>« Ajouter »</strong> en haut à droite</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('pwa-ios-modal').style.display='none';localStorage.setItem('pwa_ios_shown','1');"
+                style="background:linear-gradient(135deg,#1e3a5f,#2a4f7c);color:white;width:100%;padding:0.9rem;border-radius:0.85rem;font-weight:700;font-size:0.9rem;border:none;cursor:pointer;font-family:inherit;-webkit-appearance:none;">
+                J'ai compris ✓
+            </button>
         </div>
     </div>
 
@@ -2838,61 +2865,10 @@ window.copyReportText = function() {
 };
 </script>
 
-    <!-- ═══ PWA — Banner d'installation ═══ -->
-    <div id="pwa-install-banner" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:414px;background:linear-gradient(135deg,#1e3a5f,#2d5494);color:white;padding:0.9rem 1rem;z-index:9999;box-shadow:0 -4px 20px rgba(0,0,0,0.3);border-top-left-radius:1.25rem;border-top-right-radius:1.25rem;">
-        <div style="display:flex;align-items:center;gap:0.75rem;">
-            <div style="width:42px;height:42px;border-radius:0.75rem;background:white;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;">
-                <img id="pwa-banner-icon" src="" alt="WILLY PRO" style="width:100%;height:100%;object-fit:cover;">
-            </div>
-            <div style="flex:1;">
-                <p style="font-size:0.82rem;font-weight:900;margin:0;letter-spacing:0.05em;">Installer WILLY PRO</p>
-                <p style="font-size:0.68rem;opacity:0.75;margin:0.1rem 0 0;">Ajoutez l'app à votre écran d'accueil</p>
-            </div>
-            <div style="display:flex;gap:0.5rem;flex-shrink:0;">
-                <button onclick="document.getElementById('pwa-install-banner').style.display='none'; localStorage.setItem('pwa_banner_dismissed','1');"
-                    style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:0.4rem 0.7rem;border-radius:0.6rem;font-size:0.72rem;cursor:pointer;">Plus tard</button>
-                <button id="pwa-install-btn"
-                    style="background:white;color:#1e3a5f;border:none;padding:0.4rem 0.8rem;border-radius:0.6rem;font-size:0.72rem;font-weight:800;cursor:pointer;">Installer</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══ PWA — Modale iOS (pas d'API install sur Safari) ═══ -->
-    <!-- position:fixed pour couvrir tout l'écran indépendamment du mobile-frame -->
-    <div id="pwa-ios-modal" style="display:none;position:fixed;inset:0;background:rgba(15,30,60,0.75);z-index:9999;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(6px);">
-        <div style="background:white;width:100%;max-width:340px;border-radius:1.75rem;padding:1.75rem;text-align:center;box-shadow:0 25px 50px -10px rgba(0,0,0,0.35);max-height:90vh;overflow-y:auto;">
-            <div style="font-size:2.5rem;margin-bottom:0.75rem;">📲</div>
-            <h3 style="font-weight:900;font-size:1rem;color:#1e293b;margin:0 0 0.5rem;">Installer WILLY PRO</h3>
-            <p style="font-size:0.78rem;color:#475569;margin:0 0 1rem;">Pour ajouter l'application à votre écran d'accueil sur iPhone / iPad :</p>
-            <div style="background:#f1f5f9;border-radius:0.875rem;padding:0.9rem;text-align:left;margin-bottom:1.25rem;">
-                <div style="display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:0.6rem;">
-                    <span style="font-size:1.1rem;flex-shrink:0;">1️⃣</span>
-                    <p style="font-size:0.78rem;color:#334155;margin:0;">Appuyez sur le bouton <strong>Partager</strong> <span style="font-size:0.9rem;">⬆️</span> en bas de Safari</p>
-                </div>
-                <div style="display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:0.6rem;">
-                    <span style="font-size:1.1rem;flex-shrink:0;">2️⃣</span>
-                    <p style="font-size:0.78rem;color:#334155;margin:0;">Faites défiler et appuyez sur <strong>« Sur l'écran d'accueil »</strong></p>
-                </div>
-                <div style="display:flex;align-items:flex-start;gap:0.6rem;">
-                    <span style="font-size:1.1rem;flex-shrink:0;">3️⃣</span>
-                    <p style="font-size:0.78rem;color:#334155;margin:0;">Appuyez sur <strong>« Ajouter »</strong> en haut à droite</p>
-                </div>
-            </div>
-            <button onclick="document.getElementById('pwa-ios-modal').style.display='none'; localStorage.setItem('pwa_ios_shown','1');"
-                style="background:linear-gradient(135deg,#1e3a5f,#2a4f7c);color:white;width:100%;padding:0.9rem;border-radius:0.85rem;font-weight:700;font-size:0.9rem;border:none;cursor:pointer;font-family:inherit;">
-                J'ai compris ✓
-            </button>
-        </div>
-    </div>
-
     <script>
-    // ═══ Service Worker (cache offline — fichier sw.js requis par iOS Safari) ══
+    // ═══ Service Worker (fichier sw.js — requis par iOS Safari) ══════════════
     if ('serviceWorker' in navigator) {
-        // Safari refuse les Blob URL — on utilise un fichier sw.js réel
-        navigator.serviceWorker.register('./sw.js', { scope: './' })
-            .catch(() => {
-                // Mode dégradé silencieux si l'hébergeur bloque les SW
-            });
+        navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
     }
 
     // ═══ Icône PWA inline ══════════════════════════════════════
