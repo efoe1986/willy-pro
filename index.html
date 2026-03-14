@@ -2898,14 +2898,34 @@ window.copyReportText = function() {
     });
 
     // ═══ iOS Safari : afficher modale d'instructions ══════════
-    const isIos    = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    const isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    if (isIos && isSafari && !isStandalone && !localStorage.getItem('pwa_ios_shown')) {
+    // Sur iOS, TOUS les navigateurs (Chrome, Firefox...) utilisent WebKit
+    // On détecte iOS uniquement, sans condition sur le navigateur
+    const isIos       = /iphone|ipad|ipod/i.test(navigator.userAgent)
+                     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPad iOS 13+
+    const isStandalone2 = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    if (isIos && !isStandalone2 && !localStorage.getItem('pwa_ios_shown')) {
         setTimeout(() => {
             const modal = document.getElementById('pwa-ios-modal');
             if (modal) modal.style.display = 'flex';
-        }, 3000);
+        }, 2000);
+    }
+
+    // Bouton "Installer l'app" accessible à tout moment depuis l'app (iOS uniquement)
+    // Injecte un bouton discret dans le footer de la page de connexion
+    if (isIos && !isStandalone2) {
+        const loginScreen = document.getElementById('screen-login');
+        if (loginScreen) {
+            const btn = document.createElement('button');
+            btn.innerHTML = '📲 Installer WILLY PRO sur cet iPhone';
+            btn.style.cssText = 'margin:0.75rem auto 0;display:block;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);padding:0.6rem 1.2rem;border-radius:2rem;font-size:0.72rem;cursor:pointer;font-family:inherit;';
+            btn.onclick = () => {
+                localStorage.removeItem('pwa_ios_shown');
+                const modal = document.getElementById('pwa-ios-modal');
+                if (modal) modal.style.display = 'flex';
+            };
+            loginScreen.appendChild(btn);
+        }
     }
 
     // ═══ Masquer la banner si déjà installée ══════════════════
