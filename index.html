@@ -289,7 +289,24 @@
                 <p style="font-size:0.72rem;font-weight:600;color:#93c5fd;text-transform:uppercase;letter-spacing:0.2em;margin:0;">by Yes Concept</p>
             </div>
 
-            <!-- Formulaire -->
+            <!-- ═══ Code d'accès Yes Concept ═══ -->
+            <div id="acces-box" class="login-form-box w-full" style="max-width:340px;margin-bottom:0.85rem;">
+                <p style="font-size:0.6rem;color:#93c5fd;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin:0 0 0.5rem;">🔑 Code d'accès</p>
+                <div style="display:flex;gap:0.5rem;align-items:center;">
+                    <input type="text" id="acces-code" placeholder="Votre code d'accès" class="login-input"
+                        style="margin-bottom:0;flex:1;letter-spacing:0.05em;"
+                        maxlength="40"
+                        onkeydown="if(event.key==='Enter') verifierAcces()">
+                    <button type="button" onclick="verifierAcces()"
+                        style="background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.3);padding:0.6rem 0.9rem;border-radius:0.75rem;font-weight:800;font-size:0.8rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+                        <i class="fas fa-check"></i>
+                    </button>
+                </div>
+                <div id="acces-status" style="font-size:0.7rem;margin-top:0.5rem;min-height:1rem;text-align:center;"></div>
+            </div>
+
+            <!-- Formulaire (masqué jusqu'à validation du code) -->
+            <div id="formulaire-principal" style="display:none;width:100%;max-width:340px;">
             <div class="login-form-box w-full" style="max-width:340px;">
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin-bottom:0.65rem;">
                     <input type="text" id="login-nom" placeholder="Nom" class="login-input">
@@ -431,6 +448,7 @@
                     </div>
                 </div>
             </div>
+            </div><!-- fin formulaire-principal -->
         </div>
 
         <!-- Footer copyright -->
@@ -1319,7 +1337,97 @@ let currentEditingDay      = 1;
 let rawMarkdownReport      = "";
 let tempHebRatings         = { personnel:0, equipements:0, proprete:0, confort:0, qualite:0, emplacement:0 };
 
-/* ── NORMALIZE (accents, espaces, casse) ── */
+// ═══ CONTRÔLE D'ACCÈS — Google Sheets ═══════════════════════════════════════
+const ACCES_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzpBUQS2abcY7pQA2zBHMf3KC5YcGa3Qi-CcxYDGQR0aUVODmFtuhfmm-bZYz0k8wKk/exec';
+const ACCES_CACHE_KEY = 'willypro_acces_cache';
+const ACCES_CODE_KEY  = 'willypro_acces_valide';
+const CACHE_DUREE_MS  = 24 * 60 * 60 * 1000; // 24h
+
+// Au chargement : si un code valide est déjà en cache, déverrouiller directement
+(function() {
+    try {
+        const cache = JSON.parse(localStorage.getItem(ACCES_CACHE_KEY) || 'null');
+        if (cache && cache.expiry > Date.now() && cache.valide) {
+            deverrouillerFormulaire(false);
+        }
+    } catch(e) {}
+})();
+
+window.verifierAcces = async function() {
+    const code = (document.getElementById('acces-code').value || '').trim().toLowerCase();
+    if (!code) { setAccesStatus('Saisissez votre code d\'accès.', 'warn'); return; }
+
+    // Vérifier d'abord le cache local (évite un appel réseau si récent)
+    try {
+        const cache = JSON.parse(localStorage.getItem(ACCES_CACHE_KEY) || 'null');
+        if (cache && cache.expiry > Date.now() && cache.codes && cache.codes.includes(code)) {
+            localStorage.setItem(ACCES_CODE_KEY, code);
+            deverrouillerFormulaire(true);
+            return;
+        }
+    } catch(e) {}
+
+    setAccesStatus('<i class="fas fa-spinner fa-spin"></i> Vérification...', 'info');
+
+    try {
+        const resp = await fetch(ACCES_SHEET_URL + '?t=' + Date.now());
+        if (!resp.ok) throw new Error('Réseau');
+        const data = await resp.json();
+        const codes = (data.codes || []).map(c => String(c).trim().toLowerCase());
+
+        // Mettre en cache 24h
+        localStorage.setItem(ACCES_CACHE_KEY, JSON.stringify({
+            codes,
+            expiry: Date.now() + CACHE_DUREE_MS,
+            valide: codes.includes(code)
+        }));
+
+        if (codes.includes(code)) {
+            localStorage.setItem(ACCES_CODE_KEY, code);
+            deverrouillerFormulaire(true);
+        } else {
+            setAccesStatus('❌ Code non reconnu. Contactez Yes Concept.', 'error');
+        }
+    } catch(e) {
+        // Hors ligne : accepter si le code était valide dans le dernier cache
+        try {
+            const cache = JSON.parse(localStorage.getItem(ACCES_CACHE_KEY) || 'null');
+            if (cache && cache.codes && cache.codes.includes(code)) {
+                localStorage.setItem(ACCES_CODE_KEY, code);
+                deverrouillerFormulaire(true);
+                setAccesStatus('✅ Accès hors-ligne (cache).', 'ok');
+                return;
+            }
+        } catch(e2) {}
+        setAccesStatus('❌ Connexion impossible. Vérifiez votre réseau.', 'error');
+    }
+};
+
+function deverrouillerFormulaire(animate) {
+    document.getElementById('formulaire-principal').style.display = 'block';
+    const box = document.getElementById('acces-box');
+    if (box) {
+        box.style.opacity = '0.5';
+        box.style.pointerEvents = 'none';
+        const btn = box.querySelector('button');
+        if (btn) btn.innerHTML = '<i class="fas fa-check-circle"></i>';
+    }
+    setAccesStatus('✅ Accès autorisé', 'ok');
+    if (animate) {
+        document.getElementById('formulaire-principal').style.animation = 'fadeIn 0.4s ease-out';
+    }
+}
+
+function setAccesStatus(msg, type) {
+    const el = document.getElementById('acces-status');
+    if (!el) return;
+    const colors = { ok: '#6ee7b7', error: '#fca5a5', warn: '#fcd34d', info: 'rgba(255,255,255,0.6)' };
+    el.style.color = colors[type] || 'white';
+    el.innerHTML = msg;
+}
+// ═════════════════════════════════════════════════════════════════════════════
+
+
 function normalizeStr(s) {
     return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/gi,'').toLowerCase();
 }
