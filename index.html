@@ -289,9 +289,26 @@
                 <p style="font-size:0.72rem;font-weight:600;color:#93c5fd;text-transform:uppercase;letter-spacing:0.2em;margin:0;">by Yes Concept</p>
             </div>
 
-            <!-- ═══ Code d'accès Yes Concept ═══ -->
-            <div id="acces-box" class="login-form-box w-full" style="max-width:340px;margin-bottom:0.85rem;">
-                <p style="font-size:0.6rem;color:#93c5fd;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin:0 0 0.5rem;">🔑 Code d'accès</p>
+            <!-- ═══ ÉTAPE 1 : Identité ═══ -->
+            <div id="step-identite" class="login-form-box w-full" style="max-width:340px;margin-bottom:0.85rem;">
+                <p style="font-size:0.6rem;color:#93c5fd;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin:0 0 0.6rem;">👤 Étape 1 — Qui êtes-vous ?</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin-bottom:0.65rem;">
+                    <input type="text" id="acces-prenom" placeholder="Prénom" class="login-input" style="margin-bottom:0;"
+                        onkeydown="if(event.key==='Enter') passerEtape2()">
+                    <input type="text" id="acces-nom" placeholder="Nom" class="login-input" style="margin-bottom:0;"
+                        onkeydown="if(event.key==='Enter') passerEtape2()">
+                </div>
+                <button type="button" onclick="passerEtape2()"
+                    style="width:100%;background:rgba(255,255,255,0.18);color:white;border:1px solid rgba(255,255,255,0.3);padding:0.7rem;border-radius:0.75rem;font-weight:800;font-size:0.85rem;cursor:pointer;">
+                    Continuer <i class="fas fa-arrow-right" style="margin-left:0.4rem;"></i>
+                </button>
+                <div id="identite-status" style="font-size:0.7rem;margin-top:0.5rem;min-height:1rem;text-align:center;"></div>
+            </div>
+
+            <!-- ═══ ÉTAPE 2 : Code d'accès (masqué) ═══ -->
+            <div id="step-code" style="display:none;width:100%;max-width:340px;margin-bottom:0.85rem;">
+            <div class="login-form-box w-full">
+                <p style="font-size:0.6rem;color:#93c5fd;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin:0 0 0.6rem;">🔑 Étape 2 — Code d'accès</p>
                 <div style="display:flex;gap:0.5rem;align-items:center;">
                     <input type="text" id="acces-code" placeholder="Votre code d'accès" class="login-input"
                         style="margin-bottom:0;flex:1;letter-spacing:0.05em;"
@@ -304,13 +321,17 @@
                 </div>
                 <div id="acces-status" style="font-size:0.7rem;margin-top:0.5rem;min-height:1rem;text-align:center;"></div>
             </div>
+            </div>
 
-            <!-- Formulaire (masqué jusqu'à validation du code) -->
+            <!-- ═══ ÉTAPE 3 : Séjour (masqué) ═══ -->
             <div id="formulaire-principal" style="display:none;width:100%;max-width:340px;">
             <div class="login-form-box w-full" style="max-width:340px;">
+                <p style="font-size:0.6rem;color:#93c5fd;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin:0 0 0.6rem;">📋 Étape 3 — Votre séjour</p>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin-bottom:0.65rem;">
-                    <input type="text" id="login-nom" placeholder="Nom" class="login-input">
-                    <input type="text" id="login-prenom" placeholder="Prénom" class="login-input">
+                    <input type="text" id="login-nom" placeholder="Nom" class="login-input" readonly
+                        style="opacity:0.7;cursor:default;">
+                    <input type="text" id="login-prenom" placeholder="Prénom" class="login-input" readonly
+                        style="opacity:0.7;cursor:default;">
                 </div>
                 <div style="margin-bottom:0.65rem;">
                     <input type="text" id="login-organisme" placeholder="Organisme (ex : CSEC AF)" class="login-input">
@@ -1337,96 +1358,127 @@ let currentEditingDay      = 1;
 let rawMarkdownReport      = "";
 let tempHebRatings         = { personnel:0, equipements:0, proprete:0, confort:0, qualite:0, emplacement:0 };
 
-// ═══ CONTRÔLE D'ACCÈS — Google Sheets ═══════════════════════════════════════
+// ═══ CONTRÔLE D'ACCÈS — Google Sheets (flux 3 étapes) ═══════════════════════
 const ACCES_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzpBUQS2abcY7pQA2zBHMf3KC5YcGa3Qi-CcxYDGQR0aUVODmFtuhfmm-bZYz0k8wKk/exec';
 const ACCES_CACHE_KEY = 'willypro_acces_cache';
-const ACCES_CODE_KEY  = 'willypro_acces_valide';
 const CACHE_DUREE_MS  = 24 * 60 * 60 * 1000; // 24h
 
-// Au chargement : si un code valide est déjà en cache, déverrouiller directement
-(function() {
-    try {
-        const cache = JSON.parse(localStorage.getItem(ACCES_CACHE_KEY) || 'null');
-        if (cache && cache.expiry > Date.now() && cache.valide) {
-            deverrouillerFormulaire(false);
-        }
-    } catch(e) {}
-})();
-
-window.verifierAcces = async function() {
-    const code = (document.getElementById('acces-code').value || '').trim().toLowerCase();
-    if (!code) { setAccesStatus('Saisissez votre code d\'accès.', 'warn'); return; }
-
-    // Vérifier d'abord le cache local (évite un appel réseau si récent)
-    try {
-        const cache = JSON.parse(localStorage.getItem(ACCES_CACHE_KEY) || 'null');
-        if (cache && cache.expiry > Date.now() && cache.codes && cache.codes.includes(code)) {
-            localStorage.setItem(ACCES_CODE_KEY, code);
-            deverrouillerFormulaire(true);
-            return;
-        }
-    } catch(e) {}
-
-    setAccesStatus('<i class="fas fa-spinner fa-spin"></i> Vérification...', 'info');
-
-    try {
-        const resp = await fetch(ACCES_SHEET_URL + '?t=' + Date.now());
-        if (!resp.ok) throw new Error('Réseau');
-        const data = await resp.json();
-        const codes = (data.codes || []).map(c => String(c).trim().toLowerCase());
-
-        // Mettre en cache 24h
-        localStorage.setItem(ACCES_CACHE_KEY, JSON.stringify({
-            codes,
-            expiry: Date.now() + CACHE_DUREE_MS,
-            valide: codes.includes(code)
-        }));
-
-        if (codes.includes(code)) {
-            localStorage.setItem(ACCES_CODE_KEY, code);
-            deverrouillerFormulaire(true);
-        } else {
-            setAccesStatus('❌ Code non reconnu. Contactez Yes Concept.', 'error');
-        }
-    } catch(e) {
-        // Hors ligne : accepter si le code était valide dans le dernier cache
-        try {
-            const cache = JSON.parse(localStorage.getItem(ACCES_CACHE_KEY) || 'null');
-            if (cache && cache.codes && cache.codes.includes(code)) {
-                localStorage.setItem(ACCES_CODE_KEY, code);
-                deverrouillerFormulaire(true);
-                setAccesStatus('✅ Accès hors-ligne (cache).', 'ok');
-                return;
-            }
-        } catch(e2) {}
-        setAccesStatus('❌ Connexion impossible. Vérifiez votre réseau.', 'error');
-    }
-};
-
-function deverrouillerFormulaire(animate) {
-    document.getElementById('formulaire-principal').style.display = 'block';
-    const box = document.getElementById('acces-box');
-    if (box) {
-        box.style.opacity = '0.5';
-        box.style.pointerEvents = 'none';
-        const btn = box.querySelector('button');
-        if (btn) btn.innerHTML = '<i class="fas fa-check-circle"></i>';
-    }
-    setAccesStatus('✅ Accès autorisé', 'ok');
-    if (animate) {
-        document.getElementById('formulaire-principal').style.animation = 'fadeIn 0.4s ease-out';
-    }
+function normaliserChaine(s) {
+    return (s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-function setAccesStatus(msg, type) {
-    const el = document.getElementById('acces-status');
+function setStatus(id, msg, type) {
+    const el = document.getElementById(id);
     if (!el) return;
     const colors = { ok: '#6ee7b7', error: '#fca5a5', warn: '#fcd34d', info: 'rgba(255,255,255,0.6)' };
     el.style.color = colors[type] || 'white';
     el.innerHTML = msg;
 }
-// ═════════════════════════════════════════════════════════════════════════════
 
+// ── Étape 1 : vérifier l'identité dans le Sheet ──────────────────────────────
+window.passerEtape2 = async function() {
+    const prenom = normaliserChaine(document.getElementById('acces-prenom').value);
+    const nom    = normaliserChaine(document.getElementById('acces-nom').value);
+    if (!prenom || !nom) { setStatus('identite-status', 'Saisissez votre prénom et votre nom.', 'warn'); return; }
+
+    setStatus('identite-status', '<i class="fas fa-spinner fa-spin"></i> Vérification...', 'info');
+
+    let acces = null;
+    // Essai cache d'abord
+    try {
+        const cache = JSON.parse(localStorage.getItem(ACCES_CACHE_KEY) || 'null');
+        if (cache && cache.expiry > Date.now() && cache.acces) acces = cache.acces;
+    } catch(e) {}
+
+    // Si pas de cache valide, fetch le Sheet
+    if (!acces) {
+        try {
+            const resp = await fetch(ACCES_SHEET_URL + '?t=' + Date.now());
+            if (!resp.ok) throw new Error('Réseau');
+            const data = await resp.json();
+            acces = data.acces || [];
+            localStorage.setItem(ACCES_CACHE_KEY, JSON.stringify({ acces, expiry: Date.now() + CACHE_DUREE_MS }));
+        } catch(e) {
+            setStatus('identite-status', '❌ Connexion impossible. Vérifiez votre réseau.', 'error');
+            return;
+        }
+    }
+
+    // Chercher la personne dans la liste
+    const personne = acces.find(r => normaliserChaine(r.nom) === nom && normaliserChaine(r.prenom) === prenom);
+    if (!personne) {
+        setStatus('identite-status', '❌ Identité non reconnue. Contactez Yes Concept.', 'error');
+        return;
+    }
+
+    // Identité trouvée : afficher l'étape 2
+    setStatus('identite-status', '✅ Identité reconnue', 'ok');
+    document.getElementById('step-identite').style.opacity = '0.5';
+    document.getElementById('step-identite').style.pointerEvents = 'none';
+    const stepCode = document.getElementById('step-code');
+    stepCode.style.display = 'block';
+    stepCode.style.animation = 'fadeIn 0.4s ease-out';
+    setTimeout(() => document.getElementById('acces-code').focus(), 400);
+};
+
+// ── Étape 2 : vérifier le code associé à cette personne ──────────────────────
+window.verifierAcces = async function() {
+    const prenom = normaliserChaine(document.getElementById('acces-prenom').value);
+    const nom    = normaliserChaine(document.getElementById('acces-nom').value);
+    const code   = normaliserChaine(document.getElementById('acces-code').value);
+    if (!code) { setStatus('acces-status', 'Saisissez votre code d\'accès.', 'warn'); return; }
+
+    setStatus('acces-status', '<i class="fas fa-spinner fa-spin"></i> Vérification...', 'info');
+
+    let acces = null;
+    try {
+        const cache = JSON.parse(localStorage.getItem(ACCES_CACHE_KEY) || 'null');
+        if (cache && cache.expiry > Date.now() && cache.acces) acces = cache.acces;
+    } catch(e) {}
+
+    if (!acces) {
+        try {
+            const resp = await fetch(ACCES_SHEET_URL + '?t=' + Date.now());
+            if (!resp.ok) throw new Error('Réseau');
+            const data = await resp.json();
+            acces = data.acces || [];
+            localStorage.setItem(ACCES_CACHE_KEY, JSON.stringify({ acces, expiry: Date.now() + CACHE_DUREE_MS }));
+        } catch(e) {
+            setStatus('acces-status', '❌ Connexion impossible. Vérifiez votre réseau.', 'error');
+            return;
+        }
+    }
+
+    const personne = acces.find(r =>
+        normaliserChaine(r.nom) === nom &&
+        normaliserChaine(r.prenom) === prenom &&
+        normaliserChaine(r.code) === code
+    );
+
+    if (personne) {
+        deverrouillerFormulaire(prenom, nom);
+    } else {
+        setStatus('acces-status', '❌ Code incorrect. Contactez Yes Concept.', 'error');
+    }
+};
+
+// ── Étape 3 : déverrouiller le formulaire séjour avec nom/prénom pré-remplis ─
+function deverrouillerFormulaire(prenom, nom) {
+    // Pré-remplir les champs nom/prénom (en lecture seule)
+    const nomEl    = document.getElementById('login-nom');
+    const prenomEl = document.getElementById('login-prenom');
+    if (nomEl)    { nomEl.value    = nom.charAt(0).toUpperCase() + nom.slice(1); }
+    if (prenomEl) { prenomEl.value = prenom.charAt(0).toUpperCase() + prenom.slice(1); }
+
+    // Masquer étape 2, afficher étape 3
+    document.getElementById('step-code').style.opacity = '0.5';
+    document.getElementById('step-code').style.pointerEvents = 'none';
+    setStatus('acces-status', '✅ Accès autorisé', 'ok');
+    const form = document.getElementById('formulaire-principal');
+    form.style.display = 'block';
+    form.style.animation = 'fadeIn 0.4s ease-out';
+}
+// ═════════════════════════════════════════════════════════════════════════════
 
 function normalizeStr(s) {
     return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/gi,'').toLowerCase();
